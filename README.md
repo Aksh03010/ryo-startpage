@@ -34,7 +34,7 @@ npm run lint     # run ESLint
 
 The workflow in `.github/workflows/deploy.yml` builds and deploys the site whenever `main` is updated. In the repository's **Settings → Pages**, choose **GitHub Actions** as the build and deployment source.
 
-The Vite base path is set for this repository. Once the first Pages deployment finishes, the site URL will be:
+The Vite base path is set for this repository. The live site is:
 
 <https://aksh03010.github.io/ryo-startpage/>
 
