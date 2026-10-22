@@ -7,6 +7,7 @@
   transition:
     box-shadow 220ms ease,
     border-color 220ms ease,
+    background-color 220ms ease,
     border-radius 240ms ease;
   border: 2px solid transparent;
 }
@@ -19,15 +20,20 @@
   background:
     linear-gradient(
       155deg,
-      rgba(255, 255, 255, var(--box-alpha, 0.1)),
-      rgba(255, 255, 255, calc(var(--box-alpha, 0.1) * 0.28))
+      rgba(255, 255, 255, calc(0.08 + var(--box-alpha, 0.1) * 0.2)),
+      rgba(255, 255, 255, calc(0.025 + var(--box-alpha, 0.1) * 0.08))
+    ),
+    linear-gradient(
+      155deg,
+      rgba(8, 12, 20, calc(0.48 - var(--box-alpha, 0.1) * 0.16)),
+      rgba(8, 12, 20, calc(0.62 - var(--box-alpha, 0.1) * 0.16))
     );
-  border-color: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.24);
 }
 
 .flat {
-  background: transparent;
-  border-color: transparent;
+  background: rgba(8, 12, 20, calc(0.48 + var(--box-alpha, 0.1) * 0.35));
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 .shell[data-edit-mode] {
