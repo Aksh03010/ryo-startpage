@@ -34,10 +34,14 @@ Your settings, links, tasks, and reminders are saved in that browser on that dev
 
 The System monitor widget is off by default. It reads sensor data only while the widget is enabled and the local helper is running. The helper currently supports Windows and reads CPU load from Windows, GPU sensors from MSI Afterburner, and browser process CPU use from Windows. Temperature sensors appear only when Afterburner exposes them.
 
-1. Install Python 3.10 or newer for Windows and MSI Afterburner.
+You do not need to download or clone the Ryo - Home source code to use this feature.
+
+1. Install Python 3.10 or newer for Windows and [MSI Afterburner](https://www.msi.com/Landing/afterburner/graphics-cards).
 2. In Afterburner, open **Settings > Monitoring** and enable the GPU usage and temperature sensors you want to see. Enable CPU temperature too if it is available on your system.
-3. From this project's folder, run `py -3 monitor/ryo_monitor.py`. Keep its terminal window open while using the widget.
+3. [Download the Windows monitor launcher](https://github.com/Aksh03010/ryo-startpage/raw/refs/heads/main/monitor/Start-RyoMonitor.bat), then double-click the downloaded `Start-RyoMonitor.bat` file. The launcher downloads the helper to `%LOCALAPPDATA%\RyoHome\Monitor` and starts it. Keep its terminal window open while using the widget.
 4. In Ryo - Home, open **Customize > Widgets > System monitor**, turn on **Show on page**, and choose **Computer** or **Browser** in the widget.
+
+The launcher needs an internet connection the first time it runs. It requires the Python Launcher (`py`) and `curl.exe`, included with current Windows versions. To inspect the helper before running it, [view its source](https://github.com/Aksh03010/ryo-startpage/blob/main/monitor/ryo_monitor.py).
 
 The helper listens only on this computer (`127.0.0.1`) and allows requests from the Ryo - Home site and local development page. It does not change hardware settings. The widget can show CPU and up to two detected GPU cards; missing temperature sensors are shown as unavailable.
 
