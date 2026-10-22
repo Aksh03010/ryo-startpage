@@ -1,34 +1,54 @@
 import { useEffect } from 'react';
 import { Pause, Play, RotateCcw, Timer, Zap } from 'lucide-react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { DEFAULT_FOCUS } from '../constants';
 import styles from './FocusWidget.module.css';
 
-export default function FocusWidget({ settingsKey }: { settingsKey: string }) {
+export default function FocusWidget({ settingsKey, focusMinutes, breakMinutes }: {
+  settingsKey: string;
+  focusMinutes: number;
+  breakMinutes: number;
+}) {
   const [snapshot, setSnapshot] = useLocalStorage<{ duration: number; paused: boolean; remaining: number }>(settingsKey, () => ({
-    duration: DEFAULT_FOCUS.focusMinutes * 60,
+    duration: focusMinutes * 60,
     paused: true,
-    remaining: DEFAULT_FOCUS.focusMinutes * 60,
+    remaining: focusMinutes * 60,
   }));
+  const finished = snapshot.remaining <= 0;
 
   useEffect(() => {
-    if (snapshot.paused || snapshot.remaining <= 0) return;
+    if (snapshot.paused || finished) return;
     const timer = window.setInterval(() => {
       setSnapshot((prev) => {
         const next = Math.max(0, prev.remaining - 1);
-        return { ...prev, paused: next === 0 ? true : false, remaining: next };
+        return { ...prev, paused: next === 0, remaining: next };
       });
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [snapshot.paused, snapshot.remaining, setSnapshot]);
+  }, [snapshot.paused, finished, setSnapshot]);
 
-  const progress = snapshot.remaining / snapshot.duration;
+  useEffect(() => {
+    if (!snapshot.paused) return;
+    const duration = focusMinutes * 60;
+    setSnapshot((prev) => prev.duration === duration ? prev : ({ ...prev, duration, remaining: duration }));
+  }, [focusMinutes, snapshot.paused, setSnapshot]);
+
+  const progress = snapshot.duration > 0 ? Math.min(1, Math.max(0, snapshot.remaining / snapshot.duration)) : 0;
   const display = `${String(Math.floor(snapshot.remaining / 60)).padStart(2, '0')}:${String(snapshot.remaining % 60).padStart(2, '0')}`;
 
-  const toggle = () => setSnapshot((prev) => ({ ...prev, paused: !prev.paused }));
+  const toggle = () => setSnapshot((prev) => {
+    if (!prev.paused) return { ...prev, paused: true };
+    if (prev.remaining <= 0) {
+      const duration = focusMinutes * 60;
+      return { ...prev, duration, remaining: duration, paused: false };
+    }
+    return { ...prev, paused: false };
+  });
 
   const reset = () =>
-    setSnapshot((prev) => ({ ...prev, paused: true, remaining: prev.duration }));
+    setSnapshot((prev) => {
+      const duration = focusMinutes * 60;
+      return { ...prev, duration, paused: true, remaining: duration };
+    });
 
   return (
     <div className={styles.wrap}>
@@ -74,7 +94,7 @@ export default function FocusWidget({ settingsKey }: { settingsKey: string }) {
 
       <div className={styles.chips}>
         <span className={styles.break}>
-          <Zap size={11} /> {Math.round(snapshot.duration / 60)}m focus · {DEFAULT_FOCUS.breakMinutes}m break
+          <Zap size={11} /> {Math.round(snapshot.duration / 60)}m focus · {breakMinutes}m break
         </span>
       </div>
     </div>

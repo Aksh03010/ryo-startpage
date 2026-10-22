@@ -13,16 +13,17 @@ import SearchWidget from './components/SearchWidget';
 import TaskManager from './components/TaskManager';
 import TopBar from './components/TopBar';
 import WidgetShell from './components/WidgetShell';
-import { ACCENTS, CLOCK_FONTS, DEFAULT_CUSTOM_ACCENT, DEFAULT_POSITIONS, DEFAULT_SETTINGS, GRID_STEP, WIDGET_IDS, hexToRgbTriplet } from './constants';
+import { ACCENTS, CLOCK_FONTS, DEFAULT_CUSTOM_ACCENT, DEFAULT_FOCUS, DEFAULT_POSITIONS, DEFAULT_SETTINGS, GRID_STEP, WIDGET_IDS, hexToRgbTriplet } from './constants';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import styles from './App.module.css';
-import type { LayoutState, QuickLink, Reminder, Settings, Task, WidgetId } from './types';
+import type { FocusSettings, LayoutState, QuickLink, Reminder, Settings, Task, WidgetId } from './types';
 
 const TASK_KEY = 'ryo.tasks.v2';
 const LAYOUT_KEY = 'ryo.layout.v2';
 const LINKS_KEY = 'ryo.links.v2';
 const SETTINGS_KEY = 'ryo.settings.v2';
 const FOCUS_KEY = 'ryo.focus.v2';
+const FOCUS_SETTINGS_KEY = 'ryo.focus.settings';
 const REMINDER_KEY = 'ryo.reminders.v2';
 
 export default function App() {
@@ -31,6 +32,7 @@ export default function App() {
   const [links, setLinks] = useLocalStorage<QuickLink[]>(LINKS_KEY, []);
   const [settings, setSettings] = useLocalStorage<Settings>(SETTINGS_KEY, DEFAULT_SETTINGS);
   const [reminders, setReminders] = useLocalStorage<Reminder[]>(REMINDER_KEY, []);
+  const [focusSettings, setFocusSettings] = useLocalStorage<FocusSettings>(FOCUS_SETTINGS_KEY, DEFAULT_FOCUS);
   const [dragging, setDragging] = useState<null | string>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -196,7 +198,13 @@ export default function App() {
               />
             );
           default:
-            return <FocusWidget settingsKey={FOCUS_KEY} />;
+            return (
+              <FocusWidget
+                settingsKey={FOCUS_KEY}
+                focusMinutes={focusSettings.focusMinutes}
+                breakMinutes={focusSettings.breakMinutes}
+              />
+            );
         }
       };
 
@@ -232,6 +240,8 @@ export default function App() {
       tasks,
       links,
       reminders,
+      focusSettings.focusMinutes,
+      focusSettings.breakMinutes,
       dragging,
       setTasks,
       setLinks,
@@ -296,6 +306,8 @@ export default function App() {
         onUpload={(file) => void handleUpload(file)}
         uploading={uploading}
         uploadError={uploadError}
+        focusSettings={focusSettings}
+        onFocusSettings={setFocusSettings}
       />
     </div>
   );

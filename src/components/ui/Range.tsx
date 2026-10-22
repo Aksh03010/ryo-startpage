@@ -1,33 +1,13 @@
-import { useEffect, useState } from 'react';
 import { Slider } from './Controls';
-import { DEFAULT_FOCUS } from '../../constants';
+import type { FocusSettings } from '../../types';
 
-const STORAGE_KEY = 'ryo.focus.settings.v2';
-
-function readCurrent(key = STORAGE_KEY): { focusMinutes: number; breakMinutes: number; sessions: number } {
-  try {
-    const legacyKey = key.replace(/^ryo\./, 'aura.');
-    const raw = window.localStorage.getItem(key) ?? window.localStorage.getItem(legacyKey);
-    if (!raw) return DEFAULT_FOCUS;
-    const parsed = JSON.parse(raw) as Partial<typeof DEFAULT_FOCUS>;
-    return { ...DEFAULT_FOCUS, ...parsed };
-  } catch {
-    return DEFAULT_FOCUS;
-  }
-}
-
-export function RangeControls({ focusKey }: { focusKey?: string }) {
-  const storageKey = focusKey ?? STORAGE_KEY;
-  const [settings, setSettings] = useState(() => readCurrent(storageKey));
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(storageKey, JSON.stringify(settings));
-    } catch (error) {
-      console.error('Unable to persist focus settings.', error);
-    }
-  }, [storageKey, settings]);
-
+export function RangeControls({
+  settings,
+  onChange,
+}: {
+  settings: FocusSettings;
+  onChange: (next: FocusSettings | ((prev: FocusSettings) => FocusSettings)) => void;
+}) {
   return (
     <Slider
       label="Focus length"
@@ -36,7 +16,7 @@ export function RangeControls({ focusKey }: { focusKey?: string }) {
       step={5}
       value={settings.focusMinutes}
       display={(value) => `${value} min`}
-      onChange={(value) => setSettings({ ...settings, focusMinutes: value })}
+      onChange={(value) => onChange((prev) => ({ ...prev, focusMinutes: value }))}
     />
   );
 }

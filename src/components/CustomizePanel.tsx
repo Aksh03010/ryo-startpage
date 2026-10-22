@@ -23,6 +23,7 @@ import type {
   Settings,
   WidgetId,
   WidgetStyleOverride,
+  FocusSettings,
 } from '../types';
 import type { WallpaperState } from '../types';
 
@@ -47,6 +48,8 @@ export default function CustomizePanel({
   onUpload,
   uploading,
   uploadError,
+  focusSettings,
+  onFocusSettings,
 }: {
   open: boolean;
   onClose: () => void;
@@ -59,6 +62,8 @@ export default function CustomizePanel({
   onUpload: (file: File) => void;
   uploading: boolean;
   uploadError: string | null;
+  focusSettings: FocusSettings;
+  onFocusSettings: (next: FocusSettings | ((prev: FocusSettings) => FocusSettings)) => void;
 }) {
   const [tab, setTab] = useState<TabId>('background');
   const [urlDraft, setUrlDraft] = useState('');
@@ -544,7 +549,7 @@ export default function CustomizePanel({
                       <p className={styles.help}>
                         Adjust focus length and view your running sessions from the widget controls.
                       </p>
-                      <RangeControls focusKey="ryo.focus.settings" />
+                      <RangeControls settings={focusSettings} onChange={onFocusSettings} />
                     </>
                   )}
 
