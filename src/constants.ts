@@ -12,6 +12,7 @@ import type {
 
 export const WIDGET_IDS: WidgetId[] = ['clock', 'tasks', 'search', 'links', 'focus', 'reminders'];
 export const STORAGE_PREFIX = 'ryo:';
+const publicAsset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
 export const WIDGET_TITLES: Record<WidgetId, string> = {
   clock: 'Clock',
@@ -36,9 +37,9 @@ export const PRESETS: Array<{
     gradient:
       'radial-gradient(120% 100% at 20% 10%, #0d5b6b 0%, transparent 55%), radial-gradient(90% 90% at 90% 15%, #6b5bff 0%, transparent 60%), linear-gradient(160deg, #03050b 0%, #041020 55%, #050610 100%)',
   },
-  { id: 'midnight', name: 'Midnight Peaks', blurb: 'Static art', src: '/wallpapers/midnight.svg', gradient: '' },
-  { id: 'ember', name: 'Ember Haze', blurb: 'Static art', src: '/wallpapers/ember.svg', gradient: '' },
-  { id: 'glacier', name: 'Glacier Bloom', blurb: 'Static art', src: '/wallpapers/glacier.svg', gradient: '' },
+  { id: 'midnight', name: 'Midnight Peaks', blurb: 'Static art', src: publicAsset('wallpapers/midnight.svg'), gradient: '' },
+  { id: 'ember', name: 'Ember Haze', blurb: 'Static art', src: publicAsset('wallpapers/ember.svg'), gradient: '' },
+  { id: 'glacier', name: 'Glacier Bloom', blurb: 'Static art', src: publicAsset('wallpapers/glacier.svg'), gradient: '' },
 ];
 
 export interface PresetById {
