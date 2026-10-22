@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ctypes
+import errno
 import json
 import os
 import struct
@@ -46,8 +47,12 @@ kernel32.OpenFileMappingW.restype = wintypes.HANDLE
 kernel32.MapViewOfFile.restype = ctypes.c_void_p
 kernel32.OpenProcess.restype = wintypes.HANDLE
 kernel32.CreateToolhelp32Snapshot.restype = wintypes.HANDLE
+kernel32.CloseHandle.restype = wintypes.BOOL
+kernel32.UnmapViewOfFile.restype = wintypes.BOOL
 kernel32.OpenFileMappingW.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.LPCWSTR]
 kernel32.MapViewOfFile.argtypes = [wintypes.HANDLE, wintypes.DWORD, wintypes.DWORD, wintypes.DWORD, ctypes.c_size_t]
+kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+kernel32.UnmapViewOfFile.argtypes = [ctypes.c_void_p]
 kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
 kernel32.CreateToolhelp32Snapshot.argtypes = [wintypes.DWORD, wintypes.DWORD]
 kernel32.Process32FirstW.argtypes = [wintypes.HANDLE, ctypes.POINTER(PROCESSENTRY32W)]
@@ -214,7 +219,19 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
 
+class MonitorServer(HTTPServer):
+    # Prevent a second copy from sharing the monitor port on Windows.
+    allow_reuse_address = False
+
+
 if __name__ == "__main__":
+    try:
+        server = MonitorServer((HOST, PORT), Handler)
+    except OSError as error:
+        if error.errno == errno.EADDRINUSE or getattr(error, "winerror", None) == 10048:
+            print("Another monitor is already using this port. Close its terminal window, then try again.")
+            raise SystemExit(1) from None
+        raise
     print(f"Ryo Monitor listening on http://{HOST}:{PORT} (Ctrl+C to stop)")
     print("Read-only; only the Ryo website and local development server are allowed.")
-    HTTPServer((HOST, PORT), Handler).serve_forever()
+    server.serve_forever()
