@@ -1,0 +1,100 @@
+.app {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  color: #ffffff;
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-size: calc(16px * var(--text-scale, 1));
+  font-feature-settings: 'ss01';
+}
+
+.app.reduceMotion *,
+.app.reduceMotion *::before,
+.app.reduceMotion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+.dashboard {
+  position: relative;
+  height: 100svh;
+  width: 100%;
+  padding: 78px 24px 24px;
+  box-sizing: border-box;
+}
+
+.dashboard[data-grid] {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size:
+    40px 40px,
+    40px 40px;
+  background-position: center center;
+}
+
+.arrangeHint {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  padding: 9px 15px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(10, 14, 24, 0.8);
+  backdrop-filter: blur(18px);
+  font: 500 11px/1.4 'Manrope', system-ui;
+  color: rgba(255, 255, 255, 0.72);
+  white-space: nowrap;
+  z-index: 55;
+  animation: float-in 340ms cubic-bezier(0.22, 1.2, 0.36, 1);
+}
+
+.arrangeHint kbd {
+  display: inline-block;
+  margin: 0 4px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  font: 500 9.5px/1 'JetBrains Mono', ui-monospace, monospace;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.shortcutToast {
+  position: fixed;
+  top: 66px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  border-radius: 9px;
+  background: rgba(8, 11, 20, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font: 500 10.5px/1.4 'Manrope', system-ui;
+  color: rgba(255, 255, 255, 0.7);
+  z-index: 70;
+  animation: float-in 240ms ease-out both;
+}
+
+.shortcutToast kbd {
+  display: inline-block;
+  margin: 0 3px;
+  padding: 1px 5px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.09);
+  font: 500 9.5px/1 'JetBrains Mono', ui-monospace, monospace;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@keyframes float-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

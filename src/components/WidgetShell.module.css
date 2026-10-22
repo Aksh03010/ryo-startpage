@@ -1,0 +1,104 @@
+.shell {
+  position: absolute;
+  isolation: isolate;
+  min-width: 220px;
+  max-width: min(92vw, 720px);
+  color: #fff;
+  transition:
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    border-radius 240ms ease;
+  border: 2px solid transparent;
+}
+
+.body {
+  padding: 18px 20px;
+}
+
+.glass {
+  background:
+    linear-gradient(
+      155deg,
+      rgba(255, 255, 255, var(--box-alpha, 0.1)),
+      rgba(255, 255, 255, calc(var(--box-alpha, 0.1) * 0.28))
+    );
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.flat {
+  background: transparent;
+  border-color: transparent;
+}
+
+.shell[data-edit-mode] {
+  border: 1.5px dashed color-mix(in srgb, var(--accent) 68%, #ffffff2e);
+  cursor: grab;
+  animation: edit-pulse 2.2s ease-in-out infinite;
+}
+
+.shell[data-dragging] {
+  cursor: grabbing;
+  box-shadow: 0 50px 110px -45px rgba(4, 10, 32, 0.9);
+  z-index: 40;
+  transform: scale(1.015);
+}
+
+.shell[data-edit-mode] :focus-visible {
+  outline: 2px solid var(--accent);
+}
+
+.handle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  color: #0b1120;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  font: 600 12px/1 'Manrope', system-ui;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  touch-action: none;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.handleVisible {
+  opacity: 1;
+  pointer-events: auto;
+  cursor: grab;
+}
+
+.handle:hover {
+  transform: translateY(-2px);
+}
+
+.handle:active {
+  cursor: grabbing;
+}
+
+.handle:focus-visible {
+  outline: 2px solid var(--accent);
+}
+
+@keyframes edit-pulse {
+  0%, 100% {
+    border-color: color-mix(in srgb, var(--accent) 34%, transparent);
+  }
+  50% {
+    border-color: color-mix(in srgb, var(--accent) 72%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell {
+    transition: none;
+  }
+  .shell[data-edit-mode] {
+    animation: none;
+  }
+}

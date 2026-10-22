@@ -1,0 +1,76 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 380px;
+  max-width: min(560px, 92vw);
+  padding: 11px 14px;
+  border-radius: 999px;
+  border: 1.4px solid rgba(255, 255, 255, 0.16);
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.018));
+  backdrop-filter: blur(18px) saturate(140%);
+  color: #ffffff;
+  box-shadow: 0 10px 40px -22px rgba(2, 5, 18, 0.55);
+  transition: border-color 200ms ease, transform 200ms ease;
+}
+
+.bar:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 62%, transparent);
+  transform: translateY(-1px);
+}
+
+.spark {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--accent);
+  flex: none;
+}
+
+.input {
+  flex: 1 1 auto;
+  border: none;
+  background: transparent;
+  font: 500 14.5px/1.4 'Manrope', system-ui;
+  color: #ffffff;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.36);
+}
+
+.input:focus {
+  outline: none;
+}
+
+.engine {
+  appearance: none;
+  border: none;
+  background: transparent;
+  font: 500 11.5px/1 'Manrope', system-ui;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 7px 16px 7px 9px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.engine:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.engine option {
+  color: #101828;
+  background: #ffffff;
+}
+
+@media (max-width: 720px) {
+  .bar {
+    min-width: 0;
+    width: 100%;
+  }
+}

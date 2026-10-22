@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" width="1920" height="1080">
+  <defs>
+    <linearGradient id="glacierSky" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="#020814"/>
+      <stop offset="40%" stop-color="#061c33"/>
+      <stop offset="72%" stop-color="#0b2a4d" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#061426"/>
+    </linearGradient>
+    <radialGradient id="sunHalo" cx="26%" cy="24%" r="42%">
+      <stop offset="0%" stop-color="#eaffff" stop-opacity="0.5"/>
+      <stop offset="40%" stop-color="#7fd8ff" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#0b2a4d" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ice" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0%" stop-color="#a9f2ff" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#4fc7f0" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#061a31" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="ridgeIce" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#124a6b" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#020811" stop-opacity="1"/>
+    </linearGradient>
+    <filter id="iceSoft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="80"/>
+    </filter>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#glacierSky)"/>
+  <rect width="1920" height="1080" fill="url(#sunHalo)"/>
+
+  <g filter="url(#iceSoft)" opacity="0.85">
+    <ellipse cx="430" cy="250" rx="560" ry="260" fill="url(#ice)"/>
+    <ellipse cx="1540" cy="220" rx="500" ry="210" fill="url(#ice)" opacity="0.55"/>
+  </g>
+
+  <g opacity="0.32" stroke="#8fe9ff" stroke-width="2" fill="none">
+    <path d="M80 820 Q 380 560 760 700 Q 1180 830 1500 620 Q 1740 500 1980 640"/>
+    <path d="M-40 700 Q 420 420 860 560 Q 1260 680 1560 480 Q 1780 360 1980 460"/>
+    <path d="M240 980 Q 620 760 980 880 Q 1320 990 1640 840 Q 1820 750 1980 860"/>
+  </g>
+
+  <path d="M-60 900 Q 320 740 620 840 Q 920 930 1220 790 Q 1500 660 1720 800 Q 1840 870 1985 820 L1985 1080 L-60 1080 Z" fill="url(#ridgeIce)"/>
+  <path d="M-60 1020 Q 380 900 720 980 Q 1100 1055 1460 940 Q 1720 860 1985 960 L1985 1080 L-60 1080 Z" fill="#02060d"/>
+</svg>

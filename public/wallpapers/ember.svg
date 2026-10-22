@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" width="1920" height="1080">
+  <defs>
+    <linearGradient id="emberSky" x1="0" y1="0" x2="0.25" y2="1">
+      <stop offset="0%" stop-color="#180910"/>
+      <stop offset="45%" stop-color="#2a0d16"/>
+      <stop offset="80%" stop-color="#3d1220" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#150610"/>
+    </linearGradient>
+    <linearGradient id="warm" x1="0" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="#ff9d5c" stop-opacity="0.85"/>
+      <stop offset="55%" stop-color="#ff6a4a" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#7a1a2f" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="1" y1="0" x2="0.2" y2="1">
+      <stop offset="0%" stop-color="#ffd39a" stop-opacity="0.5"/>
+      <stop offset="65%" stop-color="#ff8b5c" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#180910" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="ridgeWarm" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3b1220" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#0c0309" stop-opacity="1"/>
+    </linearGradient>
+    <filter id="smoke" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="110"/>
+    </filter>
+    <filter id="smokeSmall" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="60"/>
+    </filter>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#emberSky)"/>
+
+  <g filter="url(#smoke)" opacity="0.9">
+    <ellipse cx="620" cy="800" rx="620" ry="330" fill="url(#warm)"/>
+    <ellipse cx="1460" cy="280" rx="500" ry="260" fill="url(#gold)"/>
+  </g>
+
+  <g filter="url(#smokeSmall)" opacity="0.35">
+    <path d="M240 620 Q 520 520 800 640 Q 1080 760 1420 660 Q 1720 570 1980 680 L1980 1080 L240 1080 Z"/>
+    <path d="M1000 320 Q 1200 260 1440 320 Q 1600 360 1760 280 L1760 640 Q 1500 580 1240 660 Q 1100 700 1000 640 Z"/>
+  </g>
+
+  <path d="M-60 880 Q 320 700 600 820 Q 900 960 1200 790 Q 1500 660 1720 800 Q 1830 870 1985 820 L1985 1080 L-60 1080 Z" fill="url(#ridgeWarm)"/>
+  <path d="M-60 1000 Q 420 880 760 970 Q 1140 1050 1500 930 Q 1740 850 1985 940 L1985 1080 L-60 1080 Z" fill="#08020a"/>
+</svg>

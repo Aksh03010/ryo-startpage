@@ -1,0 +1,272 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 280px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font: 500 12px/1 'Manrope', system-ui;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px 2px rgba(var(--accent-rgb), 0.42);
+}
+
+.menuButton {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.menuButton:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.menuButtonActive {
+  color: #ffffff;
+  background: color-mix(in srgb, var(--accent) 26%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.menuButton:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.list,
+.manageList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.list {
+  max-height: 26vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.list::-webkit-scrollbar,
+.manageList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.list::-webkit-scrollbar-thumb,
+.manageList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 99px;
+}
+
+.list li,
+.manageList li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  transition: background 180ms ease;
+}
+
+.list li:hover,
+.manageList li:hover {
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.text {
+  flex: 1 1 auto;
+  font: 500 14.5px/1.45 'Manrope', system-ui;
+  color: rgba(255, 255, 255, 0.94);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
+}
+
+.when {
+  font: 500 11px/1 'JetBrains Mono', ui-monospace, monospace;
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+}
+
+.empty {
+  font: 400 13px/1.5 'Manrope', system-ui;
+  color: rgba(255, 255, 255, 0.44);
+  margin: 0;
+}
+
+.manage {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 2px;
+}
+
+.addRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border-radius: 14px;
+  border: 1.4px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(14px);
+}
+
+.input {
+  flex: 1 1 auto;
+  border: none;
+  background: transparent;
+  font: 500 14px/1.5 'Manrope', system-ui;
+  color: #ffffff;
+  padding: 0;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.36);
+}
+
+.input:focus {
+  outline: none;
+}
+
+.add {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  border: none;
+  flex: none;
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: #ffffff;
+  transition: background 170ms ease, transform 170ms ease;
+}
+
+.add:hover {
+  background: color-mix(in srgb, var(--accent) 52%, transparent);
+  transform: translateY(-1px);
+}
+
+.repeats {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font: 500 11px/1 'Manrope', system-ui;
+  color: rgba(255, 255, 255, 0.64);
+  white-space: nowrap;
+}
+
+.repeats svg {
+  opacity: 0.85;
+}
+
+.dayRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.dayButton {
+  padding: 6px 10px;
+  border-radius: 9px;
+  border: 1.4px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  font: 500 11px/1 'Manrope', system-ui;
+  color: rgba(255, 255, 255, 0.74);
+  transition: background 170ms ease, color 170ms ease, border-color 170ms ease, transform 170ms ease;
+}
+
+.dayButton:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+}
+
+.dayButton[data-active] {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 75%, transparent);
+  color: #ffffff;
+}
+
+.hint {
+  font: 400 11px/1.5 'Manrope', system-ui;
+  color: rgba(255, 255, 255, 0.44);
+  margin: 0;
+}
+
+.whenInput {
+  color-scheme: dark;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 12px;
+  border: 1.4px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.045);
+  font: 500 12.5px/1 'JetBrains Mono', ui-monospace, monospace;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.whenInput:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.manageList li {
+  min-height: 30px;
+}
+
+.delete {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.32);
+  flex: none;
+  opacity: 0;
+  transition: opacity 160ms ease, color 160ms ease;
+}
+
+.manageList li:hover .delete,
+.delete:focus-visible {
+  opacity: 1;
+}
+
+.delete:hover {
+  color: #ff7681;
+}
+
+@media (max-width: 720px) {
+  .wrap {
+    min-width: 220px;
+  }
+}

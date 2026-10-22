@@ -1,0 +1,169 @@
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #03050b;
+  filter: none;
+  will-change: filter;
+}
+
+.wallpaperMedia {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  animation: fade-in 780ms ease-out both;
+  opacity: 1;
+  transform-origin: center center;
+}
+
+.dim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: background 260ms ease;
+}
+
+.grain {
+  position: absolute;
+  inset: -25%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' filter='grainy' viewBox='0 0 240 240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='240' height='240' opacity='0.2' fill='white' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+  opacity: 0.055;
+  pointer-events: none;
+  animation: shimmer 9s steps(3, end) infinite;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 100% at 50% 40%, transparent 40%, rgba(2, 4, 10, 0.75) 100%);
+}
+
+.dynamicWallpaper {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(110% 92% at 22% 8%, rgba(14, 91, 107, 0.5) 0%, transparent 58%),
+    radial-gradient(90% 88% at 88% 10%, rgba(107, 91, 255, 0.42) 0%, transparent 62%),
+    linear-gradient(160deg, #03050b 0%, #041020 52%, #050610 100%);
+  animation: fade-in 900ms ease-out both;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.22;
+  z-index: 1;
+  mix-blend-mode: screen;
+}
+
+.orbBlue {
+  width: 46vw;
+  height: 46vw;
+  left: 6vw;
+  top: 8vh;
+  background: #22d3ee;
+  animation: drift-blue 26s ease-in-out infinite alternate;
+}
+
+.orbGreen {
+  width: 38vw;
+  height: 38vw;
+  left: 46vw;
+  top: 14vh;
+  background: #34d399;
+  animation: drift-green 32s ease-in-out infinite alternate;
+}
+
+.orbViolet {
+  width: 34vw;
+  height: 34vw;
+  left: 74vw;
+  top: 42vh;
+  background: #a78bfa;
+  animation: drift-violet 38s ease-in-out infinite alternate;
+}
+
+.auroraBand {
+  position: absolute;
+  inset: -35%;
+  background:
+    conic-gradient(from 140deg at 30% 40%, rgba(84, 170, 245, 0.42), transparent 42%),
+    conic-gradient(from 260deg at 82% 28%, rgba(48, 222, 173, 0.36), transparent 44%),
+    conic-gradient(from 18deg at 68% 72%, rgba(214, 176, 255, 0.28), transparent 42%);
+  filter: blur(70px);
+  mix-blend-mode: screen;
+  opacity: 0.7;
+  animation: ribbon 34s ease-in-out infinite alternate;
+  z-index: 1;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    opacity: 0.05;
+  }
+  40% {
+    opacity: 0.09;
+  }
+}
+
+@keyframes drift-blue {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(16vw, 5vh, 0) scale(1.16);
+  }
+}
+
+@keyframes drift-green {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(-10vw, 7vh, 0) scale(0.94);
+  }
+}
+
+@keyframes drift-violet {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.9);
+  }
+  100% {
+    transform: translate3d(-12vw, -5vh, 0) scale(1.12);
+  }
+}
+
+@keyframes ribbon {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(-4vw, 3vh, 0) rotate(9deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orb,
+  .auroraBand,
+  .grain {
+    animation: none;
+  }
+}

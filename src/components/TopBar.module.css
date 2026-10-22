@@ -1,0 +1,54 @@
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 22px 12px;
+  pointer-events: none;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.topbar > * {
+  pointer-events: auto;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 11px;
+  border: 1.3px solid rgba(255, 255, 255, 0.14);
+  background: rgba(14, 18, 31, 0.36);
+  backdrop-filter: blur(14px);
+  color: rgba(255, 255, 255, 0.76);
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.icon:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.icon[data-active] {
+  border-color: color-mix(in srgb, var(--accent) 72%, transparent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, rgba(10, 14, 24, 0.72));
+}
+
+@media (max-width: 720px) {
+  .topbar { padding: 14px 16px 10px; }
+}
