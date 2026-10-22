@@ -1,0 +1,84 @@
+.widget {
+  width: min(360px, calc(92vw - 40px));
+  min-width: 260px;
+  color: rgba(255, 255, 255, .92);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 12px/1 'Manrope', system-ui;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.title svg { color: var(--accent); }
+
+.switcher {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px;
+  background: rgba(0,0,0,.18);
+}
+
+.switcher button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: rgba(255,255,255,.58);
+  font: 600 10px/1 'Manrope', system-ui;
+  cursor: pointer;
+}
+
+.switcher button[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--accent) 24%, rgba(255,255,255,.08));
+  color: #fff;
+}
+
+.cards { display: grid; gap: 8px; }
+
+.metricCard {
+  padding: 11px 12px 9px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 13px;
+  background: rgba(5,10,18,.34);
+}
+
+.metricHeading, .metricValues { display: flex; align-items: center; justify-content: space-between; }
+.metricHeading { font: 600 11px/1.2 'Manrope', system-ui; }
+.live { display: flex; align-items: center; gap: 5px; color: rgba(255,255,255,.44); font-size: 9px; font-weight: 500; }
+.live i { width: 5px; height: 5px; border-radius: 50%; background: #68e6c0; box-shadow: 0 0 8px #68e6c0; }
+.metricValues { justify-content: flex-start; gap: 23px; margin-top: 10px; }
+.metricValues div { display: flex; align-items: baseline; gap: 5px; }
+.metricValues strong { font: 600 18px/1 'Space Grotesk', system-ui; font-variant-numeric: tabular-nums; }
+.metricValues small { color: rgba(255,255,255,.48); font: 500 9px/1 'Manrope', system-ui; text-transform: uppercase; letter-spacing: .08em; }
+.chart { position: relative; height: 29px; margin-top: 6px; overflow: hidden; opacity: .85; }
+.sparkline { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.sparkline polyline { fill: none; stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+.usage polyline { stroke: var(--accent); }
+.temperature polyline { stroke: #ffae80; stroke-dasharray: 3 3; }
+.noChart { position: absolute; inset: 0; display: flex; align-items: center; color: rgba(255,255,255,.36); font: 400 9px/1 'Manrope', system-ui; }
+.offline { display: grid; gap: 7px; padding: 15px; border: 1px solid rgba(255,255,255,.1); border-radius: 13px; background: rgba(5,10,18,.34); font: 500 11px/1.35 'Manrope', system-ui; }
+.offline small { color: rgba(255,255,255,.55); font-size: 10px; }
+.offline a { display: inline-flex; align-items: center; gap: 5px; width: fit-content; color: var(--accent); font-size: 10px; text-decoration: none; }
+.note { margin: 0; color: rgba(255,255,255,.48); font: 400 9px/1.4 'Manrope', system-ui; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sparkline polyline { transition: none; }
+}

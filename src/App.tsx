@@ -10,6 +10,7 @@ import FocusWidget from './components/FocusWidget';
 import QuickLinks from './components/QuickLinks';
 import RemindersWidget from './components/RemindersWidget';
 import SearchWidget from './components/SearchWidget';
+import SystemMonitorWidget from './components/SystemMonitorWidget';
 import TaskManager from './components/TaskManager';
 import TopBar from './components/TopBar';
 import WidgetShell from './components/WidgetShell';
@@ -232,6 +233,8 @@ export default function App() {
                 onEngineChange={(engine) => setSettings((draft) => ({ ...draft, searchEngine: engine }))}
               />
             );
+          case 'system':
+            return <SystemMonitorWidget />;
           default:
             return (
               <FocusWidget

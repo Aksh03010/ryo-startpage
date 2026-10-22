@@ -1,4 +1,4 @@
-export type WidgetId = 'clock' | 'tasks' | 'search' | 'links' | 'focus' | 'reminders';
+export type WidgetId = 'clock' | 'tasks' | 'search' | 'links' | 'focus' | 'reminders' | 'system';
 
 export type ClockFont = 'space' | 'instrument' | 'jetbrains' | 'manrope';
 

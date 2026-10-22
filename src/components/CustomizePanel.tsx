@@ -588,6 +588,18 @@ export default function CustomizePanel({
                     </>
                   )}
 
+                  {widgetDetail === 'system' && (
+                    <>
+                      <SectionTitle>System monitor</SectionTitle>
+                      <p className={styles.help}>
+                        Shows live CPU and GPU usage and temperatures when the optional local Ryo Monitor helper is running. The widget stays hidden until you turn it on here.
+                      </p>
+                      <p className={styles.help}>
+                        MSI Afterburner supplies GPU sensor readings. Install and start the helper using the setup guide in the project README.
+                      </p>
+                    </>
+                  )}
+
                   <SectionTitle>Box style for {WIDGET_TITLES[widgetDetail]}</SectionTitle>
                   <p className={styles.help}>Use the default style, or choose a different style for this widget.</p>
                   <Segmented<'inherit' | BoxMode>
