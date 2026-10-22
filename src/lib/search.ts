@@ -1,10 +1,20 @@
 import type { SearchEngineId, Settings } from '../types';
-import { DEFAULT_SETTINGS } from '../constants';
+import { DEFAULT_SETTINGS, SEARCH_ENGINES } from '../constants';
+import { looksLikeUrl, safeHttpUrl } from './link';
 
 export function buildSearchUrl(input: string, engine: SearchEngineId): string {
   const term = input.trim();
-  const target = engine === 'duckduckgo' && term.length === 0 ? 'https://duckduckgo.com' : term;
-  return target;
+  if (!term) return '';
+
+  if (looksLikeUrl(term)) {
+    try {
+      return safeHttpUrl(term).toString();
+    } catch {
+      // Treat malformed URL-like input as a search query instead.
+    }
+  }
+
+  return SEARCH_ENGINES[engine].query.replace('%s', encodeURIComponent(term));
 }
 
 export function isTaskVisibleToday(settings: Settings): boolean {
