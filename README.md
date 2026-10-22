@@ -8,7 +8,25 @@ Ryo - Home is a customizable start page for your browser. It brings your clock, 
 
 Open the live page above, then use the customize icon in the top corner to choose a wallpaper, adjust the widget styles, and show or hide widgets. Add your own links in the Quick links widget. Press `Ctrl + ,` to open Customize and `Esc` to close it.
 
-You can use the page in any browser. To make it your browser's home page, copy the live page address into the browser's home page settings. In Helium, you can also enable its custom new-tab page option at `helium://flags/#custom-ntp` (if the option is available in your version) and use the same address for new tabs.
+You can use the page in any modern desktop browser. To make it your home page, copy the live page address into the browser's home page settings.
+
+### Google Chrome
+
+1. Open **Settings > Appearance** and turn on **Show home button**.
+2. Choose **Enter custom web address** and paste the live page address.
+
+This sets the Home button. To replace Chrome's New Tab page, you will need a new-tab extension; Chrome's standard settings do not provide a custom New Tab URL. See [Google's homepage and startup page instructions](https://support.google.com/chrome/answer/95314).
+
+### Mozilla Firefox
+
+1. Open **Settings > Home**.
+2. Beside **Homepage and new windows**, choose **Custom URLs…** and paste the live page address.
+
+Firefox's regular **New tabs** setting offers Firefox Home or a blank page. To use Ryo - Home for every new tab, install a new-tab extension and set its page to the live page address. See [Mozilla's home page instructions](https://support.mozilla.org/en-US/kb/how-to-set-the-home-page).
+
+### Other browsers
+
+The site works as a regular web page in current desktop versions of **Microsoft Edge, Brave, Safari, Opera, Vivaldi, and Helium**, as well as Chrome and Firefox. Set it as the home page in that browser's settings. New-tab replacement options vary by browser; some require an extension. In Helium, you can enable its custom new-tab page option at `helium://flags/#custom-ntp` (if the option is available in your version) and enter the live page address.
 
 Your settings, links, tasks, and reminders are saved in that browser on that device. Uploaded wallpapers are stored on that device too. Browser data is not automatically shared between devices.
 
