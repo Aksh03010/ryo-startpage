@@ -77,6 +77,7 @@ export default function CustomizePanel({
   const [urlDraft, setUrlDraft] = useState('');
   const [urlError, setUrlError] = useState<string | null>(null);
   const [widgetDetail, setWidgetDetail] = useState<WidgetId>('clock');
+  const [confirmReset, setConfirmReset] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   const appearance = settings.appearance;
@@ -688,7 +689,7 @@ export default function CustomizePanel({
               <button
                 type="button"
                 className={styles.actionButton}
-                onClick={onResetPreferences}
+                onClick={() => setConfirmReset(true)}
               >
                 <Braces size={14} /> Restore default setup
               </button>
@@ -704,6 +705,69 @@ export default function CustomizePanel({
             Settings and lists are saved in this browser. Uploaded wallpapers stay on this device.
           </p>
         </footer>
+
+        {confirmReset && (
+          <div
+            className={styles.confirmOverlay}
+            onClick={(event) => {
+              if (event.target === event.currentTarget) setConfirmReset(false);
+            }}
+          >
+            <section
+              className={styles.confirmDialog}
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="reset-confirm-title"
+              aria-describedby="reset-confirm-description"
+              onKeyDown={(event) => {
+                if (event.key === 'Escape') {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setConfirmReset(false);
+                  return;
+                }
+
+                if (event.key === 'Tab') {
+                  const buttons = event.currentTarget.querySelectorAll<HTMLButtonElement>('button');
+                  const first = buttons[0];
+                  const last = buttons[buttons.length - 1];
+                  if (event.shiftKey && document.activeElement === first) {
+                    event.preventDefault();
+                    last?.focus();
+                  } else if (!event.shiftKey && document.activeElement === last) {
+                    event.preventDefault();
+                    first?.focus();
+                  }
+                }
+              }}
+            >
+              <h2 id="reset-confirm-title" className={styles.confirmTitle}>Restore default setup?</h2>
+              <p id="reset-confirm-description" className={styles.confirmDescription}>
+                This resets your wallpaper, appearance, widget positions, quick links, search engine, and focus length. Tasks and reminders will stay as they are.
+              </p>
+              <div className={styles.confirmActions}>
+                <button
+                  type="button"
+                  className={styles.actionButton}
+                  autoFocus
+                  onClick={() => setConfirmReset(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className={styles.dangerButton}
+                  onClick={() => {
+                    setConfirmReset(false);
+                    onResetPreferences();
+                  }}
+                >
+                  Restore defaults
+                </button>
+              </div>
+            </section>
+          </div>
+        )}
       </div>
     </div>
   );
