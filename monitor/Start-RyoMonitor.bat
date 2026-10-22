@@ -29,8 +29,8 @@ if not errorlevel 1 (
   exit /b 0
 )
 
-if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
-if errorlevel 1 (
+if not exist "%INSTALL_DIR%\" mkdir "%INSTALL_DIR%"
+if not exist "%INSTALL_DIR%\" (
   echo Could not create the Ryo Monitor folder: %INSTALL_DIR%
   pause
   exit /b 1
