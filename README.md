@@ -1,50 +1,52 @@
 # Ryo - Home
 
-Ryo - Home is a customizable browser start page with a live clock, search, tasks, reminders, quick links, a focus timer, and dynamic wallpapers. Widget positions and preferences stay in your browser.
+Ryo - Home is a customizable start page for your browser. It brings your clock, search, quick links, tasks, reminders, focus timer, and wallpaper together on one page.
+
+**Open the live page:** <https://aksh03010.github.io/ryo-startpage/>
+
+## Get started
+
+Open the live page above, then use the customize icon in the top corner to choose a wallpaper, adjust the widget styles, and show or hide widgets. Add your own links in the Quick links widget. Press `Ctrl + ,` to open Customize and `Esc` to close it.
+
+You can use the page in any browser. To make it your browser's home page, copy the live page address into the browser's home page settings. In Helium, you can also enable its custom new-tab page option at `helium://flags/#custom-ntp` (if the option is available in your version) and use the same address for new tabs.
+
+Your settings, links, tasks, and reminders are saved in that browser on that device. Uploaded wallpapers are stored on that device too. Browser data is not automatically shared between devices.
 
 ## Features
 
-- Animated and built-in wallpaper scenes, plus image and video uploads or a wallpaper URL.
+- Built-in wallpaper scenes, plus image and video uploads or a wallpaper URL.
 - Clock with 12/24-hour time, date, greeting, font, and animation settings.
 - Search with Google, DuckDuckGo, Brave, and YouTube.
 - Quick links, repeating tasks, reminders, and a focus timer.
-- Draggable widgets, appearance controls, and keyboard shortcuts. Press `Ctrl + ,` to customize and `Esc` to close.
+- Draggable widgets, appearance controls, and keyboard shortcuts.
 - Local-first storage: settings and lists use `localStorage`; uploaded wallpapers use IndexedDB.
 
-## Run locally
+## Run it on your computer
 
 Requirements: Node.js 20.19+ or 22.12+.
 
 ```sh
+git clone https://github.com/Aksh03010/ryo-startpage.git
+cd ryo-startpage
 npm ci
 npm run dev
 ```
 
-Vite prints the local address, usually `http://localhost:5173`.
+Open the local address printed by Vite, usually <http://localhost:5173>.
 
 Useful commands:
 
 ```sh
-npm run build    # type-check and create dist/
-npm run preview  # preview the production build
-npm run lint     # run ESLint
+npm run build    # type-check and create a production build in dist/
+npm run preview  # preview the production build locally
+npm run lint     # check the code with ESLint
 ```
 
-## Publish with GitHub Pages
+## Host your own copy
 
-The workflow in `.github/workflows/deploy.yml` builds and deploys the site whenever `main` is updated. In the repository's **Settings → Pages**, choose **GitHub Actions** as the build and deployment source.
+You can fork this repository and publish your copy with GitHub Pages. In your repository, open **Settings > Pages** and choose **GitHub Actions** as the build and deployment source. The included workflow deploys the site whenever you push to `main`.
 
-The Vite base path is set for this repository. The live site is:
-
-<https://aksh03010.github.io/ryo-startpage/>
-
-## Use with Helium
-
-After the site is published, open `helium://flags/#custom-ntp` in Helium and enable its custom new-tab page option if available. Set the new-tab URL to the Pages URL above. You can also use that URL as Helium's home page.
-
-## Tech
-
-React, TypeScript, and Vite. Styles are kept in CSS Modules next to their components.
+The current build is configured for the repository path `/ryo-startpage/` in `vite.config.ts`. If you rename your fork or publish it under a different path, update Vite's `base` setting to match the path where the site will be hosted. For a domain hosted at the root, use `/`.
 
 ## License
 
