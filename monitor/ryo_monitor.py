@@ -163,7 +163,7 @@ def read_afterburner() -> tuple[float | None, list[dict]]:
                     gpu["temperature"] = value
                 elif is_usage:
                     gpu["usage"] = value
-        return cpu_temp, list(gpus.values())
+        return cpu_temp, list(gpus.values())[:2]
     except (OSError, ValueError, struct.error):
         return None, []
     finally:
