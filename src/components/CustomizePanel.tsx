@@ -180,7 +180,7 @@ export default function CustomizePanel({
 
         <div className={styles.body}>
           {tab === 'background' && (
-            <div>
+            <div className={styles.tabContent}>
               <SectionTitle>Wallpaper</SectionTitle>
               <div className={styles.presetGrid}>
                 {PRESETS.map((preset) => (
@@ -342,7 +342,7 @@ export default function CustomizePanel({
           )}
 
           {tab === 'appearance' && (
-            <div>
+            <div className={styles.tabContent}>
               <SectionTitle>Accent color</SectionTitle>
               <p className={styles.help}>Choose a color used for highlights and active controls.</p>
               <div className={styles.accentRow}>
@@ -462,7 +462,7 @@ export default function CustomizePanel({
           )}
 
           {tab === 'widgets' && (
-            <div>
+            <div className={styles.tabContent}>
               <SectionTitle>Choose a widget</SectionTitle>
               <p className={styles.help}>Select a widget to show or hide it and adjust its settings.</p>
               <div className={styles.widgetList}>
@@ -658,7 +658,7 @@ export default function CustomizePanel({
           )}
 
           {tab === 'layout' && (
-            <div>
+            <div className={styles.tabContent}>
               <SectionTitle>Move widgets</SectionTitle>
               <Toggle label="Turn on arrange mode" checked={arrange} onChange={() => onArrange()} />
               <p className={styles.help}>
