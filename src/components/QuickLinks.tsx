@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import type { QuickLink } from '../types';
 import { linkDomain, linkInitial, normalizeLinkUrl } from '../lib/links';
@@ -12,6 +12,10 @@ function hostColor(url: string): string {
   }
   const hue = hash;
   return `hsl(${hue} 78% 62%)`;
+}
+
+function tileBackground(url: string): string {
+  return `linear-gradient(145deg, ${hostColor(url)} 0%, rgba(10, 12, 20, 0.92) 100%)`;
 }
 
 export default function QuickLinks({
@@ -35,16 +39,6 @@ export default function QuickLinks({
     setAdding(false);
   };
 
-  const gradient = useMemo(
-    () => (url: string) => {
-      const color = hostColor(url);
-      return {
-        background: `linear-gradient(145deg, ${color}, hsl(0 0% 6% / 0.9) `,
-      };
-    },
-    [],
-  );
-
   return (
     <div className={styles.wrap}>
       <p className={styles.title}>Quick links</p>
@@ -54,8 +48,7 @@ export default function QuickLinks({
             <a href={link.url} target="_blank" rel="noreferrer" aria-label={link.label}>
               <span
                 className={styles.tile}
-                style={{ background: gradient(link.url).background + '36% 26%, rgba(10, 12, 20, 0.9) 100%)' }}
-                data-tint={hostColor(link.url)}
+                style={{ background: tileBackground(link.url) }}
               >
                 {linkInitial(link.label, link.url)}
               </span>
@@ -96,9 +89,6 @@ export default function QuickLinks({
                 placeholder="https://example.com"
                 value={draftUrl}
                 onChange={(event) => setDraftUrl(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') add();
-                }}
                 aria-label="Link URL"
               />
               <div className={styles.formActions}>

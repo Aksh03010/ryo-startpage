@@ -2,7 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  min-width: 320px;
+  width: min(320px, calc(92vw - 40px));
+  min-width: 0;
 }
 
 .title {
@@ -29,17 +30,21 @@
   padding: 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
   gap: 12px;
 }
 
 .link {
   position: relative;
+  min-width: 0;
 }
 
 .link a {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  min-width: 0;
   gap: 7px;
   text-decoration: none;
   color: rgba(255, 255, 255, 0.86);
@@ -54,8 +59,9 @@
 .tile {
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
   border-radius: 14px;
   font: 600 15px/1 'Manrope', system-ui;
   color: #ffffff;
@@ -72,6 +78,7 @@
   font: 500 11.5px/1.2 'Manrope', system-ui;
   text-align: center;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
+  width: 100%;
   max-width: 90px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -84,8 +91,8 @@
   position: absolute;
   top: 5px;
   right: 5px;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   border: none;
   color: rgba(255, 255, 255, 0.68);
@@ -108,8 +115,9 @@
 .addTile {
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
   border-radius: 14px;
   border: 1.5px dashed rgba(255, 255, 255, 0.24);
   background: transparent;
@@ -132,6 +140,8 @@
 .addForm {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-width: 0;
   gap: 7px;
 }
 
