@@ -59,6 +59,24 @@ kernel32.Process32FirstW.argtypes = [wintypes.HANDLE, ctypes.POINTER(PROCESSENTR
 kernel32.Process32NextW.argtypes = [wintypes.HANDLE, ctypes.POINTER(PROCESSENTRY32W)]
 kernel32.GetSystemTimes.argtypes = [ctypes.POINTER(FILETIME), ctypes.POINTER(FILETIME), ctypes.POINTER(FILETIME)]
 kernel32.GetProcessTimes.argtypes = [wintypes.HANDLE, ctypes.POINTER(FILETIME), ctypes.POINTER(FILETIME), ctypes.POINTER(FILETIME), ctypes.POINTER(FILETIME)]
+kernel32.GlobalMemoryStatusEx.restype = wintypes.BOOL
+
+
+class MEMORYSTATUSEX(ctypes.Structure):
+    _fields_ = [
+        ("dwLength", wintypes.DWORD),
+        ("dwMemoryLoad", wintypes.DWORD),
+        ("ullTotalPhys", ctypes.c_ulonglong),
+        ("ullAvailPhys", ctypes.c_ulonglong),
+        ("ullTotalPageFile", ctypes.c_ulonglong),
+        ("ullAvailPageFile", ctypes.c_ulonglong),
+        ("ullTotalVirtual", ctypes.c_ulonglong),
+        ("ullAvailVirtual", ctypes.c_ulonglong),
+        ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+    ]
+
+
+kernel32.GlobalMemoryStatusEx.argtypes = [ctypes.POINTER(MEMORYSTATUSEX)]
 
 previous_system = None
 previous_processes: dict[int, int] = {}
@@ -82,6 +100,21 @@ def system_cpu_usage() -> float | None:
     idle_delta = current[0] - old[0]
     total_delta = (current[1] - old[1]) + (current[2] - old[2])
     return round(max(0, min(100, (1 - idle_delta / max(1, total_delta)) * 100)), 1)
+
+
+def memory_usage() -> dict | None:
+    status = MEMORYSTATUSEX()
+    status.dwLength = ctypes.sizeof(status)
+    if not kernel32.GlobalMemoryStatusEx(ctypes.byref(status)) or status.ullTotalPhys == 0:
+        return None
+    used = status.ullTotalPhys - status.ullAvailPhys
+    return {
+        "name": "RAM",
+        "usage": round(used / status.ullTotalPhys * 100, 1),
+        "temperature": None,
+        "usedBytes": used,
+        "totalBytes": status.ullTotalPhys,
+    }
 
 
 def browser_cpu_usage() -> float | None:
@@ -160,16 +193,16 @@ def read_afterburner() -> tuple[float | None, list[dict]]:
                 continue
             is_temp = "temp" in name or source_id in (0x00, 0x80)
             is_usage = "usage" in name or "util" in name or "load" in name or source_id == 0x01
-            is_cpu = "cpu" in name or source_id == 0x80
+            is_cpu = gpu_index >= gpu_count and ("cpu" in name or source_id == 0x80)
             if is_cpu and is_temp:
                 cpu_temp = value
             elif not is_cpu and ("gpu" in name or source_id in (0x00, 0x01) or gpu_index < gpu_count):
-                gpu = gpus.setdefault(gpu_index, {"name": gpu_names.get(gpu_index, f"GPU {gpu_index + 1}"), "usage": None, "temperature": None})
+                gpu = gpus.setdefault(gpu_index, {"name": gpu_names.get(gpu_index, f"GPU {gpu_index + 1}"), "index": gpu_index + 1, "usage": None, "temperature": None})
                 if is_temp:
                     gpu["temperature"] = value
                 elif is_usage:
                     gpu["usage"] = value
-        return cpu_temp, list(gpus.values())[:2]
+        return cpu_temp, [gpus[index] for index in sorted(gpus)[:2]]
     except (OSError, ValueError, struct.error):
         return None, []
     finally:
@@ -202,6 +235,7 @@ class Handler(BaseHTTPRequestHandler):
         data = {
             "cpu": {"name": "CPU", "usage": system_cpu_usage(), "temperature": cpu_temp},
             "gpus": gpus,
+            "ram": memory_usage(),
             "browser": {"name": "Browser", "usage": browser_cpu_usage(), "temperature": None},
             "updatedAt": int(time.time() * 1000),
         }

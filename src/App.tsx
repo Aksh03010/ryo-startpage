@@ -122,6 +122,13 @@ export default function App() {
     });
   }, [setSettings]);
 
+  useEffect(() => {
+    setSettings((draft) => {
+      if (draft.monitorMetrics) return draft;
+      return { ...draft, monitorMetrics: DEFAULT_SETTINGS.monitorMetrics };
+    });
+  }, [setSettings]);
+
   const handleUpload = useCallback(
     async (file: File) => {
       setUploading(true);
@@ -234,7 +241,7 @@ export default function App() {
               />
             );
           case 'system':
-            return <SystemMonitorWidget />;
+            return <SystemMonitorWidget metrics={settings.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics} />;
           default:
             return (
               <FocusWidget
@@ -273,6 +280,7 @@ export default function App() {
       settings.clock,
       settings.tasks,
       settings.searchEngine,
+      settings.monitorMetrics,
       layout,
       arrange,
       tasks,

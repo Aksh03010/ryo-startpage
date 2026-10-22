@@ -102,6 +102,12 @@ export interface Settings {
   tasks: TaskSettings;
   layout: LayoutSettings;
   searchEngine: SearchEngineId;
+  monitorMetrics: {
+    cpu: boolean;
+    gpu1: boolean;
+    gpu2: boolean;
+    ram: boolean;
+  };
 }
 
 export type TaskRepeatDay = 0 | 1 | 2 | 3 | 4 | 5 | 6;

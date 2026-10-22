@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { RangeControls } from './ui/Range';
 import { SectionTitle, Segmented, Slider, Toggle } from './ui/Controls';
-import { DEFAULT_CUSTOM_ACCENT, WIDGET_IDS, WIDGET_TITLES, ACCENTS, CLOCK_FONTS, CLOCK_ANIMATIONS, PRESETS, SEARCH_ENGINES } from '../constants';
+import { DEFAULT_CUSTOM_ACCENT, DEFAULT_SETTINGS, WIDGET_IDS, WIDGET_TITLES, ACCENTS, CLOCK_FONTS, CLOCK_ANIMATIONS, PRESETS, SEARCH_ENGINES } from '../constants';
 import { safeHttpUrl, guessMediaType } from '../lib/link';
 import styles from './CustomizePanel.module.css';
 import type {
@@ -592,8 +592,40 @@ export default function CustomizePanel({
                     <>
                       <SectionTitle>System monitor</SectionTitle>
                       <p className={styles.help}>
-                        Shows live CPU and GPU usage and temperatures when the optional local Ryo Monitor helper is running. The widget stays hidden until you turn it on here.
+                        Choose which readings appear in the monitor. RAM usage is read from Windows; GPU readings depend on sensors exposed by MSI Afterburner.
                       </p>
+                      <Toggle
+                        label="Show CPU"
+                        checked={settings.monitorMetrics?.cpu ?? true}
+                        onChange={(value) => onSettings((draft) => ({
+                          ...draft,
+                          monitorMetrics: { ...(draft.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics), cpu: value },
+                        }))}
+                      />
+                      <Toggle
+                        label="Show GPU 1"
+                        checked={settings.monitorMetrics?.gpu1 ?? true}
+                        onChange={(value) => onSettings((draft) => ({
+                          ...draft,
+                          monitorMetrics: { ...(draft.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics), gpu1: value },
+                        }))}
+                      />
+                      <Toggle
+                        label="Show GPU 2"
+                        checked={settings.monitorMetrics?.gpu2 ?? true}
+                        onChange={(value) => onSettings((draft) => ({
+                          ...draft,
+                          monitorMetrics: { ...(draft.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics), gpu2: value },
+                        }))}
+                      />
+                      <Toggle
+                        label="Show RAM"
+                        checked={settings.monitorMetrics?.ram ?? true}
+                        onChange={(value) => onSettings((draft) => ({
+                          ...draft,
+                          monitorMetrics: { ...(draft.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics), ram: value },
+                        }))}
+                      />
                       <p className={styles.help}>
                         MSI Afterburner supplies GPU sensor readings. Install and start the helper using the setup guide in the project README.
                       </p>

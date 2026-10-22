@@ -3,8 +3,9 @@ import { Cpu, ExternalLink, Monitor, Radio } from 'lucide-react';
 import styles from './SystemMonitorWidget.module.css';
 
 type Mode = 'computer' | 'browser';
-type Metric = { name: string; usage: number | null; temperature: number | null };
-type Snapshot = { cpu: Metric; gpus: Metric[]; browser: Metric; updatedAt: number };
+type Metric = { name: string; usage: number | null; temperature: number | null; index?: number; usedBytes?: number; totalBytes?: number };
+type Snapshot = { cpu: Metric; gpus: Metric[]; ram?: Metric | null; browser: Metric; updatedAt: number };
+type MetricsVisibility = { cpu: boolean; gpu1: boolean; gpu2: boolean; ram: boolean };
 
 const ENDPOINT = 'http://127.0.0.1:8765/api/metrics';
 const HISTORY_LIMIT = 36;
@@ -15,6 +16,10 @@ function loadMode(): Mode {
   } catch {
     return 'computer';
   }
+}
+
+function formatBytes(bytes: number): string {
+  return `${(bytes / 1024 ** 3).toFixed(1)} GB`;
 }
 
 function Sparkline({ values, tone }: { values: number[]; tone: 'usage' | 'temperature' }) {
@@ -43,6 +48,9 @@ function MetricCard({ metric, history, showTemperature = true }: { metric: Metri
       <div className={styles.metricValues}>
         <div><strong>{usage}</strong><small>Usage</small></div>
         {showTemperature && <div><strong>{temp}</strong><small>Temp</small></div>}
+        {metric.usedBytes !== undefined && metric.totalBytes !== undefined && (
+          <small className={styles.memoryDetail}>{formatBytes(metric.usedBytes)} / {formatBytes(metric.totalBytes)}</small>
+        )}
       </div>
       <div className={styles.chart}>
         {history && <Sparkline values={history.usage} tone="usage" />}
@@ -53,7 +61,7 @@ function MetricCard({ metric, history, showTemperature = true }: { metric: Metri
   );
 }
 
-export default function SystemMonitorWidget() {
+export default function SystemMonitorWidget({ metrics: visibleMetrics }: { metrics: MetricsVisibility }) {
   const [mode, setMode] = useState<Mode>(loadMode);
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [error, setError] = useState(false);
@@ -74,7 +82,7 @@ export default function SystemMonitorWidget() {
         if (!active) return;
         setSnapshot(next);
         setError(false);
-        const metrics = mode === 'computer' ? [next.cpu, ...next.gpus] : [next.browser];
+        const metrics = mode === 'computer' ? [next.cpu, ...next.gpus, ...(next.ram ? [next.ram] : [])] : [next.browser];
         setHistory((previous) => {
           const updated = { ...previous };
           const activeKeys = new Set(metrics.map((metric) => metric.name));
@@ -97,7 +105,19 @@ export default function SystemMonitorWidget() {
     return () => { active = false; window.clearTimeout(timer); };
   }, [mode]);
 
-  const metrics = mode === 'computer' && snapshot ? [snapshot.cpu, ...snapshot.gpus] : mode === 'browser' && snapshot ? [snapshot.browser] : [];
+  const metrics = mode === 'computer' && snapshot
+    ? [
+        ...(visibleMetrics.cpu ? [snapshot.cpu] : []),
+        ...snapshot.gpus.filter((metric, index) => {
+          const gpuIndex = metric.index ?? index + 1;
+          return gpuIndex === 1 ? visibleMetrics.gpu1 : gpuIndex === 2 && visibleMetrics.gpu2;
+        }),
+        ...(visibleMetrics.ram && snapshot.ram ? [snapshot.ram] : []),
+      ]
+    : mode === 'browser' && snapshot
+      ? [snapshot.browser]
+      : [];
+  const noComputerMetricsSelected = !visibleMetrics.cpu && !visibleMetrics.gpu1 && !visibleMetrics.gpu2 && !visibleMetrics.ram;
 
   return (
     <div className={styles.widget}>
@@ -116,8 +136,13 @@ export default function SystemMonitorWidget() {
         </div>
       ) : (
         <div className={styles.cards}>
-          {metrics.map((metric) => <MetricCard key={metric.name} metric={metric} history={history[metric.name]} showTemperature={mode === 'computer'} />)}
+          {metrics.map((metric) => <MetricCard key={metric.name} metric={metric} history={history[metric.name]} showTemperature={mode === 'computer' && metric.usedBytes === undefined} />)}
           {mode === 'computer' && snapshot && snapshot.gpus.length === 0 && <p className={styles.note}>No GPU sensors found in Afterburner.</p>}
+          {mode === 'computer' && metrics.length === 0 && (
+            <p className={styles.note}>
+              {noComputerMetricsSelected ? 'All computer readings are hidden. Enable metrics in Customize.' : 'The selected readings are not available yet.'}
+            </p>
+          )}
           {mode === 'browser' && metrics.length > 0 && <p className={styles.note}>Browser CPU use is measured across its running processes.</p>}
           {mode === 'computer' && snapshot && snapshot.cpu.temperature === null && <p className={styles.note}>CPU temperature is not exposed by your sensors.</p>}
         </div>

@@ -32,18 +32,18 @@ Your settings, links, tasks, and reminders are saved in that browser on that dev
 
 ## Local system monitor (optional)
 
-The System monitor widget is off by default. It reads sensor data only while the widget is enabled and the local helper is running. The helper currently supports Windows and reads CPU load from Windows and browser process CPU use from Windows. MSI Afterburner is needed for GPU and temperature sensors; those readings appear only when Afterburner exposes them.
+The System monitor widget is off by default. It reads sensor data only while the widget is enabled and the local helper is running. The helper supports Windows CPU and RAM usage and browser process CPU use. MSI Afterburner is needed for GPU and temperature sensors; those readings appear only when Afterburner exposes them.
 
 You do not need to download or clone the Ryo - Home source code to use this feature.
 
 1. Install Python 3.10 or newer for Windows. Install [MSI Afterburner](https://www.msi.com/Landing/afterburner/graphics-cards) too if you want GPU or temperature readings.
-2. For Afterburner readings, open Afterburner and go to **Settings > Monitoring**. Enable the GPU usage and temperature sensors you want to see. Enable CPU temperature too if it is available on your system.
+2. For Afterburner readings, open Afterburner and go to **Settings > Monitoring**. Enable the GPU usage and temperature sensors you want to see. Enable CPU temperature too if it is available on your system. The monitor can display up to two GPUs.
 3. [Download the Windows monitor launcher](https://github.com/Aksh03010/ryo-startpage/raw/refs/heads/main/monitor/Start-RyoMonitor.bat), then double-click the downloaded `Start-RyoMonitor.bat` file. The launcher downloads the helper to `%LOCALAPPDATA%\RyoHome\Monitor` and starts it. A terminal window should say `Ryo Monitor listening on http://127.0.0.1:8765`. Keep that window open while using the widget.
 4. In Ryo - Home, open **Customize > Widgets > System monitor**, turn on **Show on page**, and choose **Computer** or **Browser** in the widget. If your browser asks to allow the page to access devices on your local network, allow it so the page can reach the monitor on this computer.
 
 The launcher needs an internet connection the first time it runs. It requires the Python Launcher (`py`), installed with Python for Windows, and `curl.exe` (included with Windows 10 and newer). If the launcher says `Python 3 is required`, install Python from [python.org](https://www.python.org/downloads/windows/) and run it again. If it says another monitor is already using the port, close any other Ryo Monitor terminal windows first. The **Browser** view and CPU usage do not need Afterburner; GPU or temperature readings can be unavailable when Afterburner is closed or a sensor is not enabled. To inspect the helper before running it, [view its source](https://github.com/Aksh03010/ryo-startpage/blob/main/monitor/ryo_monitor.py).
 
-The helper listens only on this computer (`127.0.0.1`) and allows requests from the Ryo - Home site and local development page. It does not change hardware settings. The widget can show CPU and up to two detected GPU cards; missing temperature sensors are shown as unavailable.
+The helper listens only on this computer (`127.0.0.1`) and allows requests from the Ryo - Home site and local development page. It does not change hardware settings. Customize > Widgets > System monitor lets you independently show or hide CPU, GPU 1, GPU 2, and RAM. RAM usage is available directly from Windows; GPU usage and temperatures depend on the sensors enabled in Afterburner. Missing temperature sensors are shown as unavailable.
 
 ## Features
 

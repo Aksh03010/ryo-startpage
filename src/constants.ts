@@ -178,6 +178,7 @@ export const DEFAULT_SETTINGS: Settings = {
   tasks: { showCompleted: true },
   layout: { snapToGrid: true, showGrid: false },
   searchEngine: 'duckduckgo',
+  monitorMetrics: { cpu: true, gpu1: true, gpu2: true, ram: true },
 };
 
 export const DEFAULT_FOCUS: FocusSettings = { focusMinutes: 25, breakMinutes: 5, sessions: 0 };
