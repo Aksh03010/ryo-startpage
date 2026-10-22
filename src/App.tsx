@@ -124,8 +124,16 @@ export default function App() {
 
   useEffect(() => {
     setSettings((draft) => {
-      if (draft.monitorMetrics) return draft;
-      return { ...draft, monitorMetrics: DEFAULT_SETTINGS.monitorMetrics };
+      const monitorMetrics = { ...DEFAULT_SETTINGS.monitorMetrics, ...draft.monitorMetrics };
+      const current = draft.monitorMetrics;
+      if (
+        current &&
+        current.cpu === monitorMetrics.cpu &&
+        current.gpu1 === monitorMetrics.gpu1 &&
+        current.gpu2 === monitorMetrics.gpu2 &&
+        current.ram === monitorMetrics.ram
+      ) return draft;
+      return { ...draft, monitorMetrics };
     });
   }, [setSettings]);
 

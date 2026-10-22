@@ -202,6 +202,10 @@ def read_afterburner() -> tuple[float | None, list[dict]]:
                     gpu["temperature"] = value
                 elif is_usage:
                     gpu["usage"] = value
+        # On some systems GPU 2 is the integrated graphics device, whose
+        # temperature sensor is exposed as a CPU sensor by Afterburner.
+        if 1 in gpus and cpu_temp is not None:
+            gpus[1]["temperature"] = cpu_temp
         return cpu_temp, [gpus[index] for index in sorted(gpus)[:2]]
     except (OSError, ValueError, struct.error):
         return None, []
