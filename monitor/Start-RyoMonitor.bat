@@ -13,6 +13,22 @@ if errorlevel 1 (
   exit /b 1
 )
 
+where curl.exe >nul 2>nul
+if errorlevel 1 (
+  echo curl.exe is required to download Ryo Monitor.
+  echo Install Windows updates or download the helper manually from:
+  echo https://raw.githubusercontent.com/Aksh03010/ryo-startpage/main/monitor/ryo_monitor.py
+  pause
+  exit /b 1
+)
+
+curl.exe --fail --silent --show-error --max-time 2 -H "Origin: https://aksh03010.github.io" "http://127.0.0.1:8765/api/metrics" --output NUL >nul 2>nul
+if not errorlevel 1 (
+  echo Ryo Monitor is already running and responding.
+  pause
+  exit /b 0
+)
+
 if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
 if errorlevel 1 (
   echo Could not create the Ryo Monitor folder: %INSTALL_DIR%
