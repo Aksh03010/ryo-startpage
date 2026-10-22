@@ -131,7 +131,8 @@ def read_afterburner() -> tuple[float | None, list[dict]]:
     try:
         header = ctypes.string_at(view, 32)
         signature, version, header_size, count, entry_size, _, gpu_count, gpu_size = struct.unpack_from("<8I", header)
-        if signature != 0x4D41484D or entry_size < 1332 or count > 2048 or gpu_count > 32:
+        # Five MAX_PATH strings and six 32-bit values make a 1,324-byte entry.
+        if signature != 0x4D41484D or entry_size < 1324 or count > 2048 or gpu_count > 32:
             return None, []
         gpu_names = {}
         for index in range(gpu_count):
