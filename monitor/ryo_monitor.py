@@ -193,7 +193,9 @@ def read_afterburner() -> tuple[float | None, list[dict]]:
                 continue
             is_temp = "temp" in name or source_id in (0x00, 0x80)
             is_usage = "usage" in name or "util" in name or "load" in name or source_id == 0x01
-            is_cpu = gpu_index >= gpu_count and ("cpu" in name or source_id == 0x80)
+            # Sensor names are more reliable than the GPU ordinal here:
+            # Afterburner may report CPU sensors with an in-range GPU index.
+            is_cpu = "cpu" in name or (gpu_index >= gpu_count and source_id == 0x80)
             if is_cpu and is_temp:
                 cpu_temp = value
             elif not is_cpu and ("gpu" in name or source_id in (0x00, 0x01) or gpu_index < gpu_count):
@@ -204,9 +206,12 @@ def read_afterburner() -> tuple[float | None, list[dict]]:
                     gpu["usage"] = value
         ordered_gpus = [gpus[index] for index in sorted(gpus)[:2]]
         # GPU 2 can be integrated graphics whose temperature is exposed as a
-        # CPU sensor. Apply the fallback by displayed order, not the raw index
-        # from Afterburner (which varies between driver versions).
-        if len(ordered_gpus) > 1 and cpu_temp is not None:
+        # CPU sensor. Apply the fallback only to the named integrated adapter.
+        if (
+            len(ordered_gpus) > 1
+            and any(token in ordered_gpus[1]["name"].lower() for token in ("intel", "integrated"))
+            and cpu_temp is not None
+        ):
             ordered_gpus[1]["temperature"] = cpu_temp
         return cpu_temp, ordered_gpus
     except (OSError, ValueError, struct.error):
