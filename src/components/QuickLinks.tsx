@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import type { QuickLink } from '../types';
-import { linkDomain, linkInitial, normalizeLinkUrl } from '../lib/links';
+import { linkDomain, linkFavicon, linkInitial, normalizeLinkUrl } from '../lib/links';
 import styles from './QuickLinks.module.css';
 
 function hostColor(url: string): string {
@@ -16,6 +16,27 @@ function hostColor(url: string): string {
 
 function tileBackground(url: string): string {
   return `linear-gradient(145deg, ${hostColor(url)} 0%, rgba(10, 12, 20, 0.92) 100%)`;
+}
+
+function QuickLinkIcon({ link }: { link: QuickLink }) {
+  const [failed, setFailed] = useState(false);
+  const favicon = linkFavicon(link.url);
+
+  return (
+    <span className={styles.tile} style={{ background: tileBackground(link.url) }} aria-hidden="true">
+      <span className={styles.tileFallback}>{linkInitial(link.label, link.url)}</span>
+      {favicon && !failed && (
+        <img
+          className={styles.favicon}
+          src={favicon}
+          alt=""
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={() => setFailed(true)}
+        />
+      )}
+    </span>
+  );
 }
 
 export default function QuickLinks({
@@ -46,12 +67,7 @@ export default function QuickLinks({
         {links.map((link) => (
           <li key={link.id} className={styles.link}>
             <a href={link.url} target="_blank" rel="noreferrer" aria-label={link.label}>
-              <span
-                className={styles.tile}
-                style={{ background: tileBackground(link.url) }}
-              >
-                {linkInitial(link.label, link.url)}
-              </span>
+              <QuickLinkIcon link={link} />
               <span className={styles.label}>{link.label}</span>
             </a>
             <button

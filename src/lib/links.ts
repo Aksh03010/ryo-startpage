@@ -22,6 +22,16 @@ export function linkInitial(label: string, url: string): string {
   return value.length > 0 ? value[0] : '#';
 }
 
+export function linkFavicon(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+    return new URL('/favicon.ico', parsed.origin).href;
+  } catch {
+    return null;
+  }
+}
+
 export function searchEngine(engine: SearchEngineId): { label: string; endpoint: string } {
   switch (engine) {
     case 'google':
