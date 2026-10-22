@@ -1,6 +1,6 @@
-# Ryo Startpage
+# Ryo - Home
 
-A customizable browser start page with a live clock, search, tasks, reminders, quick links, a focus timer, and dynamic wallpapers. Widget positions and preferences stay in your browser.
+Ryo - Home is a customizable browser start page with a live clock, search, tasks, reminders, quick links, a focus timer, and dynamic wallpapers. Widget positions and preferences stay in your browser.
 
 ## Features
 
