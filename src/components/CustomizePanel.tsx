@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { RangeControls } from './ui/Range';
 import { SectionTitle, Segmented, Slider, Toggle } from './ui/Controls';
-import { DEFAULT_CUSTOM_ACCENT, GRID_STEP, WIDGET_IDS, ACCENTS, CLOCK_FONTS, CLOCK_ANIMATIONS, DEFAULT_LINKS, DEFAULT_POSITIONS, PRESETS, SEARCH_ENGINES } from '../constants';
+import { DEFAULT_CUSTOM_ACCENT, WIDGET_IDS, WIDGET_TITLES, ACCENTS, CLOCK_FONTS, CLOCK_ANIMATIONS, PRESETS, SEARCH_ENGINES } from '../constants';
 import { safeHttpUrl, guessMediaType } from '../lib/link';
 import styles from './CustomizePanel.module.css';
 import type {
@@ -24,6 +24,7 @@ import type {
   WidgetId,
   WidgetStyleOverride,
   FocusSettings,
+  BoxMode,
 } from '../types';
 import type { WallpaperState } from '../types';
 
@@ -36,6 +37,13 @@ const TABS: Array<{ id: TabId; label: string; icon: typeof Image }> = [
   { id: 'layout', label: 'Layout', icon: Scan },
 ];
 
+const TAB_HELP: Record<TabId, string> = {
+  background: 'Choose a wallpaper and adjust how it looks.',
+  appearance: 'Set the colors, boxes, and text used across your widgets.',
+  widgets: 'Choose which widgets appear and customize each one.',
+  layout: 'Move widgets, change snapping, or restore the layout.',
+};
+
 export default function CustomizePanel({
   open,
   onClose,
@@ -44,7 +52,7 @@ export default function CustomizePanel({
   arrange,
   onArrange,
   onResetLayout,
-  onResetAppearance,
+  onResetPreferences,
   onUpload,
   uploading,
   uploadError,
@@ -58,7 +66,7 @@ export default function CustomizePanel({
   arrange: boolean;
   onArrange: () => void;
   onResetLayout: () => void;
-  onResetAppearance: () => void;
+  onResetPreferences: () => void;
   onUpload: (file: File) => void;
   uploading: boolean;
   uploadError: string | null;
@@ -75,6 +83,14 @@ export default function CustomizePanel({
   const background = settings.background;
   const wallpaper = background.wallpaper;
   const detailWidget = appearance.widgets[widgetDetail];
+  const globalBoxMode = appearance.boxMode ?? (appearance.glassEnabled === false ? 'solid' : 'glass');
+  const detailBoxSelection =
+    detailWidget?.style.boxMode ??
+    (detailWidget?.style.glass === 'on' ? 'glass' : detailWidget?.style.glass === 'off' ? 'solid' : 'inherit');
+  const detailBoxMode = detailBoxSelection === 'inherit' ? globalBoxMode : detailBoxSelection;
+  const anyGlassBoxes =
+    globalBoxMode === 'glass' ||
+    Object.values(appearance.widgets).some((widget) => widget.style.boxMode === 'glass' || widget.style.glass === 'on');
 
   const patchBackground = (value: Partial<Settings['background']>) =>
     onSettings((draft) => ({ ...draft, background: { ...draft.background, ...value } }));
@@ -141,7 +157,7 @@ export default function CustomizePanel({
             <p className={styles.brand}>
               <Sparkles size={15} /> Customize
             </p>
-            <p className={styles.tagline}>Tune wallpaper, widgets and layout</p>
+            <p className={styles.tagline}>{TAB_HELP[tab]}</p>
           </div>
           <button type="button" className={styles.close} onClick={onClose} aria-label="Close customize panel">
             <X size={17} />
@@ -154,6 +170,7 @@ export default function CustomizePanel({
               key={item.id}
               type="button"
               className={`${styles.tabButton} ${tab === item.id ? styles.tabActive : ''}`}
+              aria-pressed={tab === item.id}
               onClick={() => setTab(item.id)}
             >
               <item.icon size={14} /> {item.label}
@@ -171,6 +188,7 @@ export default function CustomizePanel({
                     key={preset.id}
                     type="button"
                     className={`${styles.presetCard} ${wallpaper.preset === preset.id ? styles.presetActive : ''}`}
+                    aria-pressed={wallpaper.kind === 'preset' && wallpaper.preset === preset.id}
                     onClick={() => {
                       setUrlDraft('');
                       setUrlError(null);
@@ -258,9 +276,9 @@ export default function CustomizePanel({
                 </p>
               </div>
 
-              <SectionTitle>Atmosphere</SectionTitle>
+              <SectionTitle>Wallpaper adjustments</SectionTitle>
               <Slider
-                label="Dim overlay"
+                label="Darken wallpaper"
                 min={0}
                 max={80}
                 value={background.dim}
@@ -268,7 +286,7 @@ export default function CustomizePanel({
                 onChange={(value) => patchBackground({ dim: value })}
               />
               <Slider
-                label="Backdrop blur"
+                label="Wallpaper blur"
                 min={0}
                 max={30}
                 value={background.blur}
@@ -292,7 +310,7 @@ export default function CustomizePanel({
                 onChange={(value) => patchBackground({ saturation: value })}
               />
               <Toggle
-                label="Film grain"
+                label="Show film grain"
                 checked={background.grain}
                 onChange={(value) => patchBackground({ grain: value })}
               />
@@ -300,7 +318,7 @@ export default function CustomizePanel({
                 <>
                   <SectionTitle>Video playback</SectionTitle>
                   <Slider
-                    label="Speed"
+                    label="Video speed"
                     min={0.25}
                     max={2}
                     step={0.25}
@@ -314,7 +332,7 @@ export default function CustomizePanel({
                     onChange={(value) => patchBackground({ videoLoop: value })}
                   />
                   <Toggle
-                    label="Paused"
+                    label="Pause video"
                     checked={background.videoPaused}
                     onChange={(value) => patchBackground({ videoPaused: value })}
                   />
@@ -325,7 +343,8 @@ export default function CustomizePanel({
 
           {tab === 'appearance' && (
             <div>
-              <SectionTitle>Accent</SectionTitle>
+              <SectionTitle>Accent color</SectionTitle>
+              <p className={styles.help}>Choose a color used for highlights and active controls.</p>
               <div className={styles.accentRow}>
                 {(Object.keys(ACCENTS) as Array<Exclude<AccentId, 'custom'>>).map((id) => (
                   <button
@@ -334,6 +353,8 @@ export default function CustomizePanel({
                     className={`${styles.swatch} ${appearance.accent === id ? styles.swatchActive : ''}`}
                     style={{ ['--swatch' as string]: ACCENTS[id].tint }}
                     aria-label={ACCENTS[id].name}
+                    title={`${ACCENTS[id].name} accent`}
+                    aria-pressed={appearance.accent === id}
                     onClick={() => patchAppearance({ accent: id })}
                   >
                     <span className={styles.swatchDot} />
@@ -347,6 +368,8 @@ export default function CustomizePanel({
                       appearance.accent === 'custom' ? appearance.customAccent : DEFAULT_CUSTOM_ACCENT,
                   }}
                   aria-label="Custom accent"
+                  title="Custom accent"
+                  aria-pressed={appearance.accent === 'custom'}
                   onClick={() => patchAppearance({ accent: 'custom' })}
                 >
                   <span className={styles.swatchDot} />
@@ -362,30 +385,48 @@ export default function CustomizePanel({
                 />
               </div>
 
-              <SectionTitle>Glass boxes</SectionTitle>
-              <Toggle
-                label="Use glass background box"
-                checked={appearance.glassEnabled}
-                onChange={(value) => patchAppearance({ glassEnabled: value })}
+              <SectionTitle>Widget boxes</SectionTitle>
+              <p className={styles.help}>Choose how the background behind each widget looks.</p>
+              <Segmented<BoxMode>
+                label="Default box style"
+                value={globalBoxMode}
+                options={[
+                  { id: 'glass', label: 'Glass' },
+                  { id: 'solid', label: 'Solid' },
+                  { id: 'none', label: 'None' },
+                ]}
+                onChange={(value) => patchAppearance({ boxMode: value })}
               />
+              <p className={styles.help}>Glass is blurred and translucent. Solid is dark with no blur. None removes the box.</p>
+              {globalBoxMode !== 'none' && (
+                <>
+                  <Slider
+                    label="Box darkness"
+                    min={0}
+                    max={100}
+                    value={appearance.glassOpacity}
+                    display={(value) => `${value}%`}
+                    onChange={(value) => patchAppearance({ glassOpacity: value })}
+                  />
+                  <p className={styles.help}>
+                    {globalBoxMode === 'glass'
+                      ? 'At 0, glass is clear with blur and no tint. Increase this to add a darker tint.'
+                      : 'At 0, the box fill is clear. Increase this to make the solid box darker.'}
+                  </p>
+                </>
+              )}
+              {anyGlassBoxes && (
+                <Slider
+                  label="Glass blur"
+                  min={0}
+                  max={34}
+                  value={appearance.glassBlur}
+                  display={(value) => `${value}px`}
+                  onChange={(value) => patchAppearance({ glassBlur: value })}
+                />
+              )}
               <Slider
-                label="Box opacity"
-                min={0}
-                max={100}
-                value={appearance.glassOpacity}
-                display={(value) => `${value}%`}
-                onChange={(value) => patchAppearance({ glassOpacity: value })}
-              />
-              <Slider
-                label="Box blur"
-                min={0}
-                max={34}
-                value={appearance.glassBlur}
-                display={(value) => `${value}px`}
-                onChange={(value) => patchAppearance({ glassBlur: value })}
-              />
-              <Slider
-                label="Corner rounding"
+                label="Corner roundness"
                 min={0}
                 max={36}
                 value={appearance.radius}
@@ -393,19 +434,19 @@ export default function CustomizePanel({
                 onChange={(value) => patchAppearance({ radius: value })}
               />
               <Toggle
-                label="Thin border"
+                label="Show box border"
                 checked={appearance.border}
                 onChange={(value) => patchAppearance({ border: value })}
               />
               <Toggle
-                label="Drop shadow"
+                label="Show box shadow"
                 checked={appearance.shadow}
                 onChange={(value) => patchAppearance({ shadow: value })}
               />
 
               <SectionTitle>Text</SectionTitle>
               <Slider
-                label="Widget text scale"
+                label="Text size"
                 min={90}
                 max={125}
                 value={appearance.textScale}
@@ -422,24 +463,26 @@ export default function CustomizePanel({
 
           {tab === 'widgets' && (
             <div>
-              <SectionTitle>Widget visibility</SectionTitle>
+              <SectionTitle>Choose a widget</SectionTitle>
+              <p className={styles.help}>Select a widget to show or hide it and adjust its settings.</p>
               <div className={styles.widgetList}>
                 {Object.entries(appearance.widgets).map(([id, widget]) => (
                   <button
                     key={id}
                     type="button"
                     className={`${styles.widgetRow} ${widgetDetail === id ? styles.widgetRowActive : ''}`}
+                    aria-pressed={widgetDetail === id}
                     onClick={() => setWidgetDetail(id as WidgetId)}
                   >
                     <span className={styles.widgetDot} data-active={widget.visible || undefined} />
-                    <span>{id.charAt(0).toUpperCase() + id.slice(1)}</span>
+                    <span>{WIDGET_TITLES[id as WidgetId]}</span>
                   </button>
                 ))}
               </div>
               {detailWidget && (
                 <>
                   <Toggle
-                    label="Show widget"
+                    label="Show on page"
                     checked={detailWidget.visible}
                     onChange={(value) =>
                       onSettings((draft) => ({
@@ -530,16 +573,7 @@ export default function CustomizePanel({
                   {widgetDetail === 'links' && (
                     <>
                       <SectionTitle>Quick links</SectionTitle>
-                      <p className={styles.help}>
-                        Add or remove links directly on the widget — the layout, label tiles and add-tile stay inline.
-                      </p>
-                      <button
-                        type="button"
-                        className={styles.actionButton}
-                        onClick={() => onSettings((draft) => draft)}
-                      >
-                        <Sparkles size={14} /> Workspace links
-                      </button>
+                      <p className={styles.help}>Add, edit, and remove links directly in the Quick links widget.</p>
                     </>
                   )}
 
@@ -547,43 +581,74 @@ export default function CustomizePanel({
                     <>
                       <SectionTitle>Focus timer</SectionTitle>
                       <p className={styles.help}>
-                        Adjust focus length and view your running sessions from the widget controls.
+                        Set how long a focus session lasts. Start, pause, or reset it in the Focus widget.
                       </p>
                       <RangeControls settings={focusSettings} onChange={onFocusSettings} />
                     </>
                   )}
 
-                  <SectionTitle>Per-widget glass box</SectionTitle>
-                  <Segmented<'inherit' | 'on' | 'off'>
-                    label="Glass override"
-                    value={detailWidget.style.glass ?? 'inherit'}
+                  <SectionTitle>Box style for {WIDGET_TITLES[widgetDetail]}</SectionTitle>
+                  <p className={styles.help}>Use the default style, or choose a different style for this widget.</p>
+                  <Segmented<'inherit' | BoxMode>
+                    label="Widget box style"
+                    value={detailBoxSelection}
                     options={[
-                      { id: 'inherit', label: 'Inherit' },
-                      { id: 'on', label: 'On' },
-                      { id: 'off', label: 'Off' },
+                      { id: 'inherit', label: 'Default' },
+                      { id: 'glass', label: 'Glass' },
+                      { id: 'solid', label: 'Solid' },
+                      { id: 'none', label: 'None' },
                     ]}
-                    onChange={(value) => patchWidgetStyle(widgetDetail, { glass: value === 'inherit' ? undefined : value })}
+                    onChange={(value) => patchWidgetStyle(widgetDetail, { boxMode: value === 'inherit' ? undefined : value })}
                   />
-                  <Slider
-                    label="Box opacity override"
-                    min={0}
-                    max={100}
-                    value={detailWidget.style.opacity ?? appearance.glassOpacity}
-                    display={(value) => `${value}%`}
-                    onChange={(value) => patchWidgetStyle(widgetDetail, { opacity: value })}
-                  />
-                  <Slider
-                    label="Corner radius override"
-                    min={0}
-                    max={36}
-                    value={detailWidget.style.radius ?? appearance.radius}
-                    display={(value) => `${value}px`}
-                    onChange={(value) => patchWidgetStyle(widgetDetail, { radius: value })}
-                  />
+                  {detailBoxMode !== 'none' && (
+                    <>
+                      <Slider
+                        label="Box darkness"
+                        min={0}
+                        max={100}
+                        value={detailWidget.style.opacity ?? appearance.glassOpacity}
+                        display={(value) => `${value}%`}
+                        onChange={(value) => patchWidgetStyle(widgetDetail, { opacity: value })}
+                      />
+                      <p className={styles.help}>
+                        {detailBoxMode === 'glass'
+                          ? 'At 0, this glass box has blur but no tint. Higher values add a darker tint.'
+                          : 'At 0, this box fill is clear. Higher values make it darker.'}
+                      </p>
+                      {detailBoxMode === 'glass' && (
+                        <Slider
+                          label="Glass blur"
+                          min={0}
+                          max={34}
+                          value={detailWidget.style.blur ?? appearance.glassBlur}
+                          display={(value) => `${value}px`}
+                          onChange={(value) => patchWidgetStyle(widgetDetail, { blur: value })}
+                        />
+                      )}
+                      <Slider
+                        label="Corner roundness"
+                        min={0}
+                        max={36}
+                        value={detailWidget.style.radius ?? appearance.radius}
+                        display={(value) => `${value}px`}
+                        onChange={(value) => patchWidgetStyle(widgetDetail, { radius: value })}
+                      />
+                      <Toggle
+                        label="Show box border"
+                        checked={detailWidget.style.border ?? appearance.border}
+                        onChange={(value) => patchWidgetStyle(widgetDetail, { border: value })}
+                      />
+                      <Toggle
+                        label="Show box shadow"
+                        checked={detailWidget.style.shadow ?? appearance.shadow}
+                        onChange={(value) => patchWidgetStyle(widgetDetail, { shadow: value })}
+                      />
+                    </>
+                  )}
                   <button
                     type="button"
                     className={styles.linkButton}
-                    onClick={() => patchWidgetStyle(widgetDetail, { glass: undefined, opacity: undefined, radius: undefined })}
+                    onClick={() => patchWidgetStyle(widgetDetail, { glass: undefined, boxMode: undefined, blur: undefined, opacity: undefined, radius: undefined, border: undefined, shadow: undefined })}
                   >
                     <RotateCcw size={12} /> Reset widget styling
                   </button>
@@ -594,44 +659,41 @@ export default function CustomizePanel({
 
           {tab === 'layout' && (
             <div>
-              <SectionTitle>Arrangement</SectionTitle>
-              <Toggle label="Arrange mode" checked={arrange} onChange={() => onArrange()} />
+              <SectionTitle>Move widgets</SectionTitle>
+              <Toggle label="Turn on arrange mode" checked={arrange} onChange={() => onArrange()} />
               <p className={styles.help}>
-                Toggle, then drag the grip handle on a widget. Press <kbd>Ctrl</kbd> + <kbd>,</kbd> to open this panel any time.
+                Turn this on, then drag a widget by its handle. Press <kbd>Ctrl</kbd> + <kbd>,</kbd> to reopen this panel.
               </p>
               <Toggle
-                label="Snap to grid"
+                label="Snap widgets to a grid"
                 checked={settings.layout.snapToGrid}
                 onChange={(value) => onSettings((draft) => ({ ...draft, layout: { ...draft.layout, snapToGrid: value } }))}
               />
               <Toggle
-                label="Show grid in arrange mode"
+                label="Show grid while arranging"
                 checked={settings.layout.showGrid}
                 onChange={(value) => onSettings((draft) => ({ ...draft, layout: { ...draft.layout, showGrid: value } }))}
               />
-              <SectionTitle>Presets</SectionTitle>
+              <SectionTitle>Restore layout</SectionTitle>
               <div className={styles.mediaRow}>
                 <button type="button" className={styles.actionButton} onClick={onResetLayout}>
-                  <RotateCcw size={15} /> Reset layout
+                  <RotateCcw size={15} /> Restore default positions
                 </button>
                 <span className={styles.activeIds}>
-                  {activeWidgetIds.length} of {WIDGET_IDS.length} widgets visible · grid step {GRID_STEP}px
+                  {activeWidgetIds.length} of {WIDGET_IDS.length} widgets are shown.
                 </span>
               </div>
 
-              <SectionTitle>Reset everything</SectionTitle>
+              <SectionTitle>Restore defaults</SectionTitle>
               <button
                 type="button"
-                className={styles.dangerButton}
-                onClick={() => {
-                  onResetAppearance();
-                  setDefaultLayout();
-                }}
+                className={styles.actionButton}
+                onClick={onResetPreferences}
               >
-                <Braces size={14} /> Factory reset settings
+                <Braces size={14} /> Restore default setup
               </button>
               <p className={styles.help}>
-                Clears local preferences, tasks, quick links and wallpaper selection. Stored wallpapers stay on disk until removed.
+                Restores the wallpaper, appearance, widget positions, quick links, search engine, and focus length. Tasks and reminders stay as they are.
               </p>
             </div>
           )}
@@ -639,19 +701,10 @@ export default function CustomizePanel({
 
         <footer className={styles.footer}>
           <p className={styles.footerNote}>
-            Everything lives in your browser's localStorage and IndexedDB.
+            Settings and lists are saved in this browser. Uploaded wallpapers stay on this device.
           </p>
         </footer>
       </div>
     </div>
   );
-}
-
-function setDefaultLayout() {
-  try {
-    localStorage.setItem('ryo.layout.v2', JSON.stringify(DEFAULT_POSITIONS));
-    localStorage.setItem('ryo.links.v2', JSON.stringify(DEFAULT_LINKS));
-  } catch {
-    /* ignore */
-  }
 }

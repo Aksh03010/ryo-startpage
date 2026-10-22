@@ -34,6 +34,13 @@ export function coerceSettings(raw: unknown): Settings {
     appearance: {
       ...DEFAULT_SETTINGS.appearance,
       ...(value.appearance ?? {}),
+      boxMode:
+        value.appearance?.boxMode ??
+        (value.appearance?.glassEnabled === undefined
+          ? DEFAULT_SETTINGS.appearance.boxMode
+          : value.appearance.glassEnabled
+            ? 'glass'
+            : 'solid'),
       widgets: {
         ...DEFAULT_SETTINGS.appearance.widgets,
         ...(value.appearance?.widgets ?? {}),

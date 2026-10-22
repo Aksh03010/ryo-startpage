@@ -282,8 +282,8 @@
 }
 
 .help {
-  font: 400 10.5px/1.55 'Manrope', system-ui;
-  color: rgba(255, 255, 255, 0.42);
+  font: 400 12px/1.55 'Manrope', system-ui;
+  color: rgba(255, 255, 255, 0.64);
 }
 
 .help kbd {
@@ -443,8 +443,8 @@
 }
 
 .footerNote {
-  font: 400 9.5px/1.5 'Manrope', system-ui;
-  color: rgba(255, 255, 255, 0.32);
+  font: 400 11px/1.5 'Manrope', system-ui;
+  color: rgba(255, 255, 255, 0.52);
 }
 
 @media (prefers-reduced-motion: reduce) {

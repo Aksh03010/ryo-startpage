@@ -142,8 +142,8 @@ export const DEFAULT_SETTINGS: Settings = {
   appearance: {
     accent: 'aurora',
     customAccent: DEFAULT_CUSTOM_ACCENT,
-    glassEnabled: true,
-    glassOpacity: 10,
+    boxMode: 'solid',
+    glassOpacity: 42,
     glassBlur: 14,
     radius: 20,
     border: true,
@@ -151,12 +151,12 @@ export const DEFAULT_SETTINGS: Settings = {
     textScale: 100,
     reduceMotion: false,
     widgets: {
-      clock: { visible: true, style: { glass: 'off' } },
-      tasks: { visible: true, style: { glass: 'off' } },
-      search: { visible: true, style: { glass: 'off' } },
+      clock: { visible: true, style: {} },
+      tasks: { visible: true, style: {} },
+      search: { visible: true, style: {} },
       links: { visible: true, style: {} },
       focus: { visible: true, style: {} },
-      reminders: { visible: true, style: { glass: 'off' } },
+      reminders: { visible: true, style: {} },
     },
   },
   background: {

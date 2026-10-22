@@ -28,11 +28,18 @@ export interface WidgetPosition {
 
 export type LayoutState = Record<WidgetId, WidgetPosition>;
 
+export type BoxMode = 'glass' | 'solid' | 'none';
+
 /** `undefined` values follow the global appearance settings. */
 export interface WidgetStyleOverride {
+  boxMode?: BoxMode;
+  blur?: number;
+  /** Legacy setting migrated to `boxMode` on load. */
   glass?: 'on' | 'off';
   opacity?: number;
   radius?: number;
+  border?: boolean;
+  shadow?: boolean;
 }
 
 export interface WidgetAppearance {
@@ -44,7 +51,9 @@ export interface AppearanceSettings {
   accent: AccentId;
   /** Hex color used when `accent` is 'custom'. */
   customAccent: string;
-  glassEnabled: boolean;
+  boxMode: BoxMode;
+  /** Legacy setting migrated to `boxMode` on load. */
+  glassEnabled?: boolean;
   glassOpacity: number;
   glassBlur: number;
   radius: number;

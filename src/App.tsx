@@ -13,10 +13,10 @@ import SearchWidget from './components/SearchWidget';
 import TaskManager from './components/TaskManager';
 import TopBar from './components/TopBar';
 import WidgetShell from './components/WidgetShell';
-import { ACCENTS, CLOCK_FONTS, DEFAULT_CUSTOM_ACCENT, DEFAULT_FOCUS, DEFAULT_POSITIONS, DEFAULT_SETTINGS, GRID_STEP, WIDGET_IDS, hexToRgbTriplet } from './constants';
+import { ACCENTS, CLOCK_FONTS, DEFAULT_CUSTOM_ACCENT, DEFAULT_FOCUS, DEFAULT_LINKS, DEFAULT_POSITIONS, DEFAULT_SETTINGS, GRID_STEP, WIDGET_IDS, WIDGET_TITLES, hexToRgbTriplet } from './constants';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import styles from './App.module.css';
-import type { FocusSettings, LayoutState, QuickLink, Reminder, Settings, Task, WidgetId } from './types';
+import type { BoxMode, FocusSettings, LayoutState, QuickLink, Reminder, Settings, Task, WidgetId } from './types';
 
 const TASK_KEY = 'ryo.tasks.v2';
 const LAYOUT_KEY = 'ryo.layout.v2';
@@ -86,6 +86,37 @@ export default function App() {
       return {
         ...draft,
         appearance: { ...draft.appearance, widgets: { ...additions, ...widgets } },
+      };
+    });
+  }, [setSettings]);
+
+  useEffect(() => {
+    setSettings((draft) => {
+      const legacyAppearance = draft.appearance;
+      const savedWidgets = legacyAppearance.widgets ?? DEFAULT_SETTINGS.appearance.widgets;
+      const needsMigration =
+        legacyAppearance.boxMode === undefined ||
+        legacyAppearance.glassEnabled !== undefined ||
+        Object.values(savedWidgets).some((widget) => widget.style?.glass !== undefined);
+      if (!needsMigration) return draft;
+
+      const widgets = Object.fromEntries(
+        Object.entries(savedWidgets).map(([id, widget]) => {
+          const { glass, ...style } = widget.style ?? {};
+          const boxMode: BoxMode | undefined =
+            style.boxMode ?? (glass === 'on' ? 'glass' : glass === 'off' ? 'solid' : undefined);
+          return [id, { ...widget, style: { ...style, boxMode } }];
+        }),
+      ) as Settings['appearance']['widgets'];
+      const { glassEnabled, ...appearanceSettings } = legacyAppearance;
+      return {
+        ...draft,
+        appearance: {
+          ...appearanceSettings,
+          boxMode:
+            legacyAppearance.boxMode ?? (glassEnabled === false ? 'solid' : 'glass'),
+          widgets,
+        },
       };
     });
   }, [setSettings]);
@@ -176,9 +207,13 @@ export default function App() {
     (id: WidgetId) => {
       const widget = settings.appearance.widgets[id];
       const position = layout[id] ?? DEFAULT_POSITIONS[id];
-      const glassMode = widget.style.glass ?? (settings.appearance.glassEnabled ? 'on' : 'off');
+      const globalBoxMode = settings.appearance.boxMode ?? (settings.appearance.glassEnabled === false ? 'solid' : 'glass');
+      const boxMode = widget.style.boxMode ?? globalBoxMode;
       const opacity = widget.style.opacity ?? settings.appearance.glassOpacity;
       const radius = widget.style.radius ?? settings.appearance.radius;
+      const border = widget.style.border ?? settings.appearance.border;
+      const shadow = widget.style.shadow ?? settings.appearance.shadow;
+      const glassBlur = widget.style.blur ?? settings.appearance.glassBlur;
 
       const renderContent = () => {
         switch (id) {
@@ -214,15 +249,15 @@ export default function App() {
         <WidgetShell
           key={id}
           id={id}
-          label={id.charAt(0).toUpperCase() + id.slice(1)}
+          label={WIDGET_TITLES[id]}
           position={position}
           editMode={arrange}
-          glassMode={glassMode}
+          boxMode={boxMode}
           opacity={widget.visible ? opacity : 0}
           radius={radius}
-          shadow={settings.appearance.shadow}
-          border={settings.appearance.border}
-          glassBlur={settings.appearance.glassBlur}
+          shadow={shadow}
+          border={border}
+          glassBlur={glassBlur}
           zIndex={dragging === id ? 40 : 1}
           onDraggingChange={(value) => setDragging(value ? id : null)}
         >
@@ -259,7 +294,7 @@ export default function App() {
 
   return (
     <div
-      className={styles.app}
+      className={`${styles.app} ${settings.appearance.reduceMotion ? styles.reduceMotion : ''}`}
       style={
         {
           '--accent': accent.tint,
@@ -302,7 +337,12 @@ export default function App() {
         arrange={arrange}
         onArrange={toggleArrange}
         onResetLayout={() => setLayout(DEFAULT_POSITIONS)}
-        onResetAppearance={() => setSettings(DEFAULT_SETTINGS)}
+        onResetPreferences={() => {
+          setSettings(DEFAULT_SETTINGS);
+          setLayout(DEFAULT_POSITIONS);
+          setLinks(DEFAULT_LINKS);
+          setFocusSettings(DEFAULT_FOCUS);
+        }}
         onUpload={(file) => void handleUpload(file)}
         uploading={uploading}
         uploadError={uploadError}

@@ -3,13 +3,14 @@ import type { CSSProperties, ReactNode } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { GripVertical } from 'lucide-react';
 import styles from './WidgetShell.module.css';
+import type { BoxMode } from '../types';
 
 type WidgetShellProps = {
   id: string;
   label: string;
   position: { x: number; y: number };
   editMode: boolean;
-  glassMode: 'on' | 'off';
+  boxMode: BoxMode;
   opacity: number;
   radius: number;
   border?: boolean;
@@ -27,7 +28,7 @@ export default function WidgetShell({
   label,
   position,
   editMode,
-  glassMode,
+  boxMode,
   opacity,
   radius,
   border,
@@ -50,7 +51,7 @@ export default function WidgetShell({
     onDraggingChange?.(isDragging);
   }, [isDragging, onDraggingChange]);
 
-  const glass = glassMode === 'on';
+  const glass = boxMode === 'glass';
   const bordered = border ?? true;
   const shellStyle = {
     left: `${position.x}%`,
@@ -60,8 +61,8 @@ export default function WidgetShell({
     borderRadius: `${Math.max(0, Math.min(radius, 999))}px`,
     backdropFilter: glass ? `blur(${glassBlur}px)` : undefined,
     WebkitBackdropFilter: glass ? `blur(${glassBlur}px)` : undefined,
-    boxShadow: shadow ? '0 30px 90px -40px rgba(5, 10, 30, 0.75)' : undefined,
-    borderColor: border ? undefined : 'transparent',
+    boxShadow: shadow && boxMode !== 'none' ? '0 30px 90px -40px rgba(5, 10, 30, 0.75)' : undefined,
+    borderColor: editMode && boxMode === 'none' ? undefined : border && boxMode !== 'none' ? undefined : 'transparent',
     '--box-alpha': Math.max(0, Math.min(100, opacity)) / 100,
   } as CSSProperties;
 
@@ -74,7 +75,7 @@ export default function WidgetShell({
       data-edit-mode={editMode ? 'true' : undefined}
       data-dragging={isDragging ? 'true' : undefined}
       data-border={bordered ? 'on' : undefined}
-      className={`${styles.shell} ${glass ? styles.glass : styles.flat} ${className}`}
+      className={`${styles.shell} ${glass ? styles.glass : boxMode === 'solid' ? styles.solid : styles.none} ${className}`}
       style={shellStyle}
     >
       <div
