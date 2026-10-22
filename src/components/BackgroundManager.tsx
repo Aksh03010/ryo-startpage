@@ -16,11 +16,16 @@ export function BackgroundManager({ background }: { background: BackgroundSettin
     const video = videoRef.current;
     if (!video) return;
     video.playbackRate = background.videoPlaybackRate;
-    if (background.videoPaused) {
-      video.pause();
-    } else {
+    const syncPlayback = () => {
+      if (background.videoPaused || document.visibilityState === 'hidden') {
+        video.pause();
+        return;
+      }
       void video.play().catch(() => undefined);
-    }
+    };
+    syncPlayback();
+    document.addEventListener('visibilitychange', syncPlayback);
+    return () => document.removeEventListener('visibilitychange', syncPlayback);
   }, [background.videoPlaybackRate, background.videoPaused, src]);
 
   const isPresetKind = wallpaper.kind === 'preset';
@@ -34,8 +39,6 @@ export function BackgroundManager({ background }: { background: BackgroundSettin
         <div className={styles.dynamicWallpaper}>
           <span className={`${styles.orb} ${styles.orbBlue}`} />
           <span className={`${styles.orb} ${styles.orbGreen}`} />
-          <span className={`${styles.orb} ${styles.orbViolet}`} />
-          <span className={styles.auroraBand} />
         </div>
       )}
 
@@ -46,6 +49,7 @@ export function BackgroundManager({ background }: { background: BackgroundSettin
           className={styles.wallpaperMedia}
           style={{ filter: mediaFilter, transform: `scale(${scaleWithBlur})` }}
           draggable={false}
+          decoding="async"
         />
       )}
 
@@ -59,7 +63,7 @@ export function BackgroundManager({ background }: { background: BackgroundSettin
           muted
           loop={background.videoLoop}
           playsInline
-          preload="auto"
+          preload="metadata"
         />
       )}
 
@@ -70,6 +74,7 @@ export function BackgroundManager({ background }: { background: BackgroundSettin
           className={styles.wallpaperMedia}
           style={{ filter: mediaFilter, transform: `scale(${scaleWithBlur})` }}
           draggable={false}
+          decoding="async"
         />
       )}
 

@@ -4,8 +4,6 @@
   z-index: 0;
   overflow: hidden;
   background: #03050b;
-  filter: none;
-  will-change: filter;
 }
 
 .wallpaperMedia {
@@ -34,7 +32,6 @@
   mix-blend-mode: soft-light;
   opacity: 0.055;
   pointer-events: none;
-  animation: shimmer 9s steps(3, end) infinite;
 }
 
 .vignette {
@@ -58,15 +55,14 @@
 .orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.22;
+  filter: blur(56px);
+  opacity: 0.18;
   z-index: 1;
-  mix-blend-mode: screen;
 }
 
 .orbBlue {
-  width: 46vw;
-  height: 46vw;
+  width: 38vw;
+  height: 38vw;
   left: 6vw;
   top: 8vh;
   background: #22d3ee;
@@ -74,35 +70,12 @@
 }
 
 .orbGreen {
-  width: 38vw;
-  height: 38vw;
+  width: 32vw;
+  height: 32vw;
   left: 46vw;
   top: 14vh;
   background: #34d399;
   animation: drift-green 32s ease-in-out infinite alternate;
-}
-
-.orbViolet {
-  width: 34vw;
-  height: 34vw;
-  left: 74vw;
-  top: 42vh;
-  background: #a78bfa;
-  animation: drift-violet 38s ease-in-out infinite alternate;
-}
-
-.auroraBand {
-  position: absolute;
-  inset: -35%;
-  background:
-    conic-gradient(from 140deg at 30% 40%, rgba(84, 170, 245, 0.42), transparent 42%),
-    conic-gradient(from 260deg at 82% 28%, rgba(48, 222, 173, 0.36), transparent 44%),
-    conic-gradient(from 18deg at 68% 72%, rgba(214, 176, 255, 0.28), transparent 42%);
-  filter: blur(70px);
-  mix-blend-mode: screen;
-  opacity: 0.7;
-  animation: ribbon 34s ease-in-out infinite alternate;
-  z-index: 1;
 }
 
 @keyframes fade-in {
@@ -111,16 +84,6 @@
   }
   to {
     opacity: 1;
-  }
-}
-
-@keyframes shimmer {
-  0%,
-  100% {
-    opacity: 0.05;
-  }
-  40% {
-    opacity: 0.09;
   }
 }
 
@@ -142,28 +105,8 @@
   }
 }
 
-@keyframes drift-violet {
-  0% {
-    transform: translate3d(0, 0, 0) scale(0.9);
-  }
-  100% {
-    transform: translate3d(-12vw, -5vh, 0) scale(1.12);
-  }
-}
-
-@keyframes ribbon {
-  0% {
-    transform: translate3d(0, 0, 0) rotate(0deg);
-  }
-  100% {
-    transform: translate3d(-4vw, 3vh, 0) rotate(9deg);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .orb,
-  .auroraBand,
-  .grain {
+  .orb {
     animation: none;
   }
 }
