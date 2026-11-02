@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   AppWindow,
   Braces,
@@ -11,6 +11,7 @@ import {
   Sparkles,
   X,
 } from 'lucide-react';
+import { SPACE_PRESETS, applySpacePreset } from '../lib/spacePresets';
 import { RangeControls } from './ui/Range';
 import { SectionTitle, Segmented, Slider, Toggle } from './ui/Controls';
 import { DEFAULT_CUSTOM_ACCENT, DEFAULT_SETTINGS, WIDGET_IDS, WIDGET_TITLES, ACCENTS, CLOCK_FONTS, CLOCK_ANIMATIONS, PRESETS, SEARCH_ENGINES } from '../constants';
@@ -79,6 +80,23 @@ export default function CustomizePanel({
   const [widgetDetail, setWidgetDetail] = useState<WidgetId>('clock');
   const [confirmReset, setConfirmReset] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const panel = panelRef.current;
+    panel?.querySelector<HTMLButtonElement>('button[aria-label="Close customize panel"]')?.focus();
+    const trapFocus = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab' || !panel) return;
+      const items = [...panel.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([type="file"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex="0"]')];
+      const first = items[0];
+      const last = items.at(-1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    document.addEventListener('keydown', trapFocus);
+    return () => { document.removeEventListener('keydown', trapFocus); previous?.focus(); };
+  }, [open]);
 
   const appearance = settings.appearance;
   const background = settings.background;
@@ -146,8 +164,9 @@ export default function CustomizePanel({
     .map(([id]) => id as WidgetId);
 
   return (
-    <div className={`${styles.backdrop} ${open ? styles.open : ''}`}>
+    <div className={`${styles.backdrop} ${open ? styles.open : ''}`} onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <div
+        ref={panelRef}
         className={`${styles.panel} ${open ? styles.panelOpen : ''}`}
         role="dialog"
         aria-modal="true"
@@ -180,6 +199,11 @@ export default function CustomizePanel({
         </div>
 
         <div className={styles.body}>
+          <section className={styles.spacePresets} aria-label="Space presets">
+            <SectionTitle>Make it yours</SectionTitle>
+            <div className={styles.spacePresetButtons}>{SPACE_PRESETS.map((preset) => <button type="button" key={preset.id} title={preset.description} onClick={() => { onSettings((draft) => applySpacePreset(draft, preset.id)); onResetLayout(); }}>{preset.label}</button>)}</div>
+            <p className={styles.help}>Only the widgets you enable are loaded.</p>
+          </section>
           {tab === 'background' && (
             <div className={styles.tabContent}>
               <SectionTitle>Wallpaper</SectionTitle>
@@ -230,7 +254,7 @@ export default function CustomizePanel({
                 <input
                   ref={fileRef}
                   type="file"
-                  accept="image/png,image/jpeg,image/webp,image/gif,image/avif,video/mp4,video/webm"
+                  accept="image/png,image/jpeg,image/webp,image/gif,image/avif,video/mp4,video/webm,video/ogg"
                   className={styles.hiddenInput}
                   onChange={(event) => {
                     const file = event.target.files?.[0];
@@ -273,10 +297,11 @@ export default function CustomizePanel({
                   </p>
                 )}
                 <p className={styles.help}>
-                  MP4 / WebM / GIF URLs become video or animated wallpapers automatically.
+                  Use direct image, GIF, MP4, or WebM links. Videos pause while this page is hidden.
                 </p>
               </div>
 
+              <details className={styles.engineHelp}><summary>Wallpaper Engine & live backgrounds</summary><p>For a video wallpaper, right-click it in Wallpaper Engine, choose Open in Explorer, then upload its MP4 or WebM file here. Scene (.pkg) wallpapers need a video recording.</p><p>Ryo also includes a native web-wallpaper build with Wallpaper Engine controls. See the project README for setup. In Wallpaper Engine, use WebM videos.</p><a href="https://help.wallpaperengine.io/en/functionality/editingwallpapers.html" target="_blank" rel="noreferrer">Wallpaper Engine's file guide ↗</a></details>
               <SectionTitle>Wallpaper adjustments</SectionTitle>
               <Slider
                 label="Darken wallpaper"
@@ -332,6 +357,7 @@ export default function CustomizePanel({
                     checked={background.videoLoop}
                     onChange={(value) => patchBackground({ videoLoop: value })}
                   />
+
                   <Toggle
                     label="Pause video"
                     checked={background.videoPaused}
@@ -497,6 +523,25 @@ export default function CustomizePanel({
                         },
                       }))
                     }
+                  />
+
+                  <Slider
+                    label="Widget size"
+                    min={60}
+                    max={140}
+                    step={5}
+                    value={detailWidget.size ?? 100}
+                    display={(value) => `${value}%`}
+                    onChange={(value) => onSettings((draft) => ({
+                      ...draft,
+                      appearance: {
+                        ...draft.appearance,
+                        widgets: {
+                          ...draft.appearance.widgets,
+                          [widgetDetail]: { ...draft.appearance.widgets[widgetDetail], size: value },
+                        },
+                      },
+                    }))}
                   />
 
                   {widgetDetail === 'clock' && (

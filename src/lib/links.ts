@@ -1,6 +1,3 @@
-import type { QuickLink, SearchEngineId } from '../types';
-import { DEFAULT_LINKS } from '../constants';
-
 export function normalizeLinkUrl(input: string): string {
   const raw = input.trim();
   if (!raw) return '';
@@ -30,24 +27,4 @@ export function linkFavicon(url: string): string | null {
   } catch {
     return null;
   }
-}
-
-export function searchEngine(engine: SearchEngineId): { label: string; endpoint: string } {
-  switch (engine) {
-    case 'google':
-      return { label: 'Google', endpoint: 'https://www.google.com/search?q={query}' };
-    case 'brave':
-      return { label: 'Brave', endpoint: 'https://search.brave.com/search?q={query}' };
-    case 'youtube':
-      return { label: 'YouTube', endpoint: 'https://www.youtube.com/results?search_query={query}' };
-    default:
-      return {
-        label: 'DuckDuckGo',
-        endpoint: 'https://duckduckgo.com/?q={query}',
-      };
-  }
-}
-
-export function quickLinkDefaults(): QuickLink[] {
-  return DEFAULT_LINKS;
 }

@@ -1,3 +1,4 @@
+import { isPageActive, subscribeActivity } from '../lib/activity';
 import { useEffect, useState } from 'react';
 import { Cpu, ExternalLink, Monitor, Radio } from 'lucide-react';
 import styles from './SystemMonitorWidget.module.css';
@@ -74,12 +75,19 @@ export default function SystemMonitorWidget({ metrics: visibleMetrics }: { metri
   useEffect(() => {
     let active = true;
     let timer = 0;
+    let controller: AbortController | null = null;
+    let retryDelay = 1500;
     const poll = async () => {
+      if (!active || !isPageActive()) return;
+      const request = new AbortController();
+      controller = request;
+      const timeout = window.setTimeout(() => request.abort(), 4000);
       try {
-        const response = await fetch(`${ENDPOINT}?mode=${mode}`, { cache: 'no-store' });
+        const response = await fetch(`${ENDPOINT}?mode=${mode}`, { cache: 'no-store', signal: request.signal });
         if (!response.ok) throw new Error('Monitor helper is unavailable');
         const next = await response.json() as Snapshot;
-        if (!active) return;
+        if (!active || request.signal.aborted || !isPageActive() || controller !== request) return;
+        retryDelay = 1500;
         setSnapshot(next);
         setError(false);
         const metrics = mode === 'computer' ? [next.cpu, ...next.gpus, ...(next.ram ? [next.ram] : [])] : [next.browser];
@@ -89,20 +97,35 @@ export default function SystemMonitorWidget({ metrics: visibleMetrics }: { metri
           for (const key of Object.keys(updated)) if (!activeKeys.has(key)) delete updated[key];
           for (const metric of metrics) {
             const entry = updated[metric.name] ?? { usage: [], temperature: [] };
-            if (metric.usage !== null) entry.usage = [...entry.usage, metric.usage].slice(-HISTORY_LIMIT);
-            if (metric.temperature !== null) entry.temperature = [...entry.temperature, metric.temperature].slice(-HISTORY_LIMIT);
-            updated[metric.name] = entry;
+            updated[metric.name] = {
+              usage: metric.usage !== null ? [...entry.usage, metric.usage].slice(-HISTORY_LIMIT) : entry.usage,
+              temperature: metric.temperature !== null ? [...entry.temperature, metric.temperature].slice(-HISTORY_LIMIT) : entry.temperature,
+            };
           }
           return updated;
         });
       } catch {
-        if (active) setError(true);
+        if (active && isPageActive() && controller === request) {
+          setError(true);
+          retryDelay = Math.min(30_000, retryDelay * 2);
+        }
       } finally {
-        if (active) timer = window.setTimeout(poll, 1500);
+        window.clearTimeout(timeout);
+        if (active && isPageActive() && controller === request) {
+          controller = null;
+          timer = window.setTimeout(poll, retryDelay);
+        }
       }
     };
+    const syncActivity = () => {
+      window.clearTimeout(timer);
+      controller?.abort();
+      controller = null;
+      if (isPageActive()) void poll();
+    };
+    const unsubscribe = subscribeActivity(syncActivity);
     void poll();
-    return () => { active = false; window.clearTimeout(timer); };
+    return () => { active = false; window.clearTimeout(timer); controller?.abort(); unsubscribe(); };
   }, [mode]);
 
   const metrics = mode === 'computer' && snapshot

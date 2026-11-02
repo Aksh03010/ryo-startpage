@@ -1,0 +1,46 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { Window } from 'happy-dom';
+import { h, render } from 'preact';
+import { act } from 'preact/test-utils';
+import { useNow } from '../src/hooks/useNow';
+import { setHostPaused } from '../src/lib/activity';
+
+test('clock cancels all scheduled ticks while hidden or paused by Wallpaper Engine', async () => {
+  const window = new Window();
+  Object.defineProperty(globalThis, 'window', { value: window, configurable: true });
+  Object.defineProperty(globalThis, 'Event', { value: window.Event, configurable: true });
+  Object.defineProperty(globalThis, 'document', { value: window.document, configurable: true });
+  globalThis.requestAnimationFrame = window.requestAnimationFrame.bind(window);
+  globalThis.cancelAnimationFrame = window.cancelAnimationFrame.bind(window);
+  const schedule = window.setTimeout.bind(window);
+  const cancel = window.clearTimeout.bind(window);
+  const timers = new Set<number>();
+  window.setTimeout = ((callback: () => void, delay: number) => {
+    const id = schedule(() => { timers.delete(id); callback(); }, delay);
+    timers.add(id);
+    return id;
+  }) as typeof window.setTimeout;
+  window.clearTimeout = ((id: number) => { timers.delete(id); cancel(id); }) as typeof window.clearTimeout;
+  const container = window.document.createElement('div');
+  function Probe() { return h('span', {}, useNow(1000).toISOString()); }
+  try {
+    await act(() => render(h(Probe, {}), container));
+    assert.equal(timers.size, 1);
+    Object.defineProperty(window.document, 'visibilityState', { value: 'hidden', configurable: true });
+    await act(() => window.document.dispatchEvent(new window.Event('visibilitychange')));
+    assert.equal(timers.size, 0);
+    Object.defineProperty(window.document, 'visibilityState', { value: 'visible', configurable: true });
+    await act(() => window.document.dispatchEvent(new window.Event('visibilitychange')));
+    assert.equal(timers.size, 1);
+    await act(() => setHostPaused(true));
+    assert.equal(timers.size, 0);
+    await act(() => setHostPaused(false));
+    assert.equal(timers.size, 1);
+    await act(() => render(null, container));
+    assert.equal(timers.size, 0);
+  } finally {
+    await act(() => render(null, container));
+    await window.happyDOM.close();
+  }
+});

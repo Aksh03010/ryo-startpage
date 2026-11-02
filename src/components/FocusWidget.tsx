@@ -1,5 +1,8 @@
 import { useEffect } from 'react';
 import { Pause, Play, RotateCcw, Timer, Zap } from 'lucide-react';
+import { useNow } from '../hooks/useNow';
+import { pauseFocus, remainingSeconds, startFocus } from '../lib/focus';
+import type { FocusSnapshot } from '../lib/focus';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import styles from './FocusWidget.module.css';
 
@@ -8,54 +11,48 @@ export default function FocusWidget({ settingsKey, focusMinutes, breakMinutes }:
   focusMinutes: number;
   breakMinutes: number;
 }) {
-  const [snapshot, setSnapshot] = useLocalStorage<{ duration: number; paused: boolean; remaining: number }>(settingsKey, () => ({
+  const [snapshot, setSnapshot] = useLocalStorage<FocusSnapshot>(settingsKey, () => ({
     duration: focusMinutes * 60,
     paused: true,
     remaining: focusMinutes * 60,
   }));
-  const finished = snapshot.remaining <= 0;
+  const phase = snapshot.phase ?? 'focus';
+  const duration = (phase === 'focus' ? focusMinutes : breakMinutes) * 60;
+  const now = useNow(snapshot.paused ? null : 1000);
+  const remaining = remainingSeconds(snapshot, now.getTime());
 
   useEffect(() => {
-    if (snapshot.paused || finished) return;
-    const timer = window.setInterval(() => {
-      setSnapshot((prev) => {
-        const next = Math.max(0, prev.remaining - 1);
-        return { ...prev, paused: next === 0, remaining: next };
-      });
-    }, 1000);
-    return () => window.clearInterval(timer);
-  }, [snapshot.paused, finished, setSnapshot]);
-
-  useEffect(() => {
-    if (!snapshot.paused) return;
-    const duration = focusMinutes * 60;
-    setSnapshot((prev) => prev.duration === duration ? prev : ({ ...prev, duration, remaining: duration }));
-  }, [focusMinutes, snapshot.paused, setSnapshot]);
-
-  const progress = snapshot.duration > 0 ? Math.min(1, Math.max(0, snapshot.remaining / snapshot.duration)) : 0;
-  const display = `${String(Math.floor(snapshot.remaining / 60)).padStart(2, '0')}:${String(snapshot.remaining % 60).padStart(2, '0')}`;
-
-  const toggle = () => setSnapshot((prev) => {
-    if (!prev.paused) return { ...prev, paused: true };
-    if (prev.remaining <= 0) {
-      const duration = focusMinutes * 60;
-      return { ...prev, duration, remaining: duration, paused: false };
+    if (!snapshot.paused && !snapshot.endsAt) {
+      setSnapshot((previous) => ({ ...previous, endsAt: Date.now() + previous.remaining * 1000 }));
     }
-    return { ...prev, paused: false };
-  });
+  }, [snapshot.paused, snapshot.endsAt, setSnapshot]);
 
-  const reset = () =>
-    setSnapshot((prev) => {
-      const duration = focusMinutes * 60;
-      return { ...prev, duration, paused: true, remaining: duration };
-    });
+  useEffect(() => {
+    if (snapshot.paused || remaining > 0) return;
+    setSnapshot((previous) => ({ ...previous, paused: true, remaining: 0, endsAt: null }));
+  }, [remaining, snapshot.paused, setSnapshot]);
+
+  useEffect(() => {
+    if (!snapshot.paused || snapshot.duration === duration) return;
+    setSnapshot((previous) => ({ ...previous, duration, remaining: duration, endsAt: null }));
+  }, [duration, snapshot.paused, snapshot.duration, setSnapshot]);
+
+  const progress = snapshot.duration > 0 ? Math.min(1, Math.max(0, remaining / snapshot.duration)) : 0;
+  const display = `${String(Math.floor(remaining / 60)).padStart(2, '0')}:${String(remaining % 60).padStart(2, '0')}`;
+  const toggle = () => setSnapshot((previous) => previous.paused ? startFocus(previous, Date.now()) : pauseFocus(previous, Date.now()));
+  const reset = () => setSnapshot((previous) => ({ ...previous, duration, paused: true, remaining: duration, endsAt: null }));
+  const changePhase = (next: 'focus' | 'break') => {
+    const seconds = (next === 'focus' ? focusMinutes : breakMinutes) * 60;
+    setSnapshot({ duration: seconds, remaining: seconds, paused: true, endsAt: null, phase: next });
+  };
 
   return (
     <div className={styles.wrap}>
       <div className={styles.header}>
         <p className={styles.title}>
-          <Timer size={15} strokeWidth={2} /> Focus
+          <Timer size={15} strokeWidth={2} /> A little focus
         </p>
+        <div className={styles.tabs} role="group" aria-label="Timer mode"><button type="button" aria-pressed={phase === 'focus'} onClick={() => changePhase('focus')}>Focus</button><button type="button" aria-pressed={phase === 'break'} onClick={() => changePhase('break')}>Rest</button></div>
       </div>
 
       <div className={styles.dialWrap}>
@@ -75,7 +72,7 @@ export default function FocusWidget({ settingsKey, focusMinutes, breakMinutes }:
             transform="rotate(-90 36 36)"
           />
         </svg>
-        <span className={styles.time}>{display}</span>
+        <span className={styles.time}>{display}<small>{remaining === 0 ? 'A moment well spent.' : phase === 'focus' ? 'ONE THING AT A TIME' : 'TAKE A BREATH'}</small></span>
       </div>
 
       <div className={styles.controls}>
@@ -85,7 +82,7 @@ export default function FocusWidget({ settingsKey, focusMinutes, breakMinutes }:
           aria-label={snapshot.paused ? 'Start focus' : 'Pause focus'}
           onClick={toggle}
         >
-          {snapshot.paused ? <Play size={14} /> : <Pause size={14} />}
+          {snapshot.paused ? <Play size={12} fill="currentColor" /> : <Pause size={12} />}<span>{snapshot.paused ? remaining === 0 ? 'Start again' : 'Begin session' : 'Pause session'}</span>
         </button>
         <button type="button" className={styles.icon} onClick={reset} aria-label="Reset focus timer">
           <RotateCcw size={14} />

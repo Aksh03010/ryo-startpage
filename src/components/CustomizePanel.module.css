@@ -551,3 +551,13 @@
     transform: rotate(1turn);
   }
 }
+
+.spacePresets { margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid #bbd0b51c; }
+.spacePresetButtons { display: flex; gap: 7px; margin-bottom: 10px; }
+.spacePresetButtons button { flex: 1; padding: 10px 6px; border: 1px solid #bad0b426; border-radius: 99px; background: #b3d1a80c; color: #ccdfc6; font-size: 11px; }
+.spacePresetButtons button:hover { background: #b3d1a81f; border-color: #bad0b45c; }
+.engineHelp { border: 1px solid #b5d0ae22; border-radius: 15px; padding: 12px 14px; font-size: 11px; line-height: 1.7; color: #9db397; }
+.engineHelp summary { cursor: pointer; color: #ceddc8; }
+.engineHelp p { margin-top: 9px; }
+.engineHelp a { display: inline-block; color: #c0e3cb; margin-top: 9px; }
+.panel { background: #101813; backdrop-filter: none; }

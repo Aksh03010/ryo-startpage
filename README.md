@@ -54,9 +54,49 @@ The helper listens only on this computer (`127.0.0.1`) and allows requests from 
 - Draggable widgets, appearance controls, and keyboard shortcuts.
 - Local-first storage: settings and lists use `localStorage`; uploaded wallpapers use IndexedDB.
 
+## Choose your space
+
+Open Customize and choose **Minimal** (clock and search), **Everyday** (adds quick links), or **Workspace** (adds tasks, focus, and reminders). You can still toggle and style every widget individually. Presets preserve your wallpaper and styling and return to the responsive layout. System monitoring stays opt-in.
+
+Press `/` to focus search, `Ctrl + ,` to customize, and `Esc` to close the panel or finish arranging. Focus and Rest modes have independent durations. Running timers use deadlines, so they catch up after a sleeping or hidden tab.
+
+## Wallpaper Engine
+
+### Use a Wallpaper Engine video as your startpage background
+
+Right-click an installed **video** wallpaper in Wallpaper Engine and choose **Open in Explorer**. Upload its MP4 or WebM file through Ryo's **Customize > Background > Upload image / video**. Images, GIFs, AVIF, and OGV are supported too. Uploads stay in the browser's local IndexedDB. Direct image/video URLs also work.
+
+A scene wallpaper's `.pkg` file is not a browser-playable video. To reuse a scene here, record it as a video first. See Wallpaper Engine's [file guide](https://help.wallpaperengine.io/en/functionality/editingwallpapers.html) and [scene export explanation](https://help.wallpaperengine.io/en/functionality/export.html).
+
+### Run Ryo inside Wallpaper Engine
+
+```sh
+npm ci
+npm run build:wallpaper
+```
+
+Import **dist-wallpaper/index.html** through Wallpaper Engine's **Create Wallpaper** button. Keep its `assets/`, `wallpapers/`, and `project.json` together; import the generated folder rather than the source repository. The build uses relative asset paths and includes its own fonts through system font fallbacks, so it needs no font CDN.
+
+Wallpaper Engine's panel exposes accent color, Minimal mode, individual widget switches, reduced motion, an image picker, and a video picker. A selected video takes precedence over the selected image; clear the video to return to the image. Use **WebM** for video inside Wallpaper Engine. Browser playback supports MP4 as well.
+
+The native adapter uses the documented [user properties](https://docs.wallpaperengine.io/en/web/customization/properties.html) and [pause callback](https://docs.wallpaperengine.io/en/web/api/propertylistener.html). Native overrides remain in memory and do not rewrite saved browser preferences. Pausing the host stops clock updates, monitor polling, and video playback. Local system monitoring is intended for browser mode: the optional helper retains its existing trusted-origin restrictions and rejects file-based origins.
+
+The generated package and adapter are covered by build and DOM tests. Playback inside the installed Wallpaper Engine application still requires manual verification. This integration does not mirror another desktop wallpaper live into a normal browser tab.
+
+## Performance and architecture
+
+Ryo uses **Vite + TypeScript + Preact**, with Preact's React compatibility layer for existing components, icons, and drag support. There is no server framework or background render loop.
+
+- Each optional widget is a separate lazy-loaded module. Disabled widgets do not mount or download their code/styles. Customize, drag support, and IndexedDB media code load when needed.
+- The default celestial background uses static SVG and CSS. Default widgets use solid surfaces without backdrop blur. Fonts use local system fallbacks, removing blocking font requests.
+- Clock/reminder updates and monitor polling stop while hidden. Monitoring aborts in-flight requests, times out after four seconds, and backs off to 30 seconds if the helper is offline.
+- Focus timers persist start/pause/reset/completion changes instead of saving every second.
+
+The original core JavaScript was approximately **103 KB gzip**; the new core is approximately **22 KB gzip**. Visible optional widgets add their own small chunks. These are build payload measurements, not an FPS or CPU benchmark. `npm run check:bundle` checks the current core JS/CSS budget. CI runs behavior tests and the bundle check before deploying.
+
 ## Run it on your computer
 
-Requirements: Node.js 20.19+ or 22.12+.
+Requirements: Node.js 24+ (also used by the tests and CI).
 
 ```sh
 git clone https://github.com/Aksh03010/ryo-startpage.git
@@ -73,6 +113,9 @@ Useful commands:
 npm run build    # type-check and create a production build in dist/
 npm run preview  # preview the production build locally
 npm run lint     # check the code with ESLint
+npm test         # test Preact interactions, timers, presets, and native controls
+npm run check:bundle    # enforce a 40 KiB gzip budget for core JS + CSS
+npm run build:wallpaper # create a self-contained Wallpaper Engine project
 ```
 
 ## Host your own copy

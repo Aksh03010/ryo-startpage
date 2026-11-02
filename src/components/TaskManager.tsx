@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Check, Circle, Plus, Repeat, X } from 'lucide-react';
+import { Check, ListTodo, Plus, Repeat, X } from 'lucide-react';
 import type { Task, TaskRepeatDay, TaskSettings } from '../types';
 import { REPEAT_DAY_LABELS } from '../constants';
+import { useNow } from '../hooks/useNow';
 import { dateKey, isTaskDone, weekdayOf } from '../lib/tasks';
 import styles from './TaskManager.module.css';
 
@@ -25,22 +26,23 @@ function updateOrRemove(tasks: Task[], id: string, updater: (task: Task) => Task
 }
 
 export default function TaskManager({ tasks, settings, onTasksChange }: TaskManagerProps) {
-  const today = dateKey();
+  const now = useNow(60_000);
+  const today = dateKey(now);
   const [draft, setDraft] = useState('');
   const [repeatOpen, setRepeatOpen] = useState(false);
   const [draftRepeat, setDraftRepeat] = useState<TaskRepeatDay[]>([]);
-  const todayDay = weekdayOf(new Date());
+  const todayDay = weekdayOf(now);
 
   const visible = useMemo(
     () =>
       tasks
-        .map((task) => ({ task, done: isTaskDone(task, new Date()) }))
+        .map((task) => ({ task, done: isTaskDone(task, now) }))
         .filter(({ task, done }) => {
           const scheduledToday = task.repeatDays.length === 0 || task.repeatDays.includes(todayDay);
           if (task.repeatDays.length > 0 && !scheduledToday) return false;
           return done ? settings.showCompleted : true;
         }),
-    [tasks, settings.showCompleted, todayDay],
+    [tasks, settings.showCompleted, todayDay, now],
   );
 
   const totalToday = visible.length;
@@ -72,9 +74,8 @@ export default function TaskManager({ tasks, settings, onTasksChange }: TaskMana
   return (
     <div className={styles.wrap}>
       <header className={styles.header}>
-        <p className={styles.kicker}>
-          <span className={styles.dot} /> {remaining === 0 ? 'All clear' : `${remaining}/${totalToday} left`}
-        </p>
+        <p className={styles.kicker}><ListTodo size={15} /> Today's intentions</p>
+        <span className={styles.count}>{remaining}/{totalToday}</span>
       </header>
 
       <ul className={styles.list}>
@@ -129,8 +130,8 @@ export default function TaskManager({ tasks, settings, onTasksChange }: TaskMana
         ))}
         {visible.length === 0 && (
           <li className={styles.empty} data-empty="true">
-            <Circle size={13} strokeWidth={2} />
-            No tasks for today.
+            <span className={styles.emptyStar} aria-hidden="true">✧</span>
+            <span>A little room to begin.<small>What matters to you today?</small></span>
           </li>
         )}
       </ul>
@@ -165,7 +166,7 @@ export default function TaskManager({ tasks, settings, onTasksChange }: TaskMana
           </div>
         )}
         <div className={styles.addRow}>
-          <button type="button" className={styles.repeatsButton} onClick={() => setRepeatOpen((o) => !o)}>
+          <button type="button" className={styles.repeatsButton} aria-label="Choose task repeat days" aria-expanded={repeatOpen} onClick={() => setRepeatOpen((o) => !o)}>
             <Repeat size={15} strokeWidth={2.2} data-toggled={draftRepeat.length ? true : undefined} />
           </button>
           <input

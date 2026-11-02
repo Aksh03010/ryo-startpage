@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export function useLocalStorage<T>(key: string, initial: T | (() => T)) {
   const [value, setValue] = useState<T>(() => {
@@ -21,15 +21,20 @@ export function useLocalStorage<T>(key: string, initial: T | (() => T)) {
     }
   });
 
+  // Persist committed changes only. Updaters can run more than once in StrictMode.
+  useEffect(() => {
+    try {
+      const serialized = JSON.stringify(value);
+      if (window.localStorage.getItem(key) !== serialized) window.localStorage.setItem(key, serialized);
+    } catch (error) {
+      console.error(`Unable to persist ${key}`, error);
+    }
+  }, [key, value]);
+
   const set = useCallback(
     (next: T | ((prev: T) => T)) => {
       setValue((prev) => {
         const value = typeof next === 'function' ? (next as (prev: T) => T)(prev) : next;
-        try {
-          window.localStorage.setItem(key, JSON.stringify(value));
-        } catch (error) {
-          console.error(`Unable to persist ${key}`, error);
-        }
         return value;
       });
     },

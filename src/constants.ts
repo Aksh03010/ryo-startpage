@@ -12,7 +12,7 @@ import type {
 
 export const WIDGET_IDS: WidgetId[] = ['clock', 'tasks', 'search', 'links', 'focus', 'reminders', 'system'];
 export const STORAGE_PREFIX = 'ryo:';
-const publicAsset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+const publicAsset = (path: string) => `${import.meta.env?.BASE_URL ?? '/'}${path}`;
 
 export const WIDGET_TITLES: Record<WidgetId, string> = {
   clock: 'Clock',
@@ -33,8 +33,8 @@ export const PRESETS: Array<{
 }> = [
   {
     id: 'aurora',
-    name: 'Aurora Drift',
-    blurb: 'Living gradient',
+    name: 'Celestial',
+    blurb: 'Quiet, starry skies',
     gradient:
       'radial-gradient(120% 100% at 20% 10%, #0d5b6b 0%, transparent 55%), radial-gradient(90% 90% at 90% 15%, #6b5bff 0%, transparent 60%), linear-gradient(160deg, #03050b 0%, #041020 55%, #050610 100%)',
   },
@@ -49,7 +49,7 @@ export interface PresetById {
 export const PRESET_NONE = PRESETS.find((preset) => preset.id === 'aurora') as (typeof PRESETS)[number];
 
 export const ACCENTS: Record<Exclude<AccentId, 'custom'>, { name: string; tint: string; rgb: string }> = {
-  aurora: { name: 'Aurora', tint: '#5eead4', rgb: '94,234,212' },
+  aurora: { name: 'Opal', tint: '#c0e3cb', rgb: '192,227,203' },
   ember: { name: 'Ember', tint: '#ffb56b', rgb: '255,181,107' },
   rose: { name: 'Rose', tint: '#f7a8c4', rgb: '247,168,196' },
   glacier: { name: 'Glacier', tint: '#a8c7ff', rgb: '168,199,255' },
@@ -74,20 +74,20 @@ export function hexToRgbTriplet(hex: string): string {
 export const CLOCK_FONTS: Array<{ id: ClockFont; label: string; css: string }> = [
   {
     id: 'space',
-    label: 'Space Grotesk',
-    css: "'Space Grotesk', 'Segoe UI', system-ui, sans-serif",
+    label: 'System Sans',
+    css: "'Segoe UI', system-ui, sans-serif",
   },
   {
     id: 'instrument',
-    label: 'Instrument Serif',
-    css: "'Instrument Serif', 'Times New Roman', serif",
+    label: 'Editorial Serif',
+    css: "'Iowan Old Style', 'Palatino Linotype', Georgia, serif",
   },
   {
     id: 'jetbrains',
-    label: 'JetBrains Mono',
-    css: "'JetBrains Mono', Consolas, 'Courier New', monospace",
+    label: 'System Mono',
+    css: "Consolas, 'Courier New', monospace",
   },
-  { id: 'manrope', label: 'Manrope', css: "'Manrope', 'Segoe UI', system-ui, sans-serif" },
+  { id: 'manrope', label: 'UI Sans', css: "system-ui, 'Segoe UI', sans-serif" },
 ];
 
 export const CLOCK_ANIMATIONS: Array<{ id: ClockAnimation; label: string }> = [
@@ -146,21 +146,21 @@ export const DEFAULT_SETTINGS: Settings = {
     accent: 'aurora',
     customAccent: DEFAULT_CUSTOM_ACCENT,
     boxMode: 'solid',
-    glassOpacity: 42,
+    glassOpacity: 80,
     glassBlur: 14,
-    radius: 20,
+    radius: 26,
     border: true,
     shadow: true,
     textScale: 100,
     reduceMotion: false,
     widgets: {
-      clock: { visible: true, style: {} },
-      tasks: { visible: true, style: {} },
-      search: { visible: true, style: {} },
-      links: { visible: true, style: {} },
-      focus: { visible: true, style: {} },
-      reminders: { visible: true, style: {} },
-      system: { visible: false, style: {} },
+      clock: { visible: true, size: 100, style: { boxMode: 'none' } },
+      tasks: { visible: true, size: 100, style: {} },
+      search: { visible: true, size: 100, style: { boxMode: 'none' } },
+      links: { visible: true, size: 100, style: {} },
+      focus: { visible: true, size: 100, style: {} },
+      reminders: { visible: true, size: 100, style: {} },
+      system: { visible: false, size: 100, style: {} },
     },
   },
   background: {
@@ -168,13 +168,13 @@ export const DEFAULT_SETTINGS: Settings = {
     dim: 18,
     blur: 0,
     brightness: 100,
-    saturation: 105,
-    grain: true,
+    saturation: 100,
+    grain: false,
     videoPlaybackRate: 1,
     videoLoop: true,
     videoPaused: false,
   },
-  clock: { font: 'space', size: 150, use24Hour: false, showSeconds: false, showDate: true, showGreeting: true, animation: 'none' },
+  clock: { font: 'instrument', size: 126, use24Hour: false, showSeconds: false, showDate: true, showGreeting: true, animation: 'none' },
   tasks: { showCompleted: true },
   layout: { snapToGrid: true, showGrid: false },
   searchEngine: 'duckduckgo',

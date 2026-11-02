@@ -1,11 +1,15 @@
+import { isPageActive, subscribeActivity } from '../lib/activity';
 import { useEffect, useState } from 'react';
 
-export function useNow(interval = 1000) {
+export function useNow(interval: number | null = 1000) {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
+    if (interval === null) return;
     let timer = 0;
     const update = () => {
+      window.clearTimeout(timer);
+      if (!isPageActive()) return;
       const current = new Date();
       setNow(current);
       const remainder = current.getTime() % interval;
@@ -13,18 +17,16 @@ export function useNow(interval = 1000) {
     };
 
     const handleVisibility = () => {
-      if (document.visibilityState === 'visible') {
-        window.clearTimeout(timer);
-        update();
-      }
+      window.clearTimeout(timer);
+      if (isPageActive()) update();
     };
 
     const remainder = Date.now() % interval;
-    timer = window.setTimeout(update, interval - remainder || interval);
-    document.addEventListener('visibilitychange', handleVisibility);
+    if (isPageActive()) timer = window.setTimeout(update, interval - remainder || interval);
+    const unsubscribe = subscribeActivity(handleVisibility);
     return () => {
       window.clearTimeout(timer);
-      document.removeEventListener('visibilitychange', handleVisibility);
+      unsubscribe();
     };
   }, [interval]);
 

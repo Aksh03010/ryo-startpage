@@ -1,6 +1,6 @@
 :root {
-  --accent: #5eead4;
-  --accent-rgb: 94, 234, 212;
+  --accent: #c0e3cb;
+  --accent-rgb: 192, 227, 203;
   --font-clock: 'Space Grotesk', system-ui, sans-serif;
   color-scheme: dark;
 }
@@ -23,12 +23,12 @@ body,
 
 body {
   margin: 0;
-  background: #04060c;
+  background: #080c0b;
   color: rgba(255, 255, 255, 0.88);
   font-family: 'Manrope', 'Segoe UI', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 button,
@@ -76,3 +76,5 @@ input[type='number'] {
     transition-duration: 0.001ms !important;
   }
 }
+
+html[data-host-paused] *, html[data-host-paused] *::before, html[data-host-paused] *::after { animation-play-state: paused !important; }

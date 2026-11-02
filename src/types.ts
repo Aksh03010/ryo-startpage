@@ -10,7 +10,7 @@ export type SearchEngineId = 'google' | 'duckduckgo' | 'brave' | 'youtube';
 
 export type BackgroundPresetId = 'aurora' | 'midnight' | 'ember' | 'glacier';
 
-export type WallpaperKind = 'preset' | 'upload' | 'url';
+export type WallpaperKind = 'preset' | 'upload' | 'url' | 'native';
 
 export interface WallpaperState {
   kind: WallpaperKind;
@@ -44,6 +44,8 @@ export interface WidgetStyleOverride {
 
 export interface WidgetAppearance {
   visible: boolean;
+  /** Overall widget scale percentage. Older saved settings default to 100. */
+  size?: number;
   style: WidgetStyleOverride;
 }
 

@@ -142,7 +142,7 @@ export default function RemindersWidget({ reminders, onRemindersChange }: Remind
           })}
         </ul>
       ) : (
-        <p className={styles.empty}>Nothing coming up. Use the ⋮ menu to add one.</p>
+        <p className={styles.empty}>A clear horizon. Add a reminder when you need one.</p>
       )}
 
       {manageOpen && (

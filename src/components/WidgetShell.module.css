@@ -1,7 +1,7 @@
 .shell {
   position: absolute;
   isolation: isolate;
-  min-width: 220px;
+  min-width: 0;
   max-width: min(92vw, 720px);
   color: #fff;
   transition:
@@ -9,11 +9,11 @@
     border-color 220ms ease,
     background-color 220ms ease,
     border-radius 240ms ease;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
 }
 
 .body {
-  padding: 18px 20px;
+  padding: 22px 24px;
 }
 
 .glass {
@@ -32,8 +32,8 @@
 }
 
 .solid {
-  background: rgba(8, 12, 20, calc(var(--box-alpha, 0.1) * 0.85));
-  border-color: rgba(255, 255, 255, 0.14);
+  background: linear-gradient(145deg, rgba(25, 34, 28, var(--box-alpha, .8)), rgba(14, 20, 17, var(--box-alpha, .8)));
+  border-color: rgba(190, 215, 195, 0.12);
 }
 
 .none {
@@ -44,7 +44,7 @@
 .shell[data-edit-mode] {
   border: 1.5px dashed color-mix(in srgb, var(--accent) 68%, #ffffff2e);
   cursor: grab;
-  animation: edit-pulse 2.2s ease-in-out infinite;
+
 }
 
 .shell[data-dragging] {
@@ -113,3 +113,11 @@
     animation: none;
   }
 }
+
+.shell[data-widget-id="clock"] .body, .shell[data-widget-id="search"] .body { padding: 0; }
+@media(max-width:950px) { .body { padding: 20px; } }
+
+.shell[data-widget-id='clock'] { width: min(600px, 92vw); }
+.shell[data-widget-id='search'] { width: min(580px, 92vw); }
+.shell[data-widget-id='tasks'], .shell[data-widget-id='focus'], .shell[data-widget-id='links'] { width: min(350px, 92vw); }
+.shell[data-widget-id='reminders'] { width: min(720px, 92vw); }

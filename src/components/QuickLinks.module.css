@@ -211,3 +211,19 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+.wrap { width: 100%; gap: 24px; }
+.title { text-transform: none; font-size: 12px; letter-spacing: .01em; color: #d9e4d8; }
+.title::after { display: none; }
+.title svg { color: #a4b9a5; }
+.title > span { margin-left: auto; font: 10px/1 Consolas, monospace; color: #809184; }
+.grid { gap: 18px 12px; }
+.tile { border-radius: 14px; border: 1px solid #c5d6bf24; box-shadow: none; background: #bed4b90c !important; width: 39px; height: 39px; flex-basis: 39px; }
+.favicon { padding: 10px; opacity: .85; }
+.label { color: #aab8aa; font-size: 10px; }
+.addTile { border-radius: 14px; width: 39px; height: 39px; border-width: 1px; color: #8c9e8e; border-color: #bed4b92c; }
+@media(pointer:coarse) { .remove { opacity: 1; } }
+
+.grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.addLink:has(.addForm) { grid-column: 1 / -1; }
+.addForm { padding: 8px 0; }

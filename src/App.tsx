@@ -1,23 +1,24 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DndContext, KeyboardSensor, PointerSensor, pointerWithin, useSensor, useSensors } from '@dnd-kit/core';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { DragEndEvent } from '@dnd-kit/core';
 import type { CSSProperties } from 'react';
-import { deleteWallpaper, saveWallpaper } from './lib/mediaStore';
 import BackgroundManager from './components/BackgroundManager';
 import ClockWidget from './components/ClockWidget';
-import CustomizePanel from './components/CustomizePanel';
-import FocusWidget from './components/FocusWidget';
-import QuickLinks from './components/QuickLinks';
-import RemindersWidget from './components/RemindersWidget';
 import SearchWidget from './components/SearchWidget';
-import SystemMonitorWidget from './components/SystemMonitorWidget';
-import TaskManager from './components/TaskManager';
 import TopBar from './components/TopBar';
 import WidgetShell from './components/WidgetShell';
 import { ACCENTS, CLOCK_FONTS, DEFAULT_CUSTOM_ACCENT, DEFAULT_FOCUS, DEFAULT_LINKS, DEFAULT_POSITIONS, DEFAULT_SETTINGS, GRID_STEP, WIDGET_IDS, WIDGET_TITLES, hexToRgbTriplet } from './constants';
+import { useWallpaperEngine } from './hooks/useWallpaperEngine';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import styles from './App.module.css';
 import type { BoxMode, FocusSettings, LayoutState, QuickLink, Reminder, Settings, Task, WidgetId } from './types';
+
+const FocusWidget = lazy(() => import('./components/FocusWidget'));
+const QuickLinks = lazy(() => import('./components/QuickLinks'));
+const RemindersWidget = lazy(() => import('./components/RemindersWidget'));
+const TaskManager = lazy(() => import('./components/TaskManager'));
+const CustomizePanel = lazy(() => import('./components/CustomizePanel'));
+const ArrangeCanvas = lazy(() => import('./components/ArrangeCanvas'));
+const SystemMonitorWidget = lazy(() => import('./components/SystemMonitorWidget'));
 
 const TASK_KEY = 'ryo.tasks.v2';
 const LAYOUT_KEY = 'ryo.layout.v2';
@@ -30,16 +31,15 @@ const REMINDER_KEY = 'ryo.reminders.v2';
 export default function App() {
   const [tasks, setTasks] = useLocalStorage<Task[]>(TASK_KEY, []);
   const [layout, setLayout] = useLocalStorage<LayoutState>(LAYOUT_KEY, DEFAULT_POSITIONS);
-  const [links, setLinks] = useLocalStorage<QuickLink[]>(LINKS_KEY, []);
-  const [settings, setSettings] = useLocalStorage<Settings>(SETTINGS_KEY, DEFAULT_SETTINGS);
+  const [links, setLinks] = useLocalStorage<QuickLink[]>(LINKS_KEY, DEFAULT_LINKS);
+  const [savedSettings, setSettings] = useLocalStorage<Settings>(SETTINGS_KEY, DEFAULT_SETTINGS);
+  const settings = useWallpaperEngine(savedSettings);
   const [reminders, setReminders] = useLocalStorage<Reminder[]>(REMINDER_KEY, []);
   const [focusSettings, setFocusSettings] = useLocalStorage<FocusSettings>(FOCUS_SETTINGS_KEY, DEFAULT_FOCUS);
-  const [dragging, setDragging] = useState<null | string>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [arrange, setArrange] = useState(false);
   const [customizeOpen, setCustomizeOpen] = useState(false);
-  const [shortcutToast, setShortcutToast] = useState(false);
 
   const appearance = settings.appearance;
   const accent = useMemo(() => {
@@ -53,14 +53,25 @@ export default function App() {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const toggleCustomize = useCallback(() => setCustomizeOpen((value) => !value), []);
-  const toggleArrange = useCallback(() => setArrange((value) => !value), []);
+  const toggleArrange = useCallback(() => {
+    if (!arrange && containerRef.current?.dataset.layout === 'flow' && window.innerWidth > 520) {
+      const container = containerRef.current.getBoundingClientRect();
+      const positions = { ...layout };
+      containerRef.current.querySelectorAll<HTMLElement>('[data-widget-id]').forEach((node) => {
+        const id = node.dataset.widgetId as WidgetId;
+        const rect = node.getBoundingClientRect();
+        positions[id] = { x: rect.left / window.innerWidth * 100, y: (rect.top - container.top) / Math.max(850, window.innerHeight - 100) * 100 };
+      });
+      setLayout(positions);
+    }
+    setArrange((value) => !value);
+  }, [arrange, layout, setLayout]);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key === ',') {
         event.preventDefault();
         toggleCustomize();
-        setShortcutToast(false);
       } else if (event.key === 'Escape') {
         if (customizeOpen) setCustomizeOpen(false);
         else if (arrange) setArrange(false);
@@ -69,12 +80,6 @@ export default function App() {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [customizeOpen, arrange, toggleCustomize]);
-
-  useEffect(() => {
-    if (!shortcutToast) return;
-    const timer = window.setTimeout(() => setShortcutToast(false), 1600);
-    return () => window.clearTimeout(timer);
-  }, [shortcutToast]);
 
   /** Older saves miss newer widget slots — add them once without overwriting user choices. */
   useEffect(() => {
@@ -142,18 +147,19 @@ export default function App() {
       setUploading(true);
       setUploadError(null);
       try {
-        if (!['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif', 'video/mp4', 'video/webm'].includes(file.type)) {
-          setUploadError('Use PNG, JPG, WebP, GIF, MP4 or WebM files.');
+        if (!['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif', 'video/mp4', 'video/webm', 'video/ogg'].includes(file.type)) {
+          setUploadError('Use PNG, JPG, WebP, GIF, AVIF, MP4, WebM or OGV files.');
           return;
         }
         if (file.size > 180 * 1024 * 1024) {
           setUploadError('Media that large may still work, but try a smaller file first.');
           return;
         }
+        const { deleteWallpaper, saveWallpaper } = await import('./lib/mediaStore');
         const record = await saveWallpaper(file);
         const previous = settings.background.wallpaper;
         if (previous.kind === 'upload' && previous.mediaId && previous.mediaId !== record.id) {
-          void deleteWallpaper(previous.mediaId);
+          void deleteWallpaper(previous.mediaId).catch((error) => console.error('Unable to remove the previous wallpaper', error));
         }
         setSettings((draft) => ({
           ...draft,
@@ -181,7 +187,6 @@ export default function App() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const widgetId = (event.active.data.current as { widgetId?: string }).widgetId;
-    setDragging(null);
     if (!widgetId) return;
     const translated = event.active.rect.current.translated;
     const container = containerRef.current?.getBoundingClientRect();
@@ -223,13 +228,15 @@ export default function App() {
     (id: WidgetId) => {
       const widget = settings.appearance.widgets[id];
       const position = layout[id] ?? DEFAULT_POSITIONS[id];
+      const widgetStyle = widget.style ?? {};
       const globalBoxMode = settings.appearance.boxMode ?? (settings.appearance.glassEnabled === false ? 'solid' : 'glass');
-      const boxMode = widget.style.boxMode ?? globalBoxMode;
-      const opacity = widget.style.opacity ?? settings.appearance.glassOpacity;
-      const radius = widget.style.radius ?? settings.appearance.radius;
-      const border = widget.style.border ?? settings.appearance.border;
-      const shadow = widget.style.shadow ?? settings.appearance.shadow;
-      const glassBlur = widget.style.blur ?? settings.appearance.glassBlur;
+      const boxMode = widgetStyle.boxMode ?? globalBoxMode;
+      const widgetSize = widget.size ?? 100;
+      const opacity = widgetStyle.opacity ?? settings.appearance.glassOpacity;
+      const radius = widgetStyle.radius ?? settings.appearance.radius;
+      const border = widgetStyle.border ?? settings.appearance.border;
+      const shadow = widgetStyle.shadow ?? settings.appearance.shadow;
+      const glassBlur = widgetStyle.blur ?? settings.appearance.glassBlur;
 
       const renderContent = () => {
         switch (id) {
@@ -249,7 +256,7 @@ export default function App() {
               />
             );
           case 'system':
-            return <SystemMonitorWidget metrics={settings.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics} />;
+            return <Suspense fallback={<p>Connecting monitor…</p>}><SystemMonitorWidget metrics={settings.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics} /></Suspense>;
           default:
             return (
               <FocusWidget
@@ -276,10 +283,9 @@ export default function App() {
           shadow={shadow}
           border={border}
           glassBlur={glassBlur}
-          zIndex={dragging === id ? 40 : 1}
-          onDraggingChange={(value) => setDragging(value ? id : null)}
+          size={widgetSize}
         >
-          {content}
+          <Suspense fallback={<div className={styles.widgetLoading} aria-label={`Loading ${WIDGET_TITLES[id]}`} />}>{content}</Suspense>
         </WidgetShell>
       );
     },
@@ -296,7 +302,6 @@ export default function App() {
       reminders,
       focusSettings.focusMinutes,
       focusSettings.breakMinutes,
-      dragging,
       setTasks,
       setLinks,
       setSettings,
@@ -304,12 +309,9 @@ export default function App() {
     ],
   );
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor, { keyboardCodes: { start: ['Enter', 'Space'], end: ['Enter', 'Space'], cancel: ['Escape'] } }),
-  );
-
   const gridVisible = settings.layout.showGrid && arrange;
+  const isDefaultLayout = WIDGET_IDS.every((id) => !layout[id] || (layout[id].x === DEFAULT_POSITIONS[id].x && layout[id].y === DEFAULT_POSITIONS[id].y));
+  const dashboard = <main ref={containerRef} className={styles.dashboard} data-layout={isDefaultLayout && !arrange ? 'flow' : 'free'} data-grid={gridVisible ? 'on' : undefined}>{widgetIds.map((id) => renderWidget(id))}</main>;
 
   return (
     <div
@@ -323,7 +325,7 @@ export default function App() {
         } as CSSProperties
       }
     >
-      <BackgroundManager background={settings.background} />
+      <BackgroundManager background={settings.background} reduceMotion={settings.appearance.reduceMotion} />
       <TopBar
         arrange={arrange}
         customizeOpen={customizeOpen}
@@ -331,24 +333,15 @@ export default function App() {
         onCustomize={toggleCustomize}
       />
 
-      <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={pointerWithin}>
-        <main ref={containerRef} className={styles.dashboard} data-grid={gridVisible ? 'on' : undefined}>
-          {widgetIds.map((id) => renderWidget(id))}
-        </main>
-      </DndContext>
+      {arrange ? <Suspense fallback={dashboard}><ArrangeCanvas onDragEnd={handleDragEnd}>{dashboard}</ArrangeCanvas></Suspense> : dashboard}
+      <footer className={styles.footer}><span>A little space. A clearer mind.</span><span>Made for your orbit <span aria-hidden="true">✧</span></span></footer>
 
       {arrange && (
         <p className={styles.arrangeHint}>
           Drag widgets by the grip. Snap {settings.layout.snapToGrid ? 'on' : 'off'}. <kbd>Esc</kbd> exits.
         </p>
       )}
-      {shortcutToast && !customizeOpen && !arrange && (
-        <div className={styles.shortcutToast} role="status">
-          Press <kbd>Ctrl</kbd> + <kbd>,</kbd> to customize
-        </div>
-      )}
-
-      <CustomizePanel
+      {customizeOpen && <Suspense fallback={<div className={styles.shortcutToast} role="status">Opening your space…</div>}><CustomizePanel
         open={customizeOpen}
         onClose={() => setCustomizeOpen(false)}
         settings={settings}
@@ -367,7 +360,7 @@ export default function App() {
         uploadError={uploadError}
         focusSettings={focusSettings}
         onFocusSettings={setFocusSettings}
-      />
+      /></Suspense>}
     </div>
   );
 }
