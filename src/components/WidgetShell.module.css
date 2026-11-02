@@ -117,7 +117,7 @@
 .shell[data-widget-id="clock"] .body, .shell[data-widget-id="search"] .body { padding: 0; }
 @media(max-width:950px) { .body { padding: 20px; } }
 
-.shell[data-widget-id='clock'] { width: min(600px, 92vw); }
+.shell[data-widget-id='clock'] { width: max-content; }
 .shell[data-widget-id='search'] { width: min(580px, 92vw); }
 .shell[data-widget-id='tasks'], .shell[data-widget-id='focus'], .shell[data-widget-id='links'] { width: min(350px, 92vw); }
 .shell[data-widget-id='reminders'] { width: min(720px, 92vw); }

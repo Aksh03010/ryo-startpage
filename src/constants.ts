@@ -174,7 +174,7 @@ export const DEFAULT_SETTINGS: Settings = {
     videoLoop: true,
     videoPaused: false,
   },
-  clock: { font: 'instrument', size: 126, use24Hour: false, showSeconds: false, showDate: true, showGreeting: true, animation: 'none' },
+  clock: { font: 'space', size: 150, use24Hour: false, showSeconds: false, showDate: true, showGreeting: true, animation: 'none' },
   tasks: { showCompleted: true },
   layout: { snapToGrid: true, showGrid: false },
   searchEngine: 'duckduckgo',
