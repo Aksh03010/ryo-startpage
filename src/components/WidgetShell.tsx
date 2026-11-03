@@ -3,7 +3,9 @@ import type { CSSProperties, ReactNode } from 'react';
 import styles from './WidgetShell.module.css';
 import type { BoxMode } from '../types';
 
-const DraggableFrame = lazy(() => import('./ArrangeCanvas').then((module) => ({ default: module.DraggableFrame })));
+const DraggableFrame = lazy(() =>
+  import('./DraggableFrame').then((module) => ({ default: module.DraggableFrame })),
+);
 
 type WidgetShellProps = {
   id: string;
@@ -23,7 +25,7 @@ type WidgetShellProps = {
   contentClassName?: string;
 };
 
-export default function WidgetShell({
+export function WidgetShell({
   id,
   label,
   position,
@@ -50,7 +52,12 @@ export default function WidgetShell({
     backdropFilter: glass ? `blur(${glassBlur}px)` : undefined,
     WebkitBackdropFilter: glass ? `blur(${glassBlur}px)` : undefined,
     boxShadow: shadow && boxMode !== 'none' ? '0 12px 40px -24px rgba(0, 0, 0, 0.65)' : undefined,
-    borderColor: editMode && boxMode === 'none' ? undefined : border && boxMode !== 'none' ? undefined : 'transparent',
+    borderColor:
+      editMode && boxMode === 'none'
+        ? undefined
+        : border && boxMode !== 'none'
+          ? undefined
+          : 'transparent',
     '--box-alpha': Math.max(0, Math.min(100, opacity)) / 100,
     zoom: Math.max(60, Math.min(140, size)) / 100,
   } as CSSProperties;
@@ -65,7 +72,13 @@ export default function WidgetShell({
     style: shellStyle,
   };
   const body = <div className={`${styles.body} ${contentClassName}`}>{children}</div>;
-  if (editMode) return <Suspense fallback={<section {...sectionProps}>{body}</section>}><DraggableFrame {...sectionProps} widgetId={id} label={label}>{body}</DraggableFrame></Suspense>;
+  if (editMode)
+    return (
+      <Suspense fallback={<section {...sectionProps}>{body}</section>}>
+        <DraggableFrame {...sectionProps} widgetId={id} label={label}>
+          {body}
+        </DraggableFrame>
+      </Suspense>
+    );
   return <section {...sectionProps}>{body}</section>;
-
 }

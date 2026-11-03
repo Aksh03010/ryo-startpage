@@ -53,7 +53,7 @@ function repeatLabel(days: TaskRepeatDay[]) {
     .join(' · ');
 }
 
-export default function RemindersWidget({ reminders, onRemindersChange }: RemindersWidgetProps) {
+export function RemindersWidget({ reminders, onRemindersChange }: RemindersWidgetProps) {
   const now = useNow(30_000);
   const [manageOpen, setManageOpen] = useState(false);
   const [draft, setDraft] = useState('');
@@ -87,7 +87,11 @@ export default function RemindersWidget({ reminders, onRemindersChange }: Remind
   );
 
   const toggleDraftDay = (day: TaskRepeatDay) => {
-    setDraftRepeat((prev) => (prev.includes(day) ? prev.filter((value) => value !== day) : [...prev, day].sort((a, b) => a - b)));
+    setDraftRepeat((prev) =>
+      prev.includes(day)
+        ? prev.filter((value) => value !== day)
+        : [...prev, day].sort((a, b) => a - b),
+    );
   };
 
   const addReminder = () => {
@@ -161,7 +165,12 @@ export default function RemindersWidget({ reminders, onRemindersChange }: Remind
                 }
               }}
             />
-            <button type="button" className={styles.add} aria-label="Add reminder" onClick={addReminder}>
+            <button
+              type="button"
+              className={styles.add}
+              aria-label="Add reminder"
+              onClick={addReminder}
+            >
               <Plus size={15} />
             </button>
           </div>

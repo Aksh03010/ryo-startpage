@@ -4,7 +4,7 @@ import { SEARCH_ENGINES } from '../constants';
 import { buildSearchUrl } from '../lib/search';
 import styles from './SearchWidget.module.css';
 
-export default function SearchWidget({
+export function SearchWidget({
   engine,
   onEngineChange,
 }: {
@@ -16,7 +16,16 @@ export default function SearchWidget({
   useEffect(() => {
     const focusSearch = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
-      if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) || target.isContentEditable || document.querySelector('[role="dialog"]')) return;
+      if (
+        event.key !== '/' ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.altKey ||
+        /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) ||
+        target.isContentEditable ||
+        document.querySelector('[role="dialog"]')
+      )
+        return;
       event.preventDefault();
       inputRef.current?.focus();
     };
@@ -56,7 +65,9 @@ export default function SearchWidget({
         onChange={(event) => setTerm(event.target.value)}
         aria-label="Search query"
       />
-      <kbd className={styles.shortcut} aria-hidden="true">/</kbd>
+      <kbd className={styles.shortcut} aria-hidden="true">
+        /
+      </kbd>
       <select
         className={styles.engine}
         value={engine}

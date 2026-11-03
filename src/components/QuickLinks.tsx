@@ -25,7 +25,7 @@ function QuickLinkIcon({ link }: { link: QuickLink }) {
   );
 }
 
-export default function QuickLinks({
+export function QuickLinks({
   links,
   onLinksChange,
 }: {
@@ -48,7 +48,9 @@ export default function QuickLinks({
 
   return (
     <div className={styles.wrap}>
-      <p className={styles.title}><ArrowUpRight size={15} /> Your constellation<span>{links.length} links</span></p>
+      <p className={styles.title}>
+        <ArrowUpRight size={15} /> Your constellation<span>{links.length} links</span>
+      </p>
       <ul className={styles.grid}>
         {links.map((link) => (
           <li key={link.id} className={styles.link}>
@@ -61,9 +63,7 @@ export default function QuickLinks({
               className={styles.remove}
               aria-label={`Remove ${link.label}`}
               title="Remove link"
-              onClick={() =>
-                onLinksChange((prev) => prev.filter((item) => item.id !== link.id))
-              }
+              onClick={() => onLinksChange((prev) => prev.filter((item) => item.id !== link.id))}
             >
               <X size={12} strokeWidth={2.6} />
             </button>

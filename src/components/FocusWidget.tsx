@@ -6,7 +6,11 @@ import type { FocusSnapshot } from '../lib/focus';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import styles from './FocusWidget.module.css';
 
-export default function FocusWidget({ settingsKey, focusMinutes, breakMinutes }: {
+export function FocusWidget({
+  settingsKey,
+  focusMinutes,
+  breakMinutes,
+}: {
   settingsKey: string;
   focusMinutes: number;
   breakMinutes: number;
@@ -37,10 +41,21 @@ export default function FocusWidget({ settingsKey, focusMinutes, breakMinutes }:
     setSnapshot((previous) => ({ ...previous, duration, remaining: duration, endsAt: null }));
   }, [duration, snapshot.paused, snapshot.duration, setSnapshot]);
 
-  const progress = snapshot.duration > 0 ? Math.min(1, Math.max(0, remaining / snapshot.duration)) : 0;
+  const progress =
+    snapshot.duration > 0 ? Math.min(1, Math.max(0, remaining / snapshot.duration)) : 0;
   const display = `${String(Math.floor(remaining / 60)).padStart(2, '0')}:${String(remaining % 60).padStart(2, '0')}`;
-  const toggle = () => setSnapshot((previous) => previous.paused ? startFocus(previous, Date.now()) : pauseFocus(previous, Date.now()));
-  const reset = () => setSnapshot((previous) => ({ ...previous, duration, paused: true, remaining: duration, endsAt: null }));
+  const toggle = () =>
+    setSnapshot((previous) =>
+      previous.paused ? startFocus(previous, Date.now()) : pauseFocus(previous, Date.now()),
+    );
+  const reset = () =>
+    setSnapshot((previous) => ({
+      ...previous,
+      duration,
+      paused: true,
+      remaining: duration,
+      endsAt: null,
+    }));
   const changePhase = (next: 'focus' | 'break') => {
     const seconds = (next === 'focus' ? focusMinutes : breakMinutes) * 60;
     setSnapshot({ duration: seconds, remaining: seconds, paused: true, endsAt: null, phase: next });
@@ -52,12 +67,36 @@ export default function FocusWidget({ settingsKey, focusMinutes, breakMinutes }:
         <p className={styles.title}>
           <Timer size={15} strokeWidth={2} /> A little focus
         </p>
-        <div className={styles.tabs} role="group" aria-label="Timer mode"><button type="button" aria-pressed={phase === 'focus'} onClick={() => changePhase('focus')}>Focus</button><button type="button" aria-pressed={phase === 'break'} onClick={() => changePhase('break')}>Rest</button></div>
+        <div className={styles.tabs} role="group" aria-label="Timer mode">
+          <button
+            type="button"
+            aria-pressed={phase === 'focus'}
+            onClick={() => changePhase('focus')}
+          >
+            Focus
+          </button>
+          <button
+            type="button"
+            aria-pressed={phase === 'break'}
+            onClick={() => changePhase('break')}
+          >
+            Rest
+          </button>
+        </div>
       </div>
 
       <div className={styles.dialWrap}>
         <svg viewBox="0 0 72 72" aria-hidden className={styles.dial}>
-          <circle className={styles.track} cx="36" cy="36" r="31" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="4" strokeLinecap="round" />
+          <circle
+            className={styles.track}
+            cx="36"
+            cy="36"
+            r="31"
+            fill="none"
+            stroke="rgba(255,255,255,0.14)"
+            strokeWidth="4"
+            strokeLinecap="round"
+          />
           <circle
             className={styles.progress}
             cx="36"
@@ -72,7 +111,16 @@ export default function FocusWidget({ settingsKey, focusMinutes, breakMinutes }:
             transform="rotate(-90 36 36)"
           />
         </svg>
-        <span className={styles.time}>{display}<small>{remaining === 0 ? 'A moment well spent.' : phase === 'focus' ? 'ONE THING AT A TIME' : 'TAKE A BREATH'}</small></span>
+        <span className={styles.time}>
+          {display}
+          <small>
+            {remaining === 0
+              ? 'A moment well spent.'
+              : phase === 'focus'
+                ? 'ONE THING AT A TIME'
+                : 'TAKE A BREATH'}
+          </small>
+        </span>
       </div>
 
       <div className={styles.controls}>
@@ -82,9 +130,21 @@ export default function FocusWidget({ settingsKey, focusMinutes, breakMinutes }:
           aria-label={snapshot.paused ? 'Start focus' : 'Pause focus'}
           onClick={toggle}
         >
-          {snapshot.paused ? <Play size={12} fill="currentColor" /> : <Pause size={12} />}<span>{snapshot.paused ? remaining === 0 ? 'Start again' : 'Begin session' : 'Pause session'}</span>
+          {snapshot.paused ? <Play size={12} fill="currentColor" /> : <Pause size={12} />}
+          <span>
+            {snapshot.paused
+              ? remaining === 0
+                ? 'Start again'
+                : 'Begin session'
+              : 'Pause session'}
+          </span>
         </button>
-        <button type="button" className={styles.icon} onClick={reset} aria-label="Reset focus timer">
+        <button
+          type="button"
+          className={styles.icon}
+          onClick={reset}
+          aria-label="Reset focus timer"
+        >
           <RotateCcw size={14} />
         </button>
       </div>

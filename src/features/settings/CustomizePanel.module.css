@@ -51,7 +51,9 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  font: 600 14px/1.2 'Manrope', system-ui;
+  font:
+    600 14px/1.2 'Manrope',
+    system-ui;
   color: #ffffff;
 }
 
@@ -61,7 +63,9 @@
 
 .tagline {
   margin: 4px 0 0;
-  font: 400 11px/1.4 'Manrope', system-ui;
+  font:
+    400 11px/1.4 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.5);
 }
 
@@ -74,7 +78,9 @@
   border: none;
   background: rgba(255, 255, 255, 0.06);
   color: rgba(255, 255, 255, 0.7);
-  transition: background 160ms ease, color 160ms ease;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
 }
 
 .close:hover {
@@ -98,9 +104,14 @@
   border-radius: 10px;
   border: 1px solid transparent;
   background: transparent;
-  font: 600 11px/1 'Manrope', system-ui;
+  font:
+    600 11px/1 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.55);
-  transition: color 170ms ease, background 170ms ease, border-color 170ms ease;
+  transition:
+    color 170ms ease,
+    background 170ms ease,
+    border-color 170ms ease;
 }
 
 .tabButton:hover {
@@ -165,7 +176,9 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.86);
-  transition: border-color 190ms ease, background 190ms ease;
+  transition:
+    border-color 190ms ease,
+    background 190ms ease;
 }
 
 .presetCard:hover {
@@ -195,14 +208,18 @@
 }
 
 .presetMeta span {
-  font: 600 11px/1.2 'Manrope', system-ui;
+  font:
+    600 11px/1.2 'Manrope',
+    system-ui;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .presetMeta small {
-  font: 400 9.5px/1 'Manrope', system-ui;
+  font:
+    400 9.5px/1 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.4);
 }
 
@@ -223,9 +240,14 @@
   border-radius: 11px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.06);
-  font: 600 11px/1 'Manrope', system-ui;
+  font:
+    600 11px/1 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.82);
-  transition: background 170ms ease, border-color 170ms ease, color 170ms ease;
+  transition:
+    background 170ms ease,
+    border-color 170ms ease,
+    color 170ms ease;
 }
 
 .actionButton:hover {
@@ -239,7 +261,10 @@
 }
 
 .chip {
-  font: 400 10px/1 'JetBrains Mono', ui-monospace, monospace;
+  font:
+    400 10px/1 'JetBrains Mono',
+    ui-monospace,
+    monospace;
   padding: 5px 8px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.06);
@@ -263,7 +288,9 @@
 }
 
 .fieldLabel {
-  font: 500 12px/1.3 'Manrope', system-ui;
+  font:
+    500 12px/1.3 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.6);
   display: block;
   margin-bottom: 5px;
@@ -281,7 +308,9 @@
   border-radius: 10px;
   border: 1.4px solid rgba(255, 255, 255, 0.12);
   background: rgba(10, 13, 24, 0.7);
-  font: 500 12px/1.4 'Manrope', system-ui;
+  font:
+    500 12px/1.4 'Manrope',
+    system-ui;
   color: #ffffff;
 }
 
@@ -298,12 +327,16 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font: 400 11px/1.4 'Manrope', system-ui;
+  font:
+    400 11px/1.4 'Manrope',
+    system-ui;
   color: #ff8f8f;
 }
 
 .help {
-  font: 400 12px/1.55 'Manrope', system-ui;
+  font:
+    400 12px/1.55 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.64);
 }
 
@@ -313,7 +346,10 @@
   border-radius: 5px;
   border: 1px solid rgba(255, 255, 255, 0.16);
   background: rgba(255, 255, 255, 0.07);
-  font: 500 9.5px/1 'JetBrains Mono', ui-monospace, monospace;
+  font:
+    500 9.5px/1 'JetBrains Mono',
+    ui-monospace,
+    monospace;
   color: rgba(255, 255, 255, 0.8);
 }
 
@@ -387,9 +423,14 @@
   border-radius: 10px;
   border: 1px solid transparent;
   background: rgba(255, 255, 255, 0.04);
-  font: 500 12px/1 'Manrope', system-ui;
+  font:
+    500 12px/1 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.72);
-  transition: color 170ms ease, border-color 170ms ease, background 170ms ease;
+  transition:
+    color 170ms ease,
+    border-color 170ms ease,
+    background 170ms ease;
 }
 
 .widgetRow:hover {
@@ -423,7 +464,9 @@
   border-radius: 11px;
   border: 1px solid rgba(255, 79, 79, 0.4);
   background: rgba(255, 79, 79, 0.1);
-  font: 600 11.5px/1 'Manrope', system-ui;
+  font:
+    600 11.5px/1 'Manrope',
+    system-ui;
   color: #ff8a8a;
   transition: background 170ms ease;
 }
@@ -439,7 +482,9 @@
   border: none;
   background: transparent;
   padding: 0;
-  font: 600 10.5px/1 'Manrope', system-ui;
+  font:
+    600 10.5px/1 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.52);
   cursor: pointer;
 }
@@ -449,7 +494,10 @@
 }
 
 .activeIds {
-  font: 400 10.5px/1 "JetBrains Mono", ui-monospace, monospace;
+  font:
+    400 10.5px/1 'JetBrains Mono',
+    ui-monospace,
+    monospace;
   color: rgba(255, 255, 255, 0.35);
 }
 
@@ -487,7 +535,9 @@
 }
 
 .footerNote {
-  font: 400 11px/1.5 'Manrope', system-ui;
+  font:
+    400 11px/1.5 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.52);
 }
 
@@ -513,13 +563,17 @@
 
 .confirmTitle {
   margin: 0 0 10px;
-  font: 650 16px/1.3 'Manrope', system-ui;
+  font:
+    650 16px/1.3 'Manrope',
+    system-ui;
   color: #ffffff;
 }
 
 .confirmDescription {
   margin: 0;
-  font: 400 12px/1.6 'Manrope', system-ui;
+  font:
+    400 12px/1.6 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.68);
 }
 
@@ -552,12 +606,50 @@
   }
 }
 
-.spacePresets { margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid #bbd0b51c; }
-.spacePresetButtons { display: flex; gap: 7px; margin-bottom: 10px; }
-.spacePresetButtons button { flex: 1; padding: 10px 6px; border: 1px solid #bad0b426; border-radius: 99px; background: #b3d1a80c; color: #ccdfc6; font-size: 11px; }
-.spacePresetButtons button:hover { background: #b3d1a81f; border-color: #bad0b45c; }
-.engineHelp { border: 1px solid #b5d0ae22; border-radius: 15px; padding: 12px 14px; font-size: 11px; line-height: 1.7; color: #9db397; }
-.engineHelp summary { cursor: pointer; color: #ceddc8; }
-.engineHelp p { margin-top: 9px; }
-.engineHelp a { display: inline-block; color: #c0e3cb; margin-top: 9px; }
-.panel { background: #101813; backdrop-filter: none; }
+.spacePresets {
+  margin-bottom: 22px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #bbd0b51c;
+}
+.spacePresetButtons {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+.spacePresetButtons button {
+  flex: 1;
+  padding: 10px 6px;
+  border: 1px solid #bad0b426;
+  border-radius: 99px;
+  background: #b3d1a80c;
+  color: #ccdfc6;
+  font-size: 11px;
+}
+.spacePresetButtons button:hover {
+  background: #b3d1a81f;
+  border-color: #bad0b45c;
+}
+.engineHelp {
+  border: 1px solid #b5d0ae22;
+  border-radius: 15px;
+  padding: 12px 14px;
+  font-size: 11px;
+  line-height: 1.7;
+  color: #9db397;
+}
+.engineHelp summary {
+  cursor: pointer;
+  color: #ceddc8;
+}
+.engineHelp p {
+  margin-top: 9px;
+}
+.engineHelp a {
+  display: inline-block;
+  color: #c0e3cb;
+  margin-top: 9px;
+}
+.panel {
+  background: #101813;
+  backdrop-filter: none;
+}

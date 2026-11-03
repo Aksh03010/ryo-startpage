@@ -1,24 +1,63 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { DragEndEvent } from '@dnd-kit/core';
 import type { CSSProperties } from 'react';
-import BackgroundManager from './components/BackgroundManager';
-import ClockWidget from './components/ClockWidget';
-import SearchWidget from './components/SearchWidget';
-import TopBar from './components/TopBar';
-import WidgetShell from './components/WidgetShell';
-import { ACCENTS, CLOCK_FONTS, DEFAULT_CUSTOM_ACCENT, DEFAULT_FOCUS, DEFAULT_LINKS, DEFAULT_POSITIONS, DEFAULT_SETTINGS, GRID_STEP, WIDGET_IDS, WIDGET_TITLES, hexToRgbTriplet } from './constants';
+import { BackgroundManager } from './components/BackgroundManager';
+import { ClockWidget } from './components/ClockWidget';
+import { SearchWidget } from './components/SearchWidget';
+import { TopBar } from './components/TopBar';
+import { WidgetShell } from './components/WidgetShell';
+import {
+  ACCENTS,
+  CLOCK_FONTS,
+  DEFAULT_CUSTOM_ACCENT,
+  DEFAULT_FOCUS,
+  DEFAULT_LINKS,
+  DEFAULT_POSITIONS,
+  DEFAULT_SETTINGS,
+  GRID_STEP,
+  WIDGET_IDS,
+  WIDGET_TITLES,
+  hexToRgbTriplet,
+} from './constants';
 import { useWallpaperEngine } from './hooks/useWallpaperEngine';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import styles from './App.module.css';
-import type { BoxMode, FocusSettings, LayoutState, QuickLink, Reminder, Settings, Task, WidgetId } from './types';
+import type {
+  BoxMode,
+  FocusSettings,
+  LayoutState,
+  QuickLink,
+  Reminder,
+  Settings,
+  Task,
+  WidgetId,
+} from './types';
 
-const FocusWidget = lazy(() => import('./components/FocusWidget'));
-const QuickLinks = lazy(() => import('./components/QuickLinks'));
-const RemindersWidget = lazy(() => import('./components/RemindersWidget'));
-const TaskManager = lazy(() => import('./components/TaskManager'));
-const CustomizePanel = lazy(() => import('./components/CustomizePanel'));
-const ArrangeCanvas = lazy(() => import('./components/ArrangeCanvas'));
-const SystemMonitorWidget = lazy(() => import('./components/SystemMonitorWidget'));
+const FocusWidget = lazy(() =>
+  import('./components/FocusWidget').then((module) => ({ default: module.FocusWidget })),
+);
+const QuickLinks = lazy(() =>
+  import('./components/QuickLinks').then((module) => ({ default: module.QuickLinks })),
+);
+const RemindersWidget = lazy(() =>
+  import('./components/RemindersWidget').then((module) => ({ default: module.RemindersWidget })),
+);
+const TaskManager = lazy(() =>
+  import('./components/TaskManager').then((module) => ({ default: module.TaskManager })),
+);
+const CustomizePanel = lazy(() =>
+  import('./features/settings/CustomizePanel').then((module) => ({
+    default: module.CustomizePanel,
+  })),
+);
+const ArrangeCanvas = lazy(() =>
+  import('./components/ArrangeCanvas').then((module) => ({ default: module.ArrangeCanvas })),
+);
+const SystemMonitorWidget = lazy(() =>
+  import('./components/SystemMonitorWidget').then((module) => ({
+    default: module.SystemMonitorWidget,
+  })),
+);
 
 const TASK_KEY = 'ryo.tasks.v2';
 const LAYOUT_KEY = 'ryo.layout.v2';
@@ -28,14 +67,17 @@ const FOCUS_KEY = 'ryo.focus.v2';
 const FOCUS_SETTINGS_KEY = 'ryo.focus.settings';
 const REMINDER_KEY = 'ryo.reminders.v2';
 
-export default function App() {
+export function App() {
   const [tasks, setTasks] = useLocalStorage<Task[]>(TASK_KEY, []);
   const [layout, setLayout] = useLocalStorage<LayoutState>(LAYOUT_KEY, DEFAULT_POSITIONS);
   const [links, setLinks] = useLocalStorage<QuickLink[]>(LINKS_KEY, DEFAULT_LINKS);
   const [savedSettings, setSettings] = useLocalStorage<Settings>(SETTINGS_KEY, DEFAULT_SETTINGS);
   const settings = useWallpaperEngine(savedSettings);
   const [reminders, setReminders] = useLocalStorage<Reminder[]>(REMINDER_KEY, []);
-  const [focusSettings, setFocusSettings] = useLocalStorage<FocusSettings>(FOCUS_SETTINGS_KEY, DEFAULT_FOCUS);
+  const [focusSettings, setFocusSettings] = useLocalStorage<FocusSettings>(
+    FOCUS_SETTINGS_KEY,
+    DEFAULT_FOCUS,
+  );
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [arrange, setArrange] = useState(false);
@@ -60,7 +102,10 @@ export default function App() {
       containerRef.current.querySelectorAll<HTMLElement>('[data-widget-id]').forEach((node) => {
         const id = node.dataset.widgetId as WidgetId;
         const rect = node.getBoundingClientRect();
-        positions[id] = { x: rect.left / window.innerWidth * 100, y: (rect.top - container.top) / Math.max(850, window.innerHeight - 100) * 100 };
+        positions[id] = {
+          x: (rect.left / window.innerWidth) * 100,
+          y: ((rect.top - container.top) / Math.max(850, window.innerHeight - 100)) * 100,
+        };
       });
       setLayout(positions);
     }
@@ -119,8 +164,7 @@ export default function App() {
         ...draft,
         appearance: {
           ...appearanceSettings,
-          boxMode:
-            legacyAppearance.boxMode ?? (glassEnabled === false ? 'solid' : 'glass'),
+          boxMode: legacyAppearance.boxMode ?? (glassEnabled === false ? 'solid' : 'glass'),
           widgets,
         },
       };
@@ -137,7 +181,8 @@ export default function App() {
         current.gpu1 === monitorMetrics.gpu1 &&
         current.gpu2 === monitorMetrics.gpu2 &&
         current.ram === monitorMetrics.ram
-      ) return draft;
+      )
+        return draft;
       return { ...draft, monitorMetrics };
     });
   }, [setSettings]);
@@ -147,7 +192,18 @@ export default function App() {
       setUploading(true);
       setUploadError(null);
       try {
-        if (!['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif', 'video/mp4', 'video/webm', 'video/ogg'].includes(file.type)) {
+        if (
+          ![
+            'image/png',
+            'image/jpeg',
+            'image/webp',
+            'image/gif',
+            'image/avif',
+            'video/mp4',
+            'video/webm',
+            'video/ogg',
+          ].includes(file.type)
+        ) {
           setUploadError('Use PNG, JPG, WebP, GIF, AVIF, MP4, WebM or OGV files.');
           return;
         }
@@ -159,7 +215,9 @@ export default function App() {
         const record = await saveWallpaper(file);
         const previous = settings.background.wallpaper;
         if (previous.kind === 'upload' && previous.mediaId && previous.mediaId !== record.id) {
-          void deleteWallpaper(previous.mediaId).catch((error) => console.error('Unable to remove the previous wallpaper', error));
+          void deleteWallpaper(previous.mediaId).catch((error) =>
+            console.error('Unable to remove the previous wallpaper', error),
+          );
         }
         setSettings((draft) => ({
           ...draft,
@@ -229,7 +287,9 @@ export default function App() {
       const widget = settings.appearance.widgets[id];
       const position = layout[id] ?? DEFAULT_POSITIONS[id];
       const widgetStyle = widget.style ?? {};
-      const globalBoxMode = settings.appearance.boxMode ?? (settings.appearance.glassEnabled === false ? 'solid' : 'glass');
+      const globalBoxMode =
+        settings.appearance.boxMode ??
+        (settings.appearance.glassEnabled === false ? 'solid' : 'glass');
       const boxMode = widgetStyle.boxMode ?? globalBoxMode;
       const widgetSize = widget.size ?? 100;
       const opacity = widgetStyle.opacity ?? settings.appearance.glassOpacity;
@@ -252,11 +312,19 @@ export default function App() {
             return (
               <SearchWidget
                 engine={settings.searchEngine}
-                onEngineChange={(engine) => setSettings((draft) => ({ ...draft, searchEngine: engine }))}
+                onEngineChange={(engine) =>
+                  setSettings((draft) => ({ ...draft, searchEngine: engine }))
+                }
               />
             );
           case 'system':
-            return <Suspense fallback={<p>Connecting monitor…</p>}><SystemMonitorWidget metrics={settings.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics} /></Suspense>;
+            return (
+              <Suspense fallback={<p>Connecting monitor…</p>}>
+                <SystemMonitorWidget
+                  metrics={settings.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics}
+                />
+              </Suspense>
+            );
           default:
             return (
               <FocusWidget
@@ -285,7 +353,13 @@ export default function App() {
           glassBlur={glassBlur}
           size={widgetSize}
         >
-          <Suspense fallback={<div className={styles.widgetLoading} aria-label={`Loading ${WIDGET_TITLES[id]}`} />}>{content}</Suspense>
+          <Suspense
+            fallback={
+              <div className={styles.widgetLoading} aria-label={`Loading ${WIDGET_TITLES[id]}`} />
+            }
+          >
+            {content}
+          </Suspense>
         </WidgetShell>
       );
     },
@@ -310,8 +384,21 @@ export default function App() {
   );
 
   const gridVisible = settings.layout.showGrid && arrange;
-  const isDefaultLayout = WIDGET_IDS.every((id) => !layout[id] || (layout[id].x === DEFAULT_POSITIONS[id].x && layout[id].y === DEFAULT_POSITIONS[id].y));
-  const dashboard = <main ref={containerRef} className={styles.dashboard} data-layout={isDefaultLayout && !arrange ? 'flow' : 'free'} data-grid={gridVisible ? 'on' : undefined}>{widgetIds.map((id) => renderWidget(id))}</main>;
+  const isDefaultLayout = WIDGET_IDS.every(
+    (id) =>
+      !layout[id] ||
+      (layout[id].x === DEFAULT_POSITIONS[id].x && layout[id].y === DEFAULT_POSITIONS[id].y),
+  );
+  const dashboard = (
+    <main
+      ref={containerRef}
+      className={styles.dashboard}
+      data-layout={isDefaultLayout && !arrange ? 'flow' : 'free'}
+      data-grid={gridVisible ? 'on' : undefined}
+    >
+      {widgetIds.map((id) => renderWidget(id))}
+    </main>
+  );
 
   return (
     <div
@@ -325,7 +412,10 @@ export default function App() {
         } as CSSProperties
       }
     >
-      <BackgroundManager background={settings.background} reduceMotion={settings.appearance.reduceMotion} />
+      <BackgroundManager
+        background={settings.background}
+        reduceMotion={settings.appearance.reduceMotion}
+      />
       <TopBar
         arrange={arrange}
         customizeOpen={customizeOpen}
@@ -333,34 +423,56 @@ export default function App() {
         onCustomize={toggleCustomize}
       />
 
-      {arrange ? <Suspense fallback={dashboard}><ArrangeCanvas onDragEnd={handleDragEnd}>{dashboard}</ArrangeCanvas></Suspense> : dashboard}
-      <footer className={styles.footer}><span>A little space. A clearer mind.</span><span>Made for your orbit <span aria-hidden="true">✧</span></span></footer>
+      {arrange ? (
+        <Suspense fallback={dashboard}>
+          <ArrangeCanvas onDragEnd={handleDragEnd}>{dashboard}</ArrangeCanvas>
+        </Suspense>
+      ) : (
+        dashboard
+      )}
+      <footer className={styles.footer}>
+        <span>A little space. A clearer mind.</span>
+        <span>
+          Made for your orbit <span aria-hidden="true">✧</span>
+        </span>
+      </footer>
 
       {arrange && (
         <p className={styles.arrangeHint}>
-          Drag widgets by the grip. Snap {settings.layout.snapToGrid ? 'on' : 'off'}. <kbd>Esc</kbd> exits.
+          Drag widgets by the grip. Snap {settings.layout.snapToGrid ? 'on' : 'off'}. <kbd>Esc</kbd>{' '}
+          exits.
         </p>
       )}
-      {customizeOpen && <Suspense fallback={<div className={styles.shortcutToast} role="status">Opening your space…</div>}><CustomizePanel
-        open={customizeOpen}
-        onClose={() => setCustomizeOpen(false)}
-        settings={settings}
-        onSettings={setSettings}
-        arrange={arrange}
-        onArrange={toggleArrange}
-        onResetLayout={() => setLayout(DEFAULT_POSITIONS)}
-        onResetPreferences={() => {
-          setSettings(DEFAULT_SETTINGS);
-          setLayout(DEFAULT_POSITIONS);
-          setLinks(DEFAULT_LINKS);
-          setFocusSettings(DEFAULT_FOCUS);
-        }}
-        onUpload={(file) => void handleUpload(file)}
-        uploading={uploading}
-        uploadError={uploadError}
-        focusSettings={focusSettings}
-        onFocusSettings={setFocusSettings}
-      /></Suspense>}
+      {customizeOpen && (
+        <Suspense
+          fallback={
+            <div className={styles.shortcutToast} role="status">
+              Opening your space…
+            </div>
+          }
+        >
+          <CustomizePanel
+            open={customizeOpen}
+            onClose={() => setCustomizeOpen(false)}
+            settings={settings}
+            onSettings={setSettings}
+            arrange={arrange}
+            onArrange={toggleArrange}
+            onResetLayout={() => setLayout(DEFAULT_POSITIONS)}
+            onResetPreferences={() => {
+              setSettings(DEFAULT_SETTINGS);
+              setLayout(DEFAULT_POSITIONS);
+              setLinks(DEFAULT_LINKS);
+              setFocusSettings(DEFAULT_FOCUS);
+            }}
+            onUpload={(file) => void handleUpload(file)}
+            uploading={uploading}
+            uploadError={uploadError}
+            focusSettings={focusSettings}
+            onFocusSettings={setFocusSettings}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

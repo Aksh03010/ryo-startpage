@@ -25,7 +25,7 @@ function updateOrRemove(tasks: Task[], id: string, updater: (task: Task) => Task
   return next;
 }
 
-export default function TaskManager({ tasks, settings, onTasksChange }: TaskManagerProps) {
+export function TaskManager({ tasks, settings, onTasksChange }: TaskManagerProps) {
   const now = useNow(60_000);
   const today = dateKey(now);
   const [draft, setDraft] = useState('');
@@ -74,8 +74,12 @@ export default function TaskManager({ tasks, settings, onTasksChange }: TaskMana
   return (
     <div className={styles.wrap}>
       <header className={styles.header}>
-        <p className={styles.kicker}><ListTodo size={15} /> Today's intentions</p>
-        <span className={styles.count}>{remaining}/{totalToday}</span>
+        <p className={styles.kicker}>
+          <ListTodo size={15} /> Today's intentions
+        </p>
+        <span className={styles.count}>
+          {remaining}/{totalToday}
+        </span>
       </header>
 
       <ul className={styles.list}>
@@ -93,19 +97,15 @@ export default function TaskManager({ tasks, settings, onTasksChange }: TaskMana
               aria-label={done ? `Mark "${task.text}" as pending` : `Mark "${task.text}" as done`}
               onClick={() =>
                 onTasksChange((prev) =>
-                  updateOrRemove(
-                    prev,
-                    task.id,
-                    (current) => {
-                      if (current.repeatDays.length) {
-                        const completions = current.completions.includes(today)
-                          ? current.completions.filter((date) => date !== today)
-                          : [...current.completions, today];
-                        return { ...current, completions };
-                      }
-                      return { ...current, done: !current.done };
-                    },
-                  ),
+                  updateOrRemove(prev, task.id, (current) => {
+                    if (current.repeatDays.length) {
+                      const completions = current.completions.includes(today)
+                        ? current.completions.filter((date) => date !== today)
+                        : [...current.completions, today];
+                      return { ...current, completions };
+                    }
+                    return { ...current, done: !current.done };
+                  }),
                 )
               }
             >
@@ -113,8 +113,12 @@ export default function TaskManager({ tasks, settings, onTasksChange }: TaskMana
             </button>
             <span className={styles.text}>{task.text}</span>
             {task.repeatDays.length > 0 && (
-              <span className={styles.repeats} title={`Repeats ${task.repeatDays.map(day => REPEAT_DAY_LABELS[day]).join(', ')}`}>
-                <Repeat size={11} strokeWidth={2} /> {task.repeatDays.map(day => REPEAT_DAY_LABELS[day]).join(' · ')}
+              <span
+                className={styles.repeats}
+                title={`Repeats ${task.repeatDays.map((day) => REPEAT_DAY_LABELS[day]).join(', ')}`}
+              >
+                <Repeat size={11} strokeWidth={2} />{' '}
+                {task.repeatDays.map((day) => REPEAT_DAY_LABELS[day]).join(' · ')}
               </span>
             )}
             <button
@@ -130,8 +134,12 @@ export default function TaskManager({ tasks, settings, onTasksChange }: TaskMana
         ))}
         {visible.length === 0 && (
           <li className={styles.empty} data-empty="true">
-            <span className={styles.emptyStar} aria-hidden="true">✧</span>
-            <span>A little room to begin.<small>What matters to you today?</small></span>
+            <span className={styles.emptyStar} aria-hidden="true">
+              ✧
+            </span>
+            <span>
+              A little room to begin.<small>What matters to you today?</small>
+            </span>
           </li>
         )}
       </ul>
@@ -150,9 +158,7 @@ export default function TaskManager({ tasks, settings, onTasksChange }: TaskMana
                   aria-pressed={active}
                   onClick={() =>
                     setDraftRepeat((prev) =>
-                      prev.includes(day)
-                        ? prev.filter((value) => value !== day)
-                        : [...prev, day],
+                      prev.includes(day) ? prev.filter((value) => value !== day) : [...prev, day],
                     )
                   }
                 >
@@ -160,14 +166,22 @@ export default function TaskManager({ tasks, settings, onTasksChange }: TaskMana
                 </button>
               );
             })}
-            {draftRepeat.length === 0 && (
-              <span className={styles.hint}>One-time task</span>
-            )}
+            {draftRepeat.length === 0 && <span className={styles.hint}>One-time task</span>}
           </div>
         )}
         <div className={styles.addRow}>
-          <button type="button" className={styles.repeatsButton} aria-label="Choose task repeat days" aria-expanded={repeatOpen} onClick={() => setRepeatOpen((o) => !o)}>
-            <Repeat size={15} strokeWidth={2.2} data-toggled={draftRepeat.length ? true : undefined} />
+          <button
+            type="button"
+            className={styles.repeatsButton}
+            aria-label="Choose task repeat days"
+            aria-expanded={repeatOpen}
+            onClick={() => setRepeatOpen((o) => !o)}
+          >
+            <Repeat
+              size={15}
+              strokeWidth={2.2}
+              data-toggled={draftRepeat.length ? true : undefined}
+            />
           </button>
           <input
             type="text"

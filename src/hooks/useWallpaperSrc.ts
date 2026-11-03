@@ -9,13 +9,16 @@ export function useWallpaperSrc(wallpaper: WallpaperState) {
     const id = wallpaper.mediaId;
     let cancelled = false;
     let objectUrl: string | null = null;
-    void import('../lib/mediaStore').then(({ getWallpaper }) => getWallpaper(id)).then((record) => {
-      if (cancelled) return;
-      if (record) objectUrl = URL.createObjectURL(record.blob);
-      setUpload({ id, src: objectUrl });
-    }).catch(() => {
-      if (!cancelled) setUpload({ id, src: null });
-    });
+    void import('../lib/mediaStore')
+      .then(({ getWallpaper }) => getWallpaper(id))
+      .then((record) => {
+        if (cancelled) return;
+        if (record) objectUrl = URL.createObjectURL(record.blob);
+        setUpload({ id, src: objectUrl });
+      })
+      .catch(() => {
+        if (!cancelled) setUpload({ id, src: null });
+      });
     return () => {
       cancelled = true;
       if (objectUrl) URL.revokeObjectURL(objectUrl);

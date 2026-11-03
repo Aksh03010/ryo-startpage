@@ -50,5 +50,3 @@ export function useLocalStorage<T>(key: string, initial: T | (() => T)) {
 
   return [value, set, remove] as const;
 }
-
-export default useLocalStorage;

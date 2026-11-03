@@ -5,13 +5,7 @@ import { CLOCK_FONTS } from '../constants';
 import { useNow } from '../hooks/useNow';
 import styles from './ClockWidget.module.css';
 
-export default function ClockWidget({
-  clock,
-  accent,
-}: {
-  clock: ClockSettings;
-  accent: string;
-}) {
+export function ClockWidget({ clock, accent }: { clock: ClockSettings; accent: string }) {
   const now = useNow(clock.showSeconds ? 1000 : 60_000);
   const parts = formatClockParts(now, clock.use24Hour, clock.showSeconds);
   const font = CLOCK_FONTS.find((f) => f.id === clock.font) ?? CLOCK_FONTS[0];

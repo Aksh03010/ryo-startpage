@@ -15,7 +15,7 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     'ryo.settings.v2',
     JSON.stringify(applySpacePreset(DEFAULT_SETTINGS, 'minimal')),
   );
-  const { default: App } = await import('../src/App');
+  const { App } = await import('../src/App');
   const container = window.document.createElement('div');
   window.document.body.append(container);
   const until = async (check: () => unknown) => {
@@ -61,6 +61,51 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
 
     await click(button('Open customize panel'));
     await until(() => container.querySelector('[role="dialog"]'));
+    const tab = (label: string) => {
+      const match = [...container.querySelectorAll('button')].find(
+        (node) => node.textContent?.trim() === label,
+      );
+      assert.ok(match, `Missing ${label} tab`);
+      return match;
+    };
+    const urlInput = container.querySelector(
+      'input[placeholder="https://example.com/sunset.jpg"]',
+    ) as HTMLInputElement;
+    await act(() => {
+      urlInput.value = 'https://example.com/draft.jpg';
+      urlInput.dispatchEvent(new window.Event('input', { bubbles: true }));
+    });
+    await click(tab('Appearance'));
+    const radius = container.querySelector(
+      'input[type="range"][aria-label="Corner roundness"]',
+    ) as HTMLInputElement;
+    assert.ok(radius);
+    await act(() => {
+      radius.value = '30';
+      radius.dispatchEvent(new window.Event('input', { bubbles: true }));
+    });
+    assert.equal(
+      (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).appearance.radius,
+      30,
+    );
+    await click(tab('Widgets'));
+    await click(button('Show seconds'));
+    assert.equal(
+      (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).clock.showSeconds,
+      true,
+    );
+    await click(tab('Layout'));
+    assert.ok(tab('Restore default positions'));
+    await click(tab('Background'));
+    assert.equal(
+      (
+        container.querySelector(
+          'input[placeholder="https://example.com/sunset.jpg"]',
+        ) as HTMLInputElement
+      ).value,
+      'https://example.com/draft.jpg',
+    );
+
     await click(
       [...container.querySelectorAll('button')].find((node) => node.textContent === 'Workspace')!,
     );

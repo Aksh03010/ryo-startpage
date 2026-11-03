@@ -1,5 +1,9 @@
 import { useMemo, useSyncExternalStore } from 'react';
-import { applyWallpaperOverrides, getWallpaperOverrides, subscribeWallpaperEngine } from '../lib/wallpaperEngine';
+import {
+  applyWallpaperOverrides,
+  getWallpaperOverrides,
+  subscribeWallpaperEngine,
+} from '../lib/wallpaperEngine';
 import type { Settings } from '../types';
 
 export function useWallpaperEngine(settings: Settings) {

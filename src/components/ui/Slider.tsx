@@ -1,40 +1,5 @@
 import { useState } from 'react';
-import type { ReactNode } from 'react';
 import styles from './Controls.module.css';
-
-export function SectionTitle({ children }: { children: ReactNode }) {
-  return <h3 className={styles.title}>{children}</h3>;
-}
-
-export function Row({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`${styles.row} ${className}`}>{children}</div>;
-}
-
-export function Toggle({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-}) {
-  return (
-    <label className={styles.toggleRow}>
-      <span className={styles.toggleLabel}>{label}</span>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={checked}
-        aria-label={label}
-        className={`${styles.switch} ${checked ? styles.switchOn : styles.switchOff}`}
-        onClick={() => onChange(!checked)}
-      >
-        <span className={styles.switchKnob} />
-      </button>
-    </label>
-  );
-}
 
 export function Slider({
   label,
@@ -81,7 +46,12 @@ export function Slider({
             onChange={(event) => {
               setDraft(event.target.value);
               const parsed = Number(event.target.value);
-              if (event.target.value.trim() !== '' && Number.isFinite(parsed) && parsed >= min && parsed <= max) {
+              if (
+                event.target.value.trim() !== '' &&
+                Number.isFinite(parsed) &&
+                parsed >= min &&
+                parsed <= max
+              ) {
                 onChange(parsed);
               }
             }}
@@ -112,34 +82,5 @@ export function Slider({
         aria-label={label}
       />
     </label>
-  );
-}
-
-export function Segmented<T extends string>({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: T;
-  options: Array<{ id: T; label: string }>;
-  onChange: (value: T) => void;
-}) {
-  return (
-    <div className={styles.segmentedWrap} role="group" aria-label={label}>
-      {options.map((option) => (
-        <button
-          key={option.id}
-          type="button"
-          className={`${styles.segment} ${option.id === value ? styles.segmentActive : ''}`}
-          aria-checked={option.id === value}
-          role="radio"
-          onClick={() => onChange(option.id)}
-        >
-          {option.label}
-        </button>
-      ))}
-    </div>
   );
 }

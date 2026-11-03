@@ -15,5 +15,3 @@ export function useMediaQuery(query: string) {
 
   return matches;
 }
-
-export default useMediaQuery;
