@@ -15,7 +15,9 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  font: 500 12px/1 'Manrope', system-ui;
+  font:
+    500 12px/1 'Manrope',
+    system-ui;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.7);
@@ -39,7 +41,10 @@
   border: none;
   background: transparent;
   color: rgba(255, 255, 255, 0.5);
-  transition: color 160ms ease, background 160ms ease, border-color 160ms ease;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease;
 }
 
 .menuButton:hover {
@@ -103,19 +108,26 @@
 
 .text {
   flex: 1 1 auto;
-  font: 500 14.5px/1.45 'Manrope', system-ui;
+  font:
+    500 14.5px/1.45 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.94);
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
 }
 
 .when {
-  font: 500 11px/1 'JetBrains Mono', ui-monospace, monospace;
+  font:
+    500 11px/1 'JetBrains Mono',
+    ui-monospace,
+    monospace;
   color: rgba(255, 255, 255, 0.55);
   white-space: nowrap;
 }
 
 .empty {
-  font: 400 13px/1.5 'Manrope', system-ui;
+  font:
+    400 13px/1.5 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.44);
   margin: 0;
 }
@@ -144,7 +156,9 @@
   flex: 1 1 auto;
   border: none;
   background: transparent;
-  font: 500 14px/1.5 'Manrope', system-ui;
+  font:
+    500 14px/1.5 'Manrope',
+    system-ui;
   color: #ffffff;
   padding: 0;
 }
@@ -167,7 +181,9 @@
   flex: none;
   background: color-mix(in srgb, var(--accent) 28%, transparent);
   color: #ffffff;
-  transition: background 170ms ease, transform 170ms ease;
+  transition:
+    background 170ms ease,
+    transform 170ms ease;
 }
 
 .add:hover {
@@ -179,7 +195,9 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font: 500 11px/1 'Manrope', system-ui;
+  font:
+    500 11px/1 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.64);
   white-space: nowrap;
 }
@@ -200,9 +218,15 @@
   border-radius: 9px;
   border: 1.4px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.05);
-  font: 500 11px/1 'Manrope', system-ui;
+  font:
+    500 11px/1 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.74);
-  transition: background 170ms ease, color 170ms ease, border-color 170ms ease, transform 170ms ease;
+  transition:
+    background 170ms ease,
+    color 170ms ease,
+    border-color 170ms ease,
+    transform 170ms ease;
 }
 
 .dayButton:hover {
@@ -217,7 +241,9 @@
 }
 
 .hint {
-  font: 400 11px/1.5 'Manrope', system-ui;
+  font:
+    400 11px/1.5 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.44);
   margin: 0;
 }
@@ -229,7 +255,10 @@
   border-radius: 12px;
   border: 1.4px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.045);
-  font: 500 12.5px/1 'JetBrains Mono', ui-monospace, monospace;
+  font:
+    500 12.5px/1 'JetBrains Mono',
+    ui-monospace,
+    monospace;
   color: rgba(255, 255, 255, 0.85);
 }
 
@@ -253,7 +282,9 @@
   color: rgba(255, 255, 255, 0.32);
   flex: none;
   opacity: 0;
-  transition: opacity 160ms ease, color 160ms ease;
+  transition:
+    opacity 160ms ease,
+    color 160ms ease;
 }
 
 .manageList li:hover .delete,
@@ -271,11 +302,39 @@
   }
 }
 
-.wrap { gap: 8px; }
-.kicker { font-size: 11px; letter-spacing: .02em; text-transform: none; color: #b5c4b3; }
-.dot { width: 4px; height: 4px; box-shadow: none; }
-.empty { font-size: 11px; color: #83937f; }
+.wrap {
+  gap: 8px;
+}
+.kicker {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: #b5c4b3;
+}
+.dot {
+  width: 4px;
+  height: 4px;
+  box-shadow: none;
+}
+.empty {
+  font-size: 11px;
+  color: #83937f;
+}
 
-.wrap { display: grid; grid-template-columns: 130px 1fr; align-items: center; gap: 12px; }
-.manage { grid-column: 1 / -1; }
-@media(max-width:520px) { .wrap { display: flex; flex-direction: column; align-items: stretch; gap: 8px; } }
+.wrap {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+.manage {
+  grid-column: 1 / -1;
+}
+@media (max-width: 520px) {
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+}

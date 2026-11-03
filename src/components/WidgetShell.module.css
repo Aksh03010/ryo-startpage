@@ -32,7 +32,11 @@
 }
 
 .solid {
-  background: linear-gradient(145deg, rgba(25, 34, 28, var(--box-alpha, .8)), rgba(14, 20, 17, var(--box-alpha, .8)));
+  background: linear-gradient(
+    145deg,
+    rgba(25, 34, 28, var(--box-alpha, 0.8)),
+    rgba(14, 20, 17, var(--box-alpha, 0.8))
+  );
   border-color: rgba(190, 215, 195, 0.12);
 }
 
@@ -44,7 +48,6 @@
 .shell[data-edit-mode] {
   border: 1.5px dashed color-mix(in srgb, var(--accent) 68%, #ffffff2e);
   cursor: grab;
-
 }
 
 .shell[data-dragging] {
@@ -70,12 +73,16 @@
   color: #0b1120;
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  font: 600 12px/1 'Manrope', system-ui;
+  font:
+    600 12px/1 'Manrope',
+    system-ui;
   z-index: 3;
   opacity: 0;
   pointer-events: none;
   touch-action: none;
-  transition: opacity 180ms ease, transform 180ms ease;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
 }
 
 .handleVisible {
@@ -96,15 +103,6 @@
   outline: 2px solid var(--accent);
 }
 
-@keyframes edit-pulse {
-  0%, 100% {
-    border-color: color-mix(in srgb, var(--accent) 34%, transparent);
-  }
-  50% {
-    border-color: color-mix(in srgb, var(--accent) 72%, transparent);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .shell {
     transition: none;
@@ -114,10 +112,27 @@
   }
 }
 
-.shell[data-widget-id="clock"] .body, .shell[data-widget-id="search"] .body { padding: 0; }
-@media(max-width:950px) { .body { padding: 20px; } }
+.shell[data-widget-id='clock'] .body,
+.shell[data-widget-id='search'] .body {
+  padding: 0;
+}
+@media (max-width: 950px) {
+  .body {
+    padding: 20px;
+  }
+}
 
-.shell[data-widget-id='clock'] { width: max-content; }
-.shell[data-widget-id='search'] { width: min(580px, 92vw); }
-.shell[data-widget-id='tasks'], .shell[data-widget-id='focus'], .shell[data-widget-id='links'] { width: min(350px, 92vw); }
-.shell[data-widget-id='reminders'] { width: min(720px, 92vw); }
+.shell[data-widget-id='clock'] {
+  width: max-content;
+}
+.shell[data-widget-id='search'] {
+  width: min(580px, 92vw);
+}
+.shell[data-widget-id='tasks'],
+.shell[data-widget-id='focus'],
+.shell[data-widget-id='links'] {
+  width: min(350px, 92vw);
+}
+.shell[data-widget-id='reminders'] {
+  width: min(720px, 92vw);
+}

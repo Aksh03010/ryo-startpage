@@ -1,8 +1,8 @@
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  min-width: 260px;
+  min-width: 0;
+  gap: 12px;
 }
 
 .header {
@@ -15,60 +15,70 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font: 500 12px/1 'Manrope', system-ui;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.68);
+  font:
+    500 12px/1 'Manrope',
+    system-ui;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.46);
-}
-
-.sessions {
-  font: 500 11px/1 'Manrope', system-ui;
-  color: rgba(255, 255, 255, 0.46);
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  color: #d9e4d8;
 }
 
 .dialWrap {
   position: relative;
-  width: 124px;
-  height: 124px;
   align-self: center;
+  width: 100%;
+  height: 88px;
 }
 
 .dial {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  width: 90px;
+  height: 90px;
+  left: auto;
+  right: 9px;
+  opacity: 0.32;
 }
 
 .time {
   position: absolute;
   inset: 0;
-  display: grid;
   place-items: center;
-  font: 500 26px/1 'JetBrains Mono', ui-monospace, monospace;
-  color: #ffffff;
   font-variant-numeric: tabular-nums;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  font:
+    400 44px/1 Georgia,
+    serif;
   letter-spacing: -0.03em;
+  color: #e3eddd;
 }
 
 .controls {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-start;
+  gap: 10px;
 }
 
 .icon {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
-  border: 1.5px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.04);
-  color: #ffffff;
-  transition: border-color 170ms ease, background 170ms ease, transform 170ms ease;
+  transition:
+    border-color 170ms ease,
+    background 170ms ease,
+    transform 170ms ease;
+  border: 1px solid #c2d6b82b;
+  background: #c2d6b80a;
+  border-radius: 99px;
+  width: 33px;
+  height: 33px;
+  color: #b4c8aa;
 }
 
 .icon:hover {
@@ -81,62 +91,73 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  justify-content: center;
-}
-
-.minutes {
-  width: 58px;
-  padding: 6px 8px;
-  border-radius: 9px;
-  border: 1.3px solid rgba(255, 255, 255, 0.12);
-  background: rgba(12, 16, 28, 0.7);
-  font: 500 12px/1 'JetBrains Mono', ui-monospace, monospace;
-  color: #ffffff;
-  text-align: center;
-}
-
-.minutes::-webkit-outer-spin-button,
-.minutes::-webkit-inner-spin-button {
-  appearance: none;
-  margin: 0;
-}
-
-.minutes:focus {
-  outline: none;
-  border-color: color-mix(in srgb, var(--accent) 65%, transparent);
-}
-
-.unit {
-  font: 500 11px/1 'Manrope', system-ui;
-  color: rgba(255, 255, 255, 0.42);
+  justify-content: flex-start;
 }
 
 .break {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 5px 9px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  font: 500 10.5px/1 'Manrope', system-ui;
-  color: rgba(255, 255, 255, 0.58);
+  font:
+    500 10.5px/1 'Manrope',
+    system-ui;
+  padding: 0;
+  background: none;
+  color: #7d9179;
+  font-size: 9px;
 }
-
-.wrap { min-width: 0; gap: 12px; }
-.title { font-size: 12px; text-transform: none; letter-spacing: .01em; color: #d9e4d8; }
-.title svg { color: #a4b9a5; }
-.tabs { display: flex; gap: 2px; padding: 3px; background: #0002; border: 1px solid #b6cab415; border-radius: 99px; }
-.tabs button { border: 0; border-radius: 99px; padding: 4px 8px; font-size: 9px; color: #83967f; background: transparent; }
-.tabs button[aria-pressed='true'] { color: #cfe1c6; background: #b6d2a91c; }
-.dialWrap { width: 100%; height: 88px; }
-.dial { width: 90px; height: 90px; left: auto; right: 9px; opacity: .32; }
-.dial circle { stroke-width: 1; }
-.time { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 10px; font: 400 44px/1 Georgia, serif; letter-spacing: -.03em; color: #e3eddd; }
-.time small { font: 8px/1 'Segoe UI', sans-serif; color: #7e9478; letter-spacing: .17em; }
-.controls { justify-content: flex-start; gap: 10px; }
-.icon { border: 1px solid #c2d6b82b; background: #c2d6b80a; border-radius: 99px; width: 33px; height: 33px; color: #b4c8aa; }
-.icon:first-child { padding: 0 18px; width: auto; display: flex; gap: 8px; background: linear-gradient(100deg, #b3cea329, #9ac4c01f); }
-.icon span { font-size: 10px; }
-.chips { justify-content: flex-start; }
-.break { padding: 0; background: none; color: #7d9179; font-size: 9px; }
-@media(max-width:950px) { .tabs button { padding: 4px 6px; } .title { font-size: 11px; } .title svg { display: none; } }
+.title svg {
+  color: #a4b9a5;
+}
+.tabs {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: #0002;
+  border: 1px solid #b6cab415;
+  border-radius: 99px;
+}
+.tabs button {
+  border: 0;
+  border-radius: 99px;
+  padding: 4px 8px;
+  font-size: 9px;
+  color: #83967f;
+  background: transparent;
+}
+.tabs button[aria-pressed='true'] {
+  color: #cfe1c6;
+  background: #b6d2a91c;
+}
+.dial circle {
+  stroke-width: 1;
+}
+.time small {
+  font:
+    8px/1 'Segoe UI',
+    sans-serif;
+  color: #7e9478;
+  letter-spacing: 0.17em;
+}
+.icon:first-child {
+  padding: 0 18px;
+  width: auto;
+  display: flex;
+  gap: 8px;
+  background: linear-gradient(100deg, #b3cea329, #9ac4c01f);
+}
+.icon span {
+  font-size: 10px;
+}
+@media (max-width: 950px) {
+  .tabs button {
+    padding: 4px 6px;
+  }
+  .title {
+    font-size: 11px;
+  }
+  .title svg {
+    display: none;
+  }
+}

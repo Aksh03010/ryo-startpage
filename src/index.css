@@ -77,4 +77,8 @@ input[type='number'] {
   }
 }
 
-html[data-host-paused] *, html[data-host-paused] *::before, html[data-host-paused] *::after { animation-play-state: paused !important; }
+html[data-host-paused] *,
+html[data-host-paused] *::before,
+html[data-host-paused] *::after {
+  animation-play-state: paused !important;
+}

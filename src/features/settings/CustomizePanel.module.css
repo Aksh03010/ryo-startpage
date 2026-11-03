@@ -27,13 +27,13 @@
   width: min(440px, 100%);
   display: flex;
   flex-direction: column;
-  background: linear-gradient(145deg, rgba(12, 15, 28, 0.9), rgba(6, 9, 18, 0.92));
-  backdrop-filter: blur(26px);
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   transform: translateX(100%);
   transition: transform 380ms cubic-bezier(0.32, 0.72, 0, 1);
   color: #f4f6fb;
   overflow: hidden;
+  background: #101813;
+  backdrop-filter: none;
 }
 
 .panelOpen {
@@ -144,7 +144,6 @@
 }
 
 .tabContent .field,
-.tabContent .fieldPara,
 .tabContent .presetGrid,
 .tabContent .mediaRow,
 .tabContent .accentRow,
@@ -274,16 +273,11 @@
   text-overflow: ellipsis;
 }
 
-.hidden {
-  display: none;
-}
-
 .hiddenInput {
   display: none;
 }
 
-.field,
-.fieldPara {
+.field {
   margin-bottom: 0;
 }
 
@@ -648,8 +642,4 @@
   display: inline-block;
   color: #c0e3cb;
   margin-top: 9px;
-}
-.panel {
-  background: #101813;
-  backdrop-filter: none;
 }

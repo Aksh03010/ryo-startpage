@@ -7,7 +7,9 @@
 }
 
 .greeting {
-  font: 400 15px/1.4 'Manrope', system-ui;
+  font:
+    400 15px/1.4 'Manrope',
+    system-ui;
   letter-spacing: 0.16em;
   color: rgba(255, 255, 255, 0.7);
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
@@ -67,7 +69,9 @@
   display: flex;
   align-items: baseline;
   gap: 10px;
-  font: 500 22px/1.25 'Manrope', system-ui;
+  font:
+    500 22px/1.25 'Manrope',
+    system-ui;
   color: rgba(255, 255, 255, 0.88);
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
   letter-spacing: -0.015em;
@@ -107,7 +111,7 @@
   position: absolute;
   inset: 0 10% auto 10%;
   height: 1.15em;
-  background: linear-gradient(105deg, transparent, rgba(255,255,255,0.28), transparent);
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.28), transparent);
   transform: translateX(-30%);
   opacity: 0.4;
   animation: shine 4.6s ease-out infinite;
@@ -115,7 +119,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.82;
   }
   50% {
@@ -150,8 +155,14 @@
 }
 
 @keyframes minute-tick {
-  from { opacity: 0.55; transform: translateY(0.12em); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0.55;
+    transform: translateY(0.12em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 720px) {

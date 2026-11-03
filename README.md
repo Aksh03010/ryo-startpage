@@ -94,6 +94,30 @@ Ryo uses **Vite + TypeScript + Preact**, with Preact's React compatibility layer
 
 The original core JavaScript was approximately **103 KB gzip**; the new core is approximately **22 KB gzip**. Visible optional widgets add their own small chunks. These are build payload measurements, not an FPS or CPU benchmark. `npm run check:bundle` checks the current core JS/CSS budget. CI runs behavior tests and the bundle check before deploying.
 
+## Project structure
+
+```text
+src/
+  App.tsx                Page composition and widget rendering
+  components/            Widgets, layout shells, and shared UI controls
+  features/
+    layout/              Arrange mode and persisted widget positions
+    monitor/             Optional metrics polling, types, and rendering
+    settings/            Settings ownership, migrations, and four UI tabs
+    wallpapers/          Background rendering, uploads, media storage, native bridge
+  hooks/                 Shared storage, clock, and media-query hooks
+  lib/                   Pure scheduling/search helpers and persisted key names
+  types.ts               Shared application data contracts
+  index.css              Global styles; components retain colocated CSS modules
+tests/                   Behavior tests, DOM setup, and the TS/TSX loader
+scripts/                 Wallpaper Engine packaging and bundle checks
+monitor/                 Optional Windows-only sensor helper
+```
+
+Settings flow from `useStartpageState` to widgets and the settings tabs through typed update callbacks. Lists/settings use localStorage, uploaded media uses IndexedDB, and native Wallpaper Engine preferences are merged in memory. Clock ticks remain local to the clock component. The wallpaper renderer layers the selected media, dimming, grain, and vignette.
+
+Read the [architecture guide](docs/architecture.md) for ownership and lifecycle details and [contributing guide](CONTRIBUTING.md) for coding, testing, and license rules. Application modules use named exports; optional features retain lazy imports.
+
 ## Run it on your computer
 
 Requirements: Node.js 24+ (also used by the tests and CI).
@@ -112,7 +136,10 @@ Useful commands:
 ```sh
 npm run build    # type-check and create a production build in dist/
 npm run preview  # preview the production build locally
-npm run lint     # check the code with ESLint
+npm run lint     # lint source, tests, and scripts with no warnings
+npm run typecheck # strictly check source, config, and tests
+npm run format:check # verify formatting
+npm run format   # apply formatting
 npm test         # test Preact interactions, timers, presets, and native controls
 npm run check:bundle    # enforce a 40 KiB gzip budget for core JS + CSS
 npm run build:wallpaper # create a self-contained Wallpaper Engine project
