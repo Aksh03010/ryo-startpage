@@ -25,21 +25,19 @@ export function useLocalStorage<T>(key: string, initial: T | (() => T)) {
   useEffect(() => {
     try {
       const serialized = JSON.stringify(value);
-      if (window.localStorage.getItem(key) !== serialized) window.localStorage.setItem(key, serialized);
+      if (window.localStorage.getItem(key) !== serialized)
+        window.localStorage.setItem(key, serialized);
     } catch (error) {
       console.error(`Unable to persist ${key}`, error);
     }
   }, [key, value]);
 
-  const set = useCallback(
-    (next: T | ((prev: T) => T)) => {
-      setValue((prev) => {
-        const value = typeof next === 'function' ? (next as (prev: T) => T)(prev) : next;
-        return value;
-      });
-    },
-    [key],
-  );
+  const set = useCallback((next: T | ((prev: T) => T)) => {
+    setValue((prev) => {
+      const value = typeof next === 'function' ? (next as (prev: T) => T)(prev) : next;
+      return value;
+    });
+  }, []);
 
   const remove = useCallback(() => {
     try {

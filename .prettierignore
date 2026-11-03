@@ -1,0 +1,7 @@
+node_modules/
+dist/
+dist-wallpaper/
+artifacts/
+package-lock.json
+public/
+monitor/

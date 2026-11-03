@@ -1,3 +1,4 @@
+import type { Task } from '../src/types';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { remainingSeconds, startFocus, pauseFocus } from '../src/lib/focus';
@@ -37,21 +38,36 @@ test('engine colors require three valid normalized channels', () => {
 });
 
 test('engine paths preserve drive letters, spaces, and filename punctuation', () => {
-  const result = parseEngineProperties({ backgroundfile: { value: 'C:\\Wallpapers\\moon #1.jpg' } });
+  const result = parseEngineProperties({
+    backgroundfile: { value: 'C:\\Wallpapers\\moon #1.jpg' },
+  });
   assert.equal(result.media?.url, 'file:///C:/Wallpapers/moon%20%231.jpg');
   assert.equal(result.media?.mediaType, 'image');
 });
 
 test('engine video takes precedence over image and clearing restores the image', () => {
   const image = { value: 'C:/moon.jpg' };
-  assert.equal(parseEngineProperties({ backgroundfile: image, backgroundvideo: { value: 'C:/orbit.webm' } }).media?.mediaType, 'video');
-  assert.equal(parseEngineProperties({ backgroundfile: image, backgroundvideo: { value: '' } }).media?.mediaType, 'image');
+  assert.equal(
+    parseEngineProperties({ backgroundfile: image, backgroundvideo: { value: 'C:/orbit.webm' } })
+      .media?.mediaType,
+    'video',
+  );
+  assert.equal(
+    parseEngineProperties({ backgroundfile: image, backgroundvideo: { value: '' } }).media
+      ?.mediaType,
+    'image',
+  );
   assert.equal(parseEngineProperties({ backgroundfile: { value: '' } }).media, null);
 });
 
 test('native overrides remain in memory and minimal mode wins over widget toggles', () => {
   const original = JSON.stringify(DEFAULT_SETTINGS);
-  const settings = applyWallpaperOverrides(DEFAULT_SETTINGS, { minimal: true, accent: '#ffffff', widgets: { tasks: true }, media: { url: 'file:///C:/orbit.webm', mediaType: 'video' } });
+  const settings = applyWallpaperOverrides(DEFAULT_SETTINGS, {
+    minimal: true,
+    accent: '#ffffff',
+    widgets: { tasks: true },
+    media: { url: 'file:///C:/orbit.webm', mediaType: 'video' },
+  });
   assert.equal(settings.appearance.widgets.tasks.visible, false);
   assert.equal(settings.appearance.widgets.clock.visible, true);
   assert.equal(settings.background.wallpaper.kind, 'native');
@@ -60,25 +76,47 @@ test('native overrides remain in memory and minimal mode wins over widget toggle
 
 test('minimal preset preserves user style choices and excludes optional widgets', () => {
   const settings = applySpacePreset(DEFAULT_SETTINGS, 'minimal');
-  assert.deepEqual(Object.entries(settings.appearance.widgets).filter(([, widget]) => widget.visible).map(([id]) => id).sort(), ['clock', 'search']);
+  assert.deepEqual(
+    Object.entries(settings.appearance.widgets)
+      .filter(([, widget]) => widget.visible)
+      .map(([id]) => id)
+      .sort(),
+    ['clock', 'search'],
+  );
   assert.equal(settings.background, DEFAULT_SETTINGS.background);
   assert.equal(settings.clock, DEFAULT_SETTINGS.clock);
-  assert.equal(settings.appearance.widgets.clock.style, DEFAULT_SETTINGS.appearance.widgets.clock.style);
+  assert.equal(
+    settings.appearance.widgets.clock.style,
+    DEFAULT_SETTINGS.appearance.widgets.clock.style,
+  );
 });
 
 test('workspace leaves system monitoring opt-in', () => {
-  assert.equal(applySpacePreset(DEFAULT_SETTINGS, 'workspace').appearance.widgets.system.visible, false);
+  assert.equal(
+    applySpacePreset(DEFAULT_SETTINGS, 'workspace').appearance.widgets.system.visible,
+    false,
+  );
 });
 
 test('search handles URLs, encoded queries, and empty inputs', () => {
   assert.equal(buildSearchUrl('example.com', 'google'), 'https://example.com/');
   assert.equal(buildSearchUrl('  ', 'google'), '');
-  assert.equal(buildSearchUrl('space & stars', 'duckduckgo'), 'https://duckduckgo.com/?q=space%20%26%20stars');
+  assert.equal(
+    buildSearchUrl('space & stars', 'duckduckgo'),
+    'https://duckduckgo.com/?q=space%20%26%20stars',
+  );
 });
 
 test('repeating task completion rolls over at the local date boundary', () => {
   const day = new Date(2026, 10, 2, 23, 59);
-  const task = { id: 'test', text: 'Read', createdAt: 0, repeatDays: [1], completions: [dateKey(day)], done: false };
+  const task: Task = {
+    id: 'test',
+    text: 'Read',
+    createdAt: 0,
+    repeatDays: [1],
+    completions: [dateKey(day)],
+    done: false,
+  };
   assert.equal(isTaskDone(task, day), true);
   assert.equal(isTaskDone(task, new Date(2026, 10, 3, 0, 1)), false);
 });
