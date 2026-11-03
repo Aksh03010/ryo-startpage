@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export function useLocalStorage<T>(key: string, initial: T | (() => T)) {
   const [value, setValue] = useState<T>(() => {
@@ -32,21 +32,5 @@ export function useLocalStorage<T>(key: string, initial: T | (() => T)) {
     }
   }, [key, value]);
 
-  const set = useCallback((next: T | ((prev: T) => T)) => {
-    setValue((prev) => {
-      const value = typeof next === 'function' ? (next as (prev: T) => T)(prev) : next;
-      return value;
-    });
-  }, []);
-
-  const remove = useCallback(() => {
-    try {
-      window.localStorage.removeItem(key);
-      setValue(initial);
-    } catch (error) {
-      console.error(`Unable to clear ${key}`, error);
-    }
-  }, [key, initial]);
-
-  return [value, set, remove] as const;
+  return [value, setValue] as const;
 }

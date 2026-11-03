@@ -4,6 +4,7 @@ import type { Task, TaskRepeatDay, TaskSettings } from '../types';
 import { REPEAT_DAY_LABELS } from '../constants';
 import { useNow } from '../hooks/useNow';
 import { dateKey, isTaskDone, weekdayOf } from '../lib/tasks';
+import { WeekdayPicker } from './ui/WeekdayPicker';
 import styles from './TaskManager.module.css';
 
 type TaskManagerProps = {
@@ -146,28 +147,20 @@ export function TaskManager({ tasks, settings, onTasksChange }: TaskManagerProps
 
       <div className={styles.addPane}>
         {repeatOpen && (
-          <div className={styles.repeatRow}>
-            {([1, 2, 3, 4, 5, 6, 0] as TaskRepeatDay[]).map((day) => {
-              const active = draftRepeat.includes(day);
-              return (
-                <button
-                  key={day}
-                  type="button"
-                  className={styles.dayButton}
-                  data-active={active || undefined}
-                  aria-pressed={active}
-                  onClick={() =>
-                    setDraftRepeat((prev) =>
-                      prev.includes(day) ? prev.filter((value) => value !== day) : [...prev, day],
-                    )
-                  }
-                >
-                  {REPEAT_DAY_LABELS[day]}
-                </button>
-              );
-            })}
+          <WeekdayPicker
+            selected={draftRepeat}
+            onToggle={(day) =>
+              setDraftRepeat((previous) =>
+                previous.includes(day)
+                  ? previous.filter((value) => value !== day)
+                  : [...previous, day],
+              )
+            }
+            className={styles.repeatRow}
+            buttonClassName={styles.dayButton}
+          >
             {draftRepeat.length === 0 && <span className={styles.hint}>One-time task</span>}
-          </div>
+          </WeekdayPicker>
         )}
         <div className={styles.addRow}>
           <button

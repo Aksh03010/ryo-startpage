@@ -1,3 +1,4 @@
+import { getGlobalBoxMode } from './appearance';
 import { ACCENTS, DEFAULT_CUSTOM_ACCENT } from '../../constants';
 import type { AccentId, BoxMode } from '../../types';
 import styles from './CustomizePanel.module.css';
@@ -10,8 +11,7 @@ import { createSettingsActions } from './settingsActions';
 
 export function AppearanceTab({ settings, onSettings }: SettingsTabProps) {
   const appearance = settings.appearance;
-  const globalBoxMode =
-    appearance.boxMode ?? (appearance.glassEnabled === false ? 'solid' : 'glass');
+  const globalBoxMode = getGlobalBoxMode(appearance);
   const anyGlassBoxes =
     globalBoxMode === 'glass' ||
     Object.values(appearance.widgets).some(

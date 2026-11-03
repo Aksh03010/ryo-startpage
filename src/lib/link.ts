@@ -1,4 +1,5 @@
-const URL_LIKE = /^(localhost|(\d{1,3}\.){3}\d{1,3}|(?:[\p{L}\p{N}-]+\.)+[\p{L}]{2,})(?::\d{1,5})?(?:[/?#]\S*)?$/iu;
+const URL_LIKE =
+  /^(localhost|(\d{1,3}\.){3}\d{1,3}|(?:[\p{L}\p{N}-]+\.)+[\p{L}]{2,})(?::\d{1,5})?(?:[/?#]\S*)?$/iu;
 
 const VIDEO_EXT = ['mp4', 'webm', 'ogv'];
 

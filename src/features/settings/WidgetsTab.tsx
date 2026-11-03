@@ -1,3 +1,4 @@
+import { getGlobalBoxMode } from './appearance';
 import { RotateCcw } from 'lucide-react';
 import {
   DEFAULT_SETTINGS,
@@ -25,8 +26,7 @@ export function WidgetsTab({
 }: WidgetsTabProps) {
   const appearance = settings.appearance;
   const detailWidget = appearance.widgets[widgetDetail];
-  const globalBoxMode =
-    appearance.boxMode ?? (appearance.glassEnabled === false ? 'solid' : 'glass');
+  const globalBoxMode = getGlobalBoxMode(appearance);
   const detailBoxSelection =
     detailWidget?.style.boxMode ??
     (detailWidget?.style.glass === 'on'

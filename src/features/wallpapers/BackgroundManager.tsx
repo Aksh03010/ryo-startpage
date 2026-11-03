@@ -1,9 +1,9 @@
 import { memo, useEffect, useRef } from 'react';
-import { isPageActive, subscribeActivity } from '../lib/activity';
-import { PRESETS } from '../constants';
-import type { BackgroundSettings } from '../types';
-import { useMediaQuery } from '../hooks/useMediaQuery';
-import { useWallpaperSrc } from '../hooks/useWallpaperSrc';
+import { isPageActive, subscribeActivity } from '../../lib/activity';
+import { PRESETS } from '../../constants';
+import type { BackgroundSettings } from '../../types';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { useWallpaperSource } from './useWallpaperSource';
 import styles from './BackgroundManager.module.css';
 
 function BackgroundManagerView({
@@ -16,7 +16,7 @@ function BackgroundManagerView({
   const { wallpaper } = background;
   const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const preset = PRESETS.find((item) => item.id === wallpaper.preset) ?? PRESETS[0];
-  const src = useWallpaperSrc(wallpaper);
+  const src = useWallpaperSource(wallpaper);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const mediaFilter =
     background.brightness === 100 && background.saturation === 100 && background.blur === 0

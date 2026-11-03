@@ -147,15 +147,3 @@ export interface FocusSettings {
   breakMinutes: number;
   sessions: number;
 }
-
-export interface FocusState {
-  duration: number;
-  paused: boolean;
-  endsAt: number | null;
-  remaining: number | null;
-  startedAt: number | null;
-  endTs: number | null;
-  remainingAtPause: number | null;
-  pausedAt: number | null;
-  lastFocusDate?: string;
-}

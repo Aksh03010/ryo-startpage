@@ -2,7 +2,10 @@ import type { Task } from '../src/types';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { remainingSeconds, startFocus, pauseFocus } from '../src/lib/focus';
-import { parseEngineProperties, applyWallpaperOverrides } from '../src/lib/wallpaperEngine';
+import {
+  parseEngineProperties,
+  applyWallpaperOverrides,
+} from '../src/features/wallpapers/wallpaperEngine';
 import { applySpacePreset } from '../src/lib/spacePresets';
 import { DEFAULT_SETTINGS } from '../src/constants';
 import { buildSearchUrl } from '../src/lib/search';

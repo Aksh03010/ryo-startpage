@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import type { WallpaperState } from '../types';
+import type { WallpaperState } from '../../types';
 
-export function useWallpaperSrc(wallpaper: WallpaperState) {
+export function useWallpaperSource(wallpaper: WallpaperState) {
   const [upload, setUpload] = useState<{ id: string; src: string | null }>({ id: '', src: null });
 
   useEffect(() => {
@@ -9,7 +9,7 @@ export function useWallpaperSrc(wallpaper: WallpaperState) {
     const id = wallpaper.mediaId;
     let cancelled = false;
     let objectUrl: string | null = null;
-    void import('../lib/mediaStore')
+    void import('./mediaStore')
       .then(({ getWallpaper }) => getWallpaper(id))
       .then((record) => {
         if (cancelled) return;

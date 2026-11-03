@@ -1,5 +1,5 @@
 export function formatClockParts(date: Date, use24: boolean, seconds: boolean) {
-  const hours = use24 ? date.getHours() : (date.getHours() % 12) || 12;
+  const hours = use24 ? date.getHours() : date.getHours() % 12 || 12;
   const minute = String(date.getMinutes()).padStart(2, '0');
   const second = String(date.getSeconds()).padStart(2, '0');
   const suffix = use24 ? '' : date.getHours() < 12 ? 'AM' : 'PM';

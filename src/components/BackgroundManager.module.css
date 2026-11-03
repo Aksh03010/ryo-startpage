@@ -1,9 +1,0 @@
-
-.scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #080c0b; pointer-events: none; }
-.wallpaperMedia { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transform-origin: center; }
-.dim { position: absolute; inset: 0; pointer-events: none; }
-.dynamicWallpaper { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 22%, #14241e70, transparent 54%), radial-gradient(ellipse at 3% 65%, #17202055, transparent 40%), #080c0b; }
-.stars { position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='680' height='530'%3E%3Cg fill='%23cce4d5'%3E%3Ccircle cx='24' cy='47' r='.7' opacity='.5'/%3E%3Ccircle cx='132' cy='126' r='1' opacity='.45'/%3E%3Ccircle cx='287' cy='62' r='.6' opacity='.3'/%3E%3Ccircle cx='412' cy='165' r='.8' opacity='.6'/%3E%3Ccircle cx='592' cy='33' r='.8' opacity='.4'/%3E%3Ccircle cx='627' cy='275' r='.5' opacity='.6'/%3E%3Ccircle cx='349' cy='342' r='1' opacity='.35'/%3E%3Ccircle cx='75' cy='382' r='.5' opacity='.5'/%3E%3Ccircle cx='201' cy='469' r='.7' opacity='.45'/%3E%3Ccircle cx='519' cy='462' r='.6' opacity='.4'/%3E%3Ccircle cx='470' cy='284' r='.5' opacity='.35'/%3E%3Ccircle cx='218' cy='248' r='.5' opacity='.4'/%3E%3C/g%3E%3C/svg%3E"); }
-.constellation { position: absolute; width: 420px; height: 340px; right: -10px; top: 9%; color: #9abca0; opacity: .18; }
-.grain { position: absolute; inset: 0; opacity: .035; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' d='M0 0h160v160H0z'/%3E%3C/svg%3E"); }
-.vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 35%, transparent 35%, #03060555 100%); }

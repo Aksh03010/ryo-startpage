@@ -8,7 +8,11 @@ export type FocusSnapshot = {
 
 export function remainingSeconds(snapshot: FocusSnapshot, now: number) {
   if (snapshot.paused || !snapshot.endsAt) return Math.max(0, snapshot.remaining);
-  return Math.min(snapshot.duration, snapshot.remaining, Math.max(0, Math.ceil((snapshot.endsAt - now) / 1000)));
+  return Math.min(
+    snapshot.duration,
+    snapshot.remaining,
+    Math.max(0, Math.ceil((snapshot.endsAt - now) / 1000)),
+  );
 }
 
 export function startFocus(snapshot: FocusSnapshot, now: number): FocusSnapshot {

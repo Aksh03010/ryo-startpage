@@ -10,8 +10,15 @@ import type {
   WidgetId,
 } from './types';
 
-export const WIDGET_IDS: WidgetId[] = ['clock', 'tasks', 'search', 'links', 'focus', 'reminders', 'system'];
-export const STORAGE_PREFIX = 'ryo:';
+export const WIDGET_IDS: WidgetId[] = [
+  'clock',
+  'tasks',
+  'search',
+  'links',
+  'focus',
+  'reminders',
+  'system',
+];
 const publicAsset = (path: string) => `${import.meta.env?.BASE_URL ?? '/'}${path}`;
 
 export const WIDGET_TITLES: Record<WidgetId, string> = {
@@ -38,17 +45,33 @@ export const PRESETS: Array<{
     gradient:
       'radial-gradient(120% 100% at 20% 10%, #0d5b6b 0%, transparent 55%), radial-gradient(90% 90% at 90% 15%, #6b5bff 0%, transparent 60%), linear-gradient(160deg, #03050b 0%, #041020 55%, #050610 100%)',
   },
-  { id: 'midnight', name: 'Midnight Peaks', blurb: 'Static art', src: publicAsset('wallpapers/midnight.svg'), gradient: '' },
-  { id: 'ember', name: 'Ember Haze', blurb: 'Static art', src: publicAsset('wallpapers/ember.svg'), gradient: '' },
-  { id: 'glacier', name: 'Glacier Bloom', blurb: 'Static art', src: publicAsset('wallpapers/glacier.svg'), gradient: '' },
+  {
+    id: 'midnight',
+    name: 'Midnight Peaks',
+    blurb: 'Static art',
+    src: publicAsset('wallpapers/midnight.svg'),
+    gradient: '',
+  },
+  {
+    id: 'ember',
+    name: 'Ember Haze',
+    blurb: 'Static art',
+    src: publicAsset('wallpapers/ember.svg'),
+    gradient: '',
+  },
+  {
+    id: 'glacier',
+    name: 'Glacier Bloom',
+    blurb: 'Static art',
+    src: publicAsset('wallpapers/glacier.svg'),
+    gradient: '',
+  },
 ];
 
-export interface PresetById {
-  [key: string]: (typeof PRESETS)[number];
-}
-export const PRESET_NONE = PRESETS.find((preset) => preset.id === 'aurora') as (typeof PRESETS)[number];
-
-export const ACCENTS: Record<Exclude<AccentId, 'custom'>, { name: string; tint: string; rgb: string }> = {
+export const ACCENTS: Record<
+  Exclude<AccentId, 'custom'>,
+  { name: string; tint: string; rgb: string }
+> = {
   aurora: { name: 'Opal', tint: '#c0e3cb', rgb: '192,227,203' },
   ember: { name: 'Ember', tint: '#ffb56b', rgb: '255,181,107' },
   rose: { name: 'Rose', tint: '#f7a8c4', rgb: '247,168,196' },
@@ -97,7 +120,10 @@ export const CLOCK_ANIMATIONS: Array<{ id: ClockAnimation; label: string }> = [
   { id: 'shine', label: 'Shine' },
 ];
 
-export const SEARCH_ENGINES: Record<SearchEngineId, { label: string; host: string; query: string }> = {
+export const SEARCH_ENGINES: Record<
+  SearchEngineId,
+  { label: string; host: string; query: string }
+> = {
   google: { label: 'Google', host: 'google.com', query: 'https://www.google.com/search?q=%s' },
   duckduckgo: {
     label: 'DuckDuckGo',
@@ -174,7 +200,15 @@ export const DEFAULT_SETTINGS: Settings = {
     videoLoop: true,
     videoPaused: false,
   },
-  clock: { font: 'space', size: 150, use24Hour: false, showSeconds: false, showDate: true, showGreeting: true, animation: 'none' },
+  clock: {
+    font: 'space',
+    size: 150,
+    use24Hour: false,
+    showSeconds: false,
+    showDate: true,
+    showGreeting: true,
+    animation: 'none',
+  },
   tasks: { showCompleted: true },
   layout: { snapToGrid: true, showGrid: false },
   searchEngine: 'duckduckgo',
