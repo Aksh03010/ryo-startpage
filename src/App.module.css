@@ -27,7 +27,7 @@
   position: relative;
   flex: 1;
   min-height: 0;
-  width: min(1120px, 88%);
+  width: 90%;
   margin: 0 auto;
   overflow: hidden;
 }
@@ -41,8 +41,6 @@
   grid-template-rows: var(--flow-rows);
   align-content: start;
   gap: clamp(10px, 2dvh, 20px);
-  width: min(1120px, 88%);
-  margin: 0 auto;
   padding: 0 0 18px;
 }
 .dashboard[data-layout='flow'] > section {
