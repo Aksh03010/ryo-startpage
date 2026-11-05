@@ -28,7 +28,7 @@ The current model supports a single selected background. Wallpaper Engine integr
 
 ## Layout and resource use
 
-`App` mounts the desktop application only when the viewport is at least 1024 pixels wide; smaller windows show a plain desktop-only notice without mounting widgets, storage owners, or background media. There are no alternate mobile layouts.
+`App` uses mobile device hints to show a plain desktop-only notice without mounting widgets, storage owners, or background media. Window width is not a device signal, and desktop windows have no minimum width requirement. Device identification uses available browser hints and user-agent fallbacks, so browsers disguising their device can be misclassified. There are no alternate mobile layouts.
 
 `features/layout/useDashboardLayout.ts` owns the desktop grid versus free-position layout, arrange mode, and drag completion. The page is bounded to the viewport, with overflow confined to widget content and settings panels. Drag coordinates are relative to the available dashboard. `WidgetShell` owns widget appearance. Drag context and draggable frames load only when arrange mode is enabled.
 

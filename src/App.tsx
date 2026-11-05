@@ -22,7 +22,7 @@ import { useDashboardLayout } from './features/layout/useDashboardLayout';
 import { useStartpageState } from './features/settings/useStartpageState';
 import { useWallpaperUpload } from './features/wallpapers/useWallpaperUpload';
 import { STORAGE_KEYS } from './lib/storageKeys';
-import { useMediaQuery } from './hooks/useMediaQuery';
+import { isMobileDevice } from './lib/device';
 import styles from './App.module.css';
 import type { WidgetId } from './types';
 
@@ -48,11 +48,10 @@ const ArrangeCanvas = lazy(() =>
 );
 
 export function App() {
-  const desktop = useMediaQuery('(min-width: 1024px)');
-  return desktop ? (
-    <DesktopApp />
-  ) : (
+  return isMobileDevice() ? (
     <main className={styles.desktopNotice}>This start page is for desktop users.</main>
+  ) : (
+    <DesktopApp />
   );
 }
 

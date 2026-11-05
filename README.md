@@ -1,6 +1,6 @@
 # Ryo - Home
 
-Ryo - Home is a customizable start page for desktop browsers. It brings your clock, search, quick links, tasks, reminders, focus timer, and wallpaper together on one page. Windows narrower than 1024 pixels show a desktop-only notice. The desktop page fits the viewport; long lists and settings scroll within their own panels.
+Ryo - Home is a customizable start page for desktop browsers. It brings your clock, search, quick links, tasks, reminders, focus timer, and wallpaper together on one page. Mobile devices show a desktop-only notice; desktop windows have no minimum width requirement. The desktop page fits the viewport; long lists and settings scroll within their own panels.
 
 **Open the live page:** <https://aksh03010.github.io/ryo-startpage/>
 

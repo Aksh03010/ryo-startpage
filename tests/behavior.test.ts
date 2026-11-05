@@ -7,6 +7,35 @@ import { DEFAULT_SETTINGS } from '../src/constants';
 import { buildSearchUrl } from '../src/lib/search';
 import { dateKey, isTaskDone } from '../src/lib/tasks';
 import { formatClockParts } from '../src/lib/time';
+import { isMobileDevice } from '../src/lib/device';
+
+test('mobile notice uses device hints and allows touch-capable desktop devices', () => {
+  const desktop = {
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    platform: 'Win32',
+    maxTouchPoints: 10,
+  };
+  assert.equal(isMobileDevice(desktop), false);
+  assert.equal(isMobileDevice({ ...desktop, userAgentData: { mobile: true } }), true);
+  assert.equal(isMobileDevice({ ...desktop, userAgent: 'Mozilla/5.0 (Linux; Android 15)' }), true);
+  assert.equal(isMobileDevice({ ...desktop, userAgent: 'Mozilla/5.0 (iPhone)' }), true);
+  assert.equal(
+    isMobileDevice({
+      userAgent: 'Mozilla/5.0 (Macintosh)',
+      platform: 'MacIntel',
+      maxTouchPoints: 5,
+    }),
+    true,
+  );
+  assert.equal(
+    isMobileDevice({
+      userAgent: 'Mozilla/5.0 (Macintosh)',
+      platform: 'MacIntel',
+      maxTouchPoints: 0,
+    }),
+    false,
+  );
+});
 
 test('blorp decimal time follows the local day and rolls over at exact metric boundaries', () => {
   const cases: Array<[number, string, string, string]> = [

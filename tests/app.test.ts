@@ -12,6 +12,11 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
   const window = createTestWindow({ url: 'http://localhost/' });
   window.happyDOM.setWindowSize({ width: 390, height: 844 });
   installTestGlobals(window);
+  const desktopAgent = window.navigator.userAgent;
+  Object.defineProperty(window.navigator, 'userAgent', {
+    value: 'Mozilla/5.0 (Linux; Android 15) Mobile',
+    configurable: true,
+  });
   const legacySettings = structuredClone(applySpacePreset(DEFAULT_SETTINGS, 'minimal'));
   delete legacySettings.clock.base24;
   delete legacySettings.clock.blorp;
@@ -47,6 +52,16 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     assert.equal(container.textContent, 'This start page is for desktop users.');
     assert.equal(container.querySelector('[data-widget-id]'), null);
     assert.equal(container.querySelector('header'), null);
+    await act(() => render(null, container));
+    Object.defineProperty(window.navigator, 'userAgent', {
+      value: desktopAgent,
+      configurable: true,
+    });
+    await act(() => render(h(App, {}), container));
+    assert.ok(
+      container.querySelector('[data-widget-id="clock"]'),
+      'A narrow desktop window is allowed',
+    );
     await act(() => {
       window.happyDOM.setWindowSize({ width: 1280, height: 720 });
     });
@@ -213,6 +228,15 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     assert.ok(clock().querySelector('time.blorp'));
     assert.equal(clock().querySelector('button'), null);
     assert.match(clock().querySelector('.seconds')!.textContent!, /^\d{2}$/);
+    const saved = window.localStorage.getItem('ryo.settings.v2');
+    await act(() => render(null, container));
+    Object.defineProperty(window.navigator, 'userAgent', {
+      value: 'Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X)',
+      configurable: true,
+    });
+    await act(() => render(h(App, {}), container));
+    assert.equal(container.textContent, 'This start page is for desktop users.');
+    assert.equal(window.localStorage.getItem('ryo.settings.v2'), saved);
   } finally {
     await act(() => render(null, container));
     await window.happyDOM.close();
