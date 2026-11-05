@@ -1,8 +1,11 @@
 .shell {
   position: absolute;
+  display: flex;
+  flex-direction: column;
   isolation: isolate;
   min-width: 0;
-  max-width: min(92vw, 720px);
+  max-width: 720px;
+  overflow: hidden;
   color: #fff;
   transition:
     box-shadow 220ms ease,
@@ -13,7 +16,11 @@
 }
 
 .body {
-  padding: 22px 24px;
+  flex: 1;
+  min-height: 0;
+  padding: 16px 20px;
+  overflow: auto;
+  overscroll-behavior: contain;
 }
 
 .glass {
@@ -79,7 +86,6 @@
   z-index: 3;
   opacity: 0;
   pointer-events: none;
-  touch-action: none;
   transition:
     opacity 180ms ease,
     transform 180ms ease;
@@ -112,27 +118,28 @@
   }
 }
 
+.shell[data-widget-id='clock'],
+.shell[data-widget-id='search'] {
+  overflow: visible;
+}
+
 .shell[data-widget-id='clock'] .body,
 .shell[data-widget-id='search'] .body {
   padding: 0;
-}
-@media (max-width: 950px) {
-  .body {
-    padding: 20px;
-  }
+  overflow: visible;
 }
 
 .shell[data-widget-id='clock'] {
   width: max-content;
 }
 .shell[data-widget-id='search'] {
-  width: min(580px, 92vw);
+  width: 580px;
 }
 .shell[data-widget-id='tasks'],
 .shell[data-widget-id='focus'],
 .shell[data-widget-id='links'] {
-  width: min(350px, 92vw);
+  width: 350px;
 }
 .shell[data-widget-id='reminders'] {
-  width: min(720px, 92vw);
+  width: 720px;
 }

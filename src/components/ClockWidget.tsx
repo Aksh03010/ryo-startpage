@@ -34,7 +34,7 @@ export function ClockWidget({ clock, accent }: { clock: ClockSettings; accent: s
 
   const timeStyle = {
     fontFamily: font.css,
-    fontSize: `clamp(48px, 11vw, ${baseSize}px)`,
+    fontSize: `clamp(48px, min(11vw, 18dvh), ${baseSize}px)`,
     color: accent,
   } as CSSProperties;
 

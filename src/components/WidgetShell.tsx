@@ -44,9 +44,13 @@ export function WidgetShell({
 }: WidgetShellProps) {
   const glass = boxMode === 'glass';
   const bordered = border ?? true;
+  const left = Math.max(0, Math.min(95, position.x));
+  const top = Math.max(0, Math.min(95, position.y));
   const shellStyle = {
-    left: `${position.x}%`,
-    top: `${position.y}%`,
+    left: `${left}%`,
+    top: `${top}%`,
+    '--widget-left': `${left}%`,
+    '--widget-top': `${top}%`,
     zIndex,
     borderRadius: `${Math.max(0, Math.min(radius, 999))}px`,
     backdropFilter: glass ? `blur(${glassBlur}px)` : undefined,

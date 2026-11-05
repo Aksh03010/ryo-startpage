@@ -2,11 +2,13 @@
   position: relative;
   z-index: 50;
   display: flex;
+  flex: none;
   align-items: center;
   gap: 24px;
+  width: 100%;
   max-width: 1540px;
-  margin: auto;
-  padding: 30px 5%;
+  margin: 0 auto;
+  padding: 18px 5%;
   color: #e5ece4;
 }
 .brand {
@@ -25,13 +27,6 @@
 .brandDot {
   color: var(--accent);
 }
-.tagline {
-  border-left: 1px solid #ffffff1c;
-  padding-left: 24px;
-  color: #86938c;
-  font-size: 9px;
-  letter-spacing: 0.2em;
-}
 .actions {
   display: flex;
   align-items: center;
@@ -39,17 +34,14 @@
   margin-left: auto;
 }
 .icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  min-height: 37px;
-  padding: 0 15px;
+  display: grid;
+  place-items: center;
+  width: 37px;
+  height: 37px;
   border-radius: 999px;
   border: 1px solid #ffffff1c;
   background: #ffffff04;
   color: #b2bdb5;
-  font-size: 11px;
   transition:
     background 160ms,
     border-color 160ms,
@@ -64,26 +56,4 @@
   border-color: #a9d2b578;
   color: var(--accent);
   background: #b6d9ba12;
-}
-@media (max-width: 640px) {
-  .topbar {
-    padding: 22px 6%;
-    gap: 12px;
-  }
-  .tagline {
-    display: none;
-  }
-  .icon {
-    padding: 0 11px;
-  }
-  .icon span {
-    font-size: 10px;
-  }
-}
-
-@media (min-width: 760px) and (max-height: 850px) {
-  .topbar {
-    padding-top: 20px;
-    padding-bottom: 20px;
-  }
 }

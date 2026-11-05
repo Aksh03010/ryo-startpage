@@ -28,7 +28,9 @@ The current model supports a single selected background. Wallpaper Engine integr
 
 ## Layout and resource use
 
-`features/layout/useDashboardLayout.ts` owns responsive-flow versus free-position layout, arrange mode, and drag completion. `WidgetShell` owns widget appearance. Drag context and draggable frames load only when arrange mode is enabled.
+`App` mounts the desktop application only when the viewport is at least 1024 pixels wide; smaller windows show a plain desktop-only notice without mounting widgets, storage owners, or background media. There are no alternate mobile layouts.
+
+`features/layout/useDashboardLayout.ts` owns the desktop grid versus free-position layout, arrange mode, and drag completion. The page is bounded to the viewport, with overflow confined to widget content and settings panels. Drag coordinates are relative to the available dashboard. `WidgetShell` owns widget appearance. Drag context and draggable frames load only when arrange mode is enabled.
 
 `lib/activity.ts` tracks page visibility. Clock/reminder ticks and video playback subscribe to that state. The clock's ticking state stays in its own component rather than rerendering `App`.
 

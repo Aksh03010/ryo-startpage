@@ -150,14 +150,3 @@
 .icon span {
   font-size: 10px;
 }
-@media (max-width: 950px) {
-  .tabs button {
-    padding: 4px 6px;
-  }
-  .title {
-    font-size: 11px;
-  }
-  .title svg {
-    display: none;
-  }
-}

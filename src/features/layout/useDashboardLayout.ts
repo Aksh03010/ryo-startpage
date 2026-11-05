@@ -4,7 +4,7 @@ import type { DragEndEvent } from '@dnd-kit/core';
 import { DEFAULT_POSITIONS, GRID_STEP, WIDGET_IDS } from '../../constants';
 import type { LayoutState, WidgetId } from '../../types';
 
-/** Own the transition from responsive flow to a freely positioned canvas. */
+/** Own the transition from the desktop grid to a freely positioned canvas. */
 export function useDashboardLayout(
   layout: LayoutState,
   setLayout: Dispatch<SetStateAction<LayoutState>>,
@@ -13,15 +13,15 @@ export function useDashboardLayout(
   const [arrange, setArrange] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const toggleArrange = useCallback(() => {
-    if (!arrange && containerRef.current?.dataset.layout === 'flow' && window.innerWidth > 520) {
+    if (!arrange && containerRef.current?.dataset.layout === 'flow') {
       const container = containerRef.current.getBoundingClientRect();
       const positions = { ...layout };
       containerRef.current.querySelectorAll<HTMLElement>('[data-widget-id]').forEach((node) => {
         const id = node.dataset.widgetId as WidgetId;
         const rect = node.getBoundingClientRect();
         positions[id] = {
-          x: (rect.left / window.innerWidth) * 100,
-          y: ((rect.top - container.top) / Math.max(850, window.innerHeight - 100)) * 100,
+          x: container.width ? ((rect.left - container.left) / container.width) * 100 : 0,
+          y: container.height ? ((rect.top - container.top) / container.height) * 100 : 0,
         };
       });
       setLayout(positions);
@@ -38,10 +38,8 @@ export function useDashboardLayout(
 
     const widgetWidth = translated.width;
     const widgetHeight = translated.height;
-    let left = Math.min(translated.left - container.left, container.width - widgetWidth);
-    let top = Math.min(translated.top - container.top, container.height - widgetHeight);
-    left = Math.max(left, 12);
-    top = Math.max(top, 76);
+    let left = translated.left - container.left;
+    let top = translated.top - container.top;
 
     if (snapToGrid) {
       left = Math.round(left / GRID_STEP) * GRID_STEP;
@@ -50,6 +48,10 @@ export function useDashboardLayout(
       left = Math.round(left);
       top = Math.round(top);
     }
+
+    left = Math.max(0, Math.min(left, container.width - widgetWidth));
+    top = Math.max(0, Math.min(top, container.height - widgetHeight));
+    if (!container.width || !container.height) return;
 
     setLayout((prev) => ({
       ...prev,

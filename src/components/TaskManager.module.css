@@ -354,8 +354,3 @@
   color: #d0e3ca;
   background: #b4d1a91a;
 }
-@media (pointer: coarse) {
-  .delete {
-    opacity: 1;
-  }
-}

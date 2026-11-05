@@ -242,11 +242,7 @@
     monospace;
   color: #809184;
 }
-@media (pointer: coarse) {
-  .remove {
-    opacity: 1;
-  }
-}
+
 .addLink:has(.addForm) {
   grid-column: 1 / -1;
 }

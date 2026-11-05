@@ -296,12 +296,6 @@
   color: #ff7681;
 }
 
-@media (max-width: 720px) {
-  .wrap {
-    min-width: 220px;
-  }
-}
-
 .wrap {
   gap: 8px;
 }
@@ -329,12 +323,4 @@
 }
 .manage {
   grid-column: 1 / -1;
-}
-@media (max-width: 520px) {
-  .wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
 }

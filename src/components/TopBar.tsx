@@ -30,7 +30,6 @@ export function TopBar({
           ryo<span className={styles.brandDot}>.</span>
         </span>
       </a>
-      <span className={styles.tagline}>YOUR OWN LITTLE UNIVERSE</span>
       <nav className={styles.actions} aria-label="Home controls">
         <button
           type="button"
@@ -42,7 +41,6 @@ export function TopBar({
           title="Arrange widgets"
         >
           <Grip size={15} />
-          <span>{arrange ? 'Done arranging' : 'Arrange'}</span>
         </button>
         <button
           type="button"
@@ -54,7 +52,6 @@ export function TopBar({
           title="Customize (Ctrl + ,)"
         >
           <Settings2 size={15} />
-          <span>Customize</span>
         </button>
       </nav>
     </header>

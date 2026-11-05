@@ -1,6 +1,6 @@
 # Ryo - Home
 
-Ryo - Home is a customizable start page for your browser. It brings your clock, search, quick links, tasks, reminders, focus timer, and wallpaper together on one page.
+Ryo - Home is a customizable start page for desktop browsers. It brings your clock, search, quick links, tasks, reminders, focus timer, and wallpaper together on one page. Windows narrower than 1024 pixels show a desktop-only notice. The desktop page fits the viewport; long lists and settings scroll within their own panels.
 
 **Open the live page:** <https://aksh03010.github.io/ryo-startpage/>
 
@@ -41,7 +41,7 @@ Your settings, links, tasks, and reminders are saved in that browser on that dev
 
 ## Choose your space
 
-Open Customize and choose **Minimal** (clock and search), **Everyday** (adds quick links), or **Workspace** (adds tasks, focus, and reminders). You can still toggle and style every widget individually. Presets preserve your wallpaper and styling and return to the responsive layout.
+Open Customize and choose **Minimal** (clock and search), **Everyday** (adds quick links), or **Workspace** (adds tasks, focus, and reminders). You can still toggle and style every widget individually. Presets preserve your wallpaper and styling and return to the desktop grid.
 
 Press `/` to focus search, `Ctrl + ,` to customize, and `Esc` to close the panel or finish arranging. Focus and Rest modes have independent durations. Running timers use deadlines, so they catch up after a sleeping or hidden tab.
 

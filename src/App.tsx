@@ -22,6 +22,7 @@ import { useDashboardLayout } from './features/layout/useDashboardLayout';
 import { useStartpageState } from './features/settings/useStartpageState';
 import { useWallpaperUpload } from './features/wallpapers/useWallpaperUpload';
 import { STORAGE_KEYS } from './lib/storageKeys';
+import { useMediaQuery } from './hooks/useMediaQuery';
 import styles from './App.module.css';
 import type { WidgetId } from './types';
 
@@ -47,6 +48,15 @@ const ArrangeCanvas = lazy(() =>
 );
 
 export function App() {
+  const desktop = useMediaQuery('(min-width: 1024px)');
+  return desktop ? (
+    <DesktopApp />
+  ) : (
+    <main className={styles.desktopNotice}>This start page is for desktop users.</main>
+  );
+}
+
+function DesktopApp() {
   const {
     tasks,
     setTasks,
@@ -100,6 +110,24 @@ export function App() {
     () => WIDGET_IDS.filter((id) => settings.appearance.widgets[id]?.visible),
     [settings.appearance.widgets],
   );
+
+  const flowStyle = useMemo(() => {
+    const rows: string[] = [];
+    const properties: Record<string, string | number> = {};
+    const groups: Array<[WidgetId[], string]> = [
+      [['clock'], 'max-content'],
+      [['search'], 'max-content'],
+      [['tasks', 'focus', 'links'], 'minmax(0, 1fr)'],
+      [['reminders'], 'minmax(0, 0.3fr)'],
+    ];
+    for (const [ids, track] of groups) {
+      if (!ids.some((id) => widgetIds.includes(id))) continue;
+      rows.push(track);
+      for (const id of ids) properties[`--row-${id}`] = rows.length;
+    }
+    properties['--flow-rows'] = rows.join(' ') || 'none';
+    return properties as CSSProperties;
+  }, [widgetIds]);
 
   const renderWidget = useCallback(
     (id: WidgetId) => {
@@ -197,6 +225,7 @@ export function App() {
     <main
       ref={containerRef}
       className={styles.dashboard}
+      style={flowStyle}
       data-layout={isDefaultLayout && !arrange ? 'flow' : 'free'}
       data-grid={gridVisible ? 'on' : undefined}
     >
@@ -234,12 +263,6 @@ export function App() {
       ) : (
         dashboard
       )}
-      <footer className={styles.footer}>
-        <span>A little space. A clearer mind.</span>
-        <span>
-          Made for your orbit <span aria-hidden="true">✧</span>
-        </span>
-      </footer>
 
       {arrange && (
         <p className={styles.arrangeHint}>

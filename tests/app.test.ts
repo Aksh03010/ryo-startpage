@@ -10,6 +10,7 @@ import { applySpacePreset } from '../src/lib/spacePresets';
 
 test('Preact app: minimal → workspace, task entry, timer controls, and arrange mode', async () => {
   const window = createTestWindow({ url: 'http://localhost/' });
+  window.happyDOM.setWindowSize({ width: 390, height: 844 });
   installTestGlobals(window);
   const legacySettings = structuredClone(applySpacePreset(DEFAULT_SETTINGS, 'minimal'));
   delete legacySettings.clock.base24;
@@ -43,6 +44,25 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
   };
   try {
     await act(() => render(h(App, {}), container));
+    assert.equal(container.textContent, 'This start page is for desktop users.');
+    assert.equal(container.querySelector('[data-widget-id]'), null);
+    assert.equal(container.querySelector('header'), null);
+    await act(() => {
+      window.happyDOM.setWindowSize({ width: 1280, height: 720 });
+    });
+    await until(() => container.querySelector('[data-widget-id="clock"]'));
+    assert.equal(container.querySelector('header')!.textContent?.trim(), 'ryo.');
+    assert.equal(container.querySelector('footer'), null);
+    for (const label of ['Arrange widgets', 'Open customize panel']) {
+      assert.equal(button(label).textContent, '');
+    }
+    for (const text of [
+      'YOUR OWN LITTLE UNIVERSE',
+      'A little space. A clearer mind.',
+      'Made for your orbit',
+    ]) {
+      assert.equal(container.textContent?.includes(text), false);
+    }
     assert.ok(container.querySelector('[data-widget-id="clock"]'));
     assert.ok(container.querySelector('[role="search"]'));
     assert.equal(container.querySelector('[data-widget-id="tasks"]'), null);
