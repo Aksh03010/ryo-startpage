@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useCallback, useId } from 'react';
 import type { CSSProperties, HTMLAttributes } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { GripVertical } from 'lucide-react';
@@ -9,20 +9,32 @@ export function DraggableFrame({
   label,
   children,
   style,
+  elementRef,
   ...props
-}: HTMLAttributes<HTMLElement> & { widgetId: string; label: string }) {
+}: HTMLAttributes<HTMLElement> & {
+  widgetId: string;
+  label: string;
+  elementRef: (element: HTMLElement | null) => void;
+}) {
   const id = useId();
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id,
     data: { widgetId },
   });
+  const setRefs = useCallback(
+    (element: HTMLElement | null) => {
+      setNodeRef(element);
+      elementRef(element);
+    },
+    [setNodeRef, elementRef],
+  );
   const dragStyle: CSSProperties = {
     ...style,
     zIndex: isDragging ? 40 : style?.zIndex,
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
   };
   return (
-    <section {...props} ref={setNodeRef} style={dragStyle} data-dragging={isDragging || undefined}>
+    <section {...props} ref={setRefs} style={dragStyle} data-dragging={isDragging || undefined}>
       <button
         type="button"
         className={`${styles.handle} ${styles.handleVisible}`}

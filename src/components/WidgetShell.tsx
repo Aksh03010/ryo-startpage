@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import styles from './WidgetShell.module.css';
 import type { BoxMode } from '../types';
+import { useWidgetBounds } from '../features/layout/useWidgetBounds';
 
 const DraggableFrame = lazy(() =>
   import('./DraggableFrame').then((module) => ({ default: module.DraggableFrame })),
@@ -44,13 +45,12 @@ export function WidgetShell({
 }: WidgetShellProps) {
   const glass = boxMode === 'glass';
   const bordered = border ?? true;
-  const left = Math.max(0, Math.min(95, position.x));
-  const top = Math.max(0, Math.min(95, position.y));
+  const elementRef = useWidgetBounds(position, size, editMode);
+  const left = Math.max(0, Math.min(100, position.x));
+  const top = Math.max(0, Math.min(100, position.y));
   const shellStyle = {
     left: `${left}%`,
     top: `${top}%`,
-    '--widget-left': `${left}%`,
-    '--widget-top': `${top}%`,
     zIndex,
     borderRadius: `${Math.max(0, Math.min(radius, 999))}px`,
     backdropFilter: glass ? `blur(${glassBlur}px)` : undefined,
@@ -78,11 +78,21 @@ export function WidgetShell({
   const body = <div className={`${styles.body} ${contentClassName}`}>{children}</div>;
   if (editMode)
     return (
-      <Suspense fallback={<section {...sectionProps}>{body}</section>}>
-        <DraggableFrame {...sectionProps} widgetId={id} label={label}>
+      <Suspense
+        fallback={
+          <section {...sectionProps} ref={elementRef}>
+            {body}
+          </section>
+        }
+      >
+        <DraggableFrame {...sectionProps} elementRef={elementRef} widgetId={id} label={label}>
           {body}
         </DraggableFrame>
       </Suspense>
     );
-  return <section {...sectionProps}>{body}</section>;
+  return (
+    <section {...sectionProps} ref={elementRef}>
+      {body}
+    </section>
+  );
 }

@@ -27,9 +27,23 @@ function openDatabase(): Promise<IDBDatabase> {
     };
     request.onsuccess = () => {
       const db = request.result;
-      void migrateLegacyWallpapers(db).then(() => resolve(db), reject);
+      db.onversionchange = () => {
+        db.close();
+        dbPromise = null;
+      };
+      void migrateLegacyWallpapers(db).then(
+        () => resolve(db),
+        (error: unknown) => {
+          db.close();
+          reject(error);
+        },
+      );
     };
     request.onerror = () => reject(request.error);
+  });
+  dbPromise = dbPromise.catch((error: unknown) => {
+    dbPromise = null;
+    throw error;
   });
   return dbPromise;
 }

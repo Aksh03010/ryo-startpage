@@ -75,6 +75,12 @@ test('decimal clock aligns to local midnight, changes cadence, pauses hidden, an
     assert.equal(pending()[1].delay, 60_000);
     assert.equal(container.querySelector('.hour')!.textContent, '12');
     assert.equal(container.querySelector('.minute')!.textContent, '02');
+    await fireAt(midnight + 43_920_000);
+    assert.equal(container.querySelector('.hour')!.textContent, '12');
+    assert.equal(container.querySelector('.minute')!.textContent, '12');
+    await fireAt(midnight + 43_980_000);
+    assert.equal(container.querySelector('.hour')!.textContent, '12');
+    assert.equal(container.querySelector('.minute')!.textContent, '13');
   } finally {
     await act(() => render(null, container));
     assert.equal(timers.size, 0);

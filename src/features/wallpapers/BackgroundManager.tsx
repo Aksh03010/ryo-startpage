@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { isPageActive, subscribeActivity } from '../../lib/activity';
 import { PRESETS } from '../../constants';
 import type { BackgroundSettings } from '../../types';
@@ -16,7 +16,14 @@ function BackgroundManagerView({
   const { wallpaper } = background;
   const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const preset = PRESETS.find((item) => item.id === wallpaper.preset) ?? PRESETS[0];
-  const src = useWallpaperSource(wallpaper);
+  const { src, failed: sourceFailed } = useWallpaperSource(wallpaper);
+  const [failure, setFailure] = useState<{
+    selection: BackgroundSettings['wallpaper'];
+    src: string;
+  } | null>(null);
+  const failedSource = failure?.selection === wallpaper ? failure.src : null;
+  const setFailedSource = (src: string) => setFailure({ selection: wallpaper, src });
+  const failed = sourceFailed || (src !== null && failedSource === src);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const mediaFilter =
     background.brightness === 100 && background.saturation === 100 && background.blur === 0
@@ -36,88 +43,103 @@ function BackgroundManagerView({
       void video.play().catch(() => undefined);
     };
     syncPlayback();
-    return subscribeActivity(syncPlayback);
+    const unsubscribe = subscribeActivity(syncPlayback);
+    return () => {
+      unsubscribe();
+      video.pause();
+    };
   }, [
     background.videoPlaybackRate,
     background.videoPaused,
     reduceMotion,
     prefersReducedMotion,
     src,
+    failed,
   ]);
 
-  const isPresetKind = wallpaper.kind === 'preset';
+  const isPresetKind = wallpaper.kind === 'preset' || failed || !src;
   const presetImage = preset.id !== 'aurora' && preset.src ? preset.src : undefined;
   const showCustomMedia =
-    !isPresetKind && src && (wallpaper.kind === 'url' || wallpaper.kind === 'upload');
+    !failed && src && (wallpaper.kind === 'url' || wallpaper.kind === 'upload');
 
   return (
-    <div className={styles.scene} aria-hidden>
-      {isPresetKind && !presetImage && (
-        <div className={styles.dynamicWallpaper} style={{ filter: mediaFilter }}>
-          <div className={styles.stars} />
-          <svg className={styles.constellation} viewBox="0 0 500 400" fill="none">
-            <path
-              d="m52 260 98-98 108 43 72-121 95 37M150 162l35-90 145 12"
-              stroke="currentColor"
-              strokeWidth=".6"
-            />
-            {[
-              [52, 260],
-              [150, 162],
-              [258, 205],
-              [330, 84],
-              [425, 121],
-              [185, 72],
-            ].map(([cx, cy]) => (
-              <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="2" fill="currentColor" />
-            ))}
-          </svg>
-        </div>
-      )}
+    <>
+      <div className={styles.scene} aria-hidden>
+        {isPresetKind && (!presetImage || failedSource === presetImage) && (
+          <div className={styles.dynamicWallpaper} style={{ filter: mediaFilter }}>
+            <div className={styles.stars} />
+            <svg className={styles.constellation} viewBox="0 0 500 400" fill="none">
+              <path
+                d="m52 260 98-98 108 43 72-121 95 37M150 162l35-90 145 12"
+                stroke="currentColor"
+                strokeWidth=".6"
+              />
+              {[
+                [52, 260],
+                [150, 162],
+                [258, 205],
+                [330, 84],
+                [425, 121],
+                [185, 72],
+              ].map(([cx, cy]) => (
+                <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="2" fill="currentColor" />
+              ))}
+            </svg>
+          </div>
+        )}
 
-      {isPresetKind && presetImage && (
-        <img
-          src={presetImage}
-          alt=""
-          className={styles.wallpaperMedia}
-          style={{ filter: mediaFilter, transform: `scale(${scaleWithBlur})` }}
-          draggable={false}
-          decoding="async"
+        {isPresetKind && presetImage && failedSource !== presetImage && (
+          <img
+            src={presetImage}
+            alt=""
+            className={styles.wallpaperMedia}
+            style={{ filter: mediaFilter, transform: `scale(${scaleWithBlur})` }}
+            draggable={false}
+            decoding="async"
+            onError={() => setFailedSource(presetImage)}
+          />
+        )}
+
+        {showCustomMedia && wallpaper.mediaType === 'video' && (
+          <video
+            ref={videoRef}
+            src={src}
+            className={styles.wallpaperMedia}
+            style={{ filter: mediaFilter, transform: `scale(${scaleWithBlur})` }}
+            autoPlay
+            muted
+            loop={background.videoLoop}
+            playsInline
+            preload="metadata"
+            onError={() => setFailedSource(src)}
+          />
+        )}
+
+        {showCustomMedia && wallpaper.mediaType !== 'video' && (
+          <img
+            src={src}
+            alt=""
+            className={styles.wallpaperMedia}
+            style={{ filter: mediaFilter, transform: `scale(${scaleWithBlur})` }}
+            draggable={false}
+            decoding="async"
+            onError={() => setFailedSource(src)}
+          />
+        )}
+
+        <div
+          className={styles.dim}
+          style={{ background: `rgba(4, 7, 14, ${background.dim / 100})` }}
         />
+        {background.grain && <div className={styles.grain} />}
+        <div className={styles.vignette} />
+      </div>
+      {failed && (
+        <p className={styles.mediaError} role="status">
+          This wallpaper couldn’t load. Showing your preset instead.
+        </p>
       )}
-
-      {showCustomMedia && wallpaper.mediaType === 'video' && (
-        <video
-          ref={videoRef}
-          src={src}
-          className={styles.wallpaperMedia}
-          style={{ filter: mediaFilter, transform: `scale(${scaleWithBlur})` }}
-          autoPlay
-          muted
-          loop={background.videoLoop}
-          playsInline
-          preload="metadata"
-        />
-      )}
-
-      {showCustomMedia && wallpaper.mediaType !== 'video' && (
-        <img
-          src={src}
-          alt=""
-          className={styles.wallpaperMedia}
-          style={{ filter: mediaFilter, transform: `scale(${scaleWithBlur})` }}
-          draggable={false}
-          decoding="async"
-        />
-      )}
-
-      <div
-        className={styles.dim}
-        style={{ background: `rgba(4, 7, 14, ${background.dim / 100})` }}
-      />
-      {background.grain && <div className={styles.grain} />}
-      <div className={styles.vignette} />
-    </div>
+    </>
   );
 }
 

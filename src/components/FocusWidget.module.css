@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  gap: 12px;
+  gap: 10px;
 }
 
 .header {
@@ -22,7 +22,7 @@
   font-size: 12px;
   text-transform: none;
   letter-spacing: 0.01em;
-  color: #d9e4d8;
+  color: var(--ui-text);
 }
 
 .dialWrap {
@@ -56,7 +56,7 @@
     400 44px/1 Georgia,
     serif;
   letter-spacing: -0.03em;
-  color: #e3eddd;
+  color: var(--ui-text);
 }
 
 .controls {
@@ -73,17 +73,17 @@
     border-color 170ms ease,
     background 170ms ease,
     transform 170ms ease;
-  border: 1px solid #c2d6b82b;
-  background: #c2d6b80a;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-hover);
   border-radius: 99px;
   width: 33px;
   height: 33px;
-  color: #b4c8aa;
+  color: var(--accent-ink);
 }
 
 .icon:hover {
-  background: color-mix(in srgb, var(--accent) 20%, transparent);
-  border-color: color-mix(in srgb, var(--accent) 62%, transparent);
+  background: color-mix(in srgb, var(--accent-ink, var(--accent)) 20%, transparent);
+  border-color: color-mix(in srgb, var(--accent-ink, var(--accent)) 62%, transparent);
   transform: translateY(-1px);
 }
 
@@ -104,18 +104,18 @@
     system-ui;
   padding: 0;
   background: none;
-  color: #7d9179;
+  color: var(--ui-dim);
   font-size: 9px;
 }
 .title svg {
-  color: #a4b9a5;
+  color: var(--accent-ink);
 }
 .tabs {
   display: flex;
   gap: 2px;
   padding: 3px;
   background: #0002;
-  border: 1px solid #b6cab415;
+  border: 1px solid var(--ui-border);
   border-radius: 99px;
 }
 .tabs button {
@@ -123,12 +123,12 @@
   border-radius: 99px;
   padding: 4px 8px;
   font-size: 9px;
-  color: #83967f;
+  color: var(--ui-muted);
   background: transparent;
 }
 .tabs button[aria-pressed='true'] {
-  color: #cfe1c6;
-  background: #b6d2a91c;
+  color: var(--ui-text);
+  background: var(--ui-hover);
 }
 .dial circle {
   stroke-width: 1;
@@ -137,7 +137,7 @@
   font:
     8px/1 'Segoe UI',
     sans-serif;
-  color: #7e9478;
+  color: var(--ui-dim);
   letter-spacing: 0.17em;
 }
 .icon:first-child {
@@ -145,7 +145,11 @@
   width: auto;
   display: flex;
   gap: 8px;
-  background: linear-gradient(100deg, #b3cea329, #9ac4c01f);
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--accent-ink, var(--accent)) 22%, transparent),
+    var(--ui-hover)
+  );
 }
 .icon span {
   font-size: 10px;

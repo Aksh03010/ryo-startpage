@@ -1,5 +1,5 @@
 import { getGlobalBoxMode } from './features/settings/appearance';
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { BackgroundManager } from './features/wallpapers/BackgroundManager';
 import { ClockWidget } from './components/ClockWidget';
@@ -23,6 +23,7 @@ import { useStartpageState } from './features/settings/useStartpageState';
 import { useWallpaperUpload } from './features/wallpapers/useWallpaperUpload';
 import { STORAGE_KEYS } from './lib/storageKeys';
 import { isMobileDevice } from './lib/device';
+import { readableAccent } from './lib/theme';
 import styles from './App.module.css';
 import type { WidgetId } from './types';
 
@@ -78,6 +79,12 @@ function DesktopApp() {
   const { arrange, setArrange, containerRef, toggleArrange, handleDragEnd, isDefaultLayout } =
     useDashboardLayout(layout, setLayout, settings.layout.snapToGrid);
   const [customizeOpen, setCustomizeOpen] = useState(false);
+  const [storageError, setStorageError] = useState(false);
+  useLayoutEffect(() => {
+    const notify = () => setStorageError(true);
+    window.addEventListener('ryo:storage-error', notify);
+    return () => window.removeEventListener('ryo:storage-error', notify);
+  }, []);
 
   const appearance = settings.appearance;
   const accent = useMemo(() => {
@@ -112,12 +119,13 @@ function DesktopApp() {
 
   const flowStyle = useMemo(() => {
     const rows: string[] = [];
+    const compactRows: string[] = [];
     const properties: Record<string, string | number> = {};
     const groups: Array<[WidgetId[], string]> = [
       [['clock'], 'max-content'],
       [['search'], 'max-content'],
       [['tasks', 'focus', 'links'], 'minmax(0, 1fr)'],
-      [['reminders'], 'minmax(0, 0.3fr)'],
+      [['reminders'], 'var(--reminders-track, minmax(76px, 0.25fr))'],
     ];
     for (const [ids, track] of groups) {
       if (!ids.some((id) => widgetIds.includes(id))) continue;
@@ -125,6 +133,18 @@ function DesktopApp() {
       for (const id of ids) properties[`--row-${id}`] = rows.length;
     }
     properties['--flow-rows'] = rows.join(' ') || 'none';
+    const cards = (['tasks', 'focus', 'links'] as const).filter((id) => widgetIds.includes(id));
+    cards.forEach((id, index) => {
+      properties[`--column-${id}`] = `${index * (6 / cards.length) + 1} / span ${6 / cards.length}`;
+    });
+    for (const [ids, track] of [[['clock', 'search'], 'max-content'], ...groups.slice(2)] as Array<
+      [WidgetId[], string]
+    >) {
+      if (!ids.some((id) => widgetIds.includes(id))) continue;
+      compactRows.push(track);
+      for (const id of ids) properties[`--compact-row-${id}`] = compactRows.length;
+    }
+    properties['--compact-flow-rows'] = compactRows.join(' ') || 'none';
     return properties as CSSProperties;
   }, [widgetIds]);
 
@@ -145,7 +165,7 @@ function DesktopApp() {
       const renderContent = () => {
         switch (id) {
           case 'clock':
-            return <ClockWidget clock={settings.clock} accent={`rgba(var(--accent-rgb), 0.94)`} />;
+            return <ClockWidget clock={settings.clock} accent="var(--accent-ink)" />;
           case 'tasks':
             return <TaskManager tasks={tasks} settings={settings.tasks} onTasksChange={setTasks} />;
           case 'reminders':
@@ -239,6 +259,7 @@ function DesktopApp() {
         {
           '--accent': accent.tint,
           '--accent-rgb': accent.rgb,
+          '--accent-ink': readableAccent(accent.tint),
           '--font-clock': clockFont.css,
           '--text-scale': String(settings.appearance.textScale / 100),
         } as CSSProperties
@@ -254,6 +275,18 @@ function DesktopApp() {
         onArrange={toggleArrange}
         onCustomize={toggleCustomize}
       />
+      {storageError && (
+        <div className={styles.storageError} role="status">
+          Changes couldn’t be saved in this browser. Keep this tab open to retain them.
+          <button
+            type="button"
+            aria-label="Dismiss storage message"
+            onClick={() => setStorageError(false)}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {arrange ? (
         <Suspense fallback={dashboard}>

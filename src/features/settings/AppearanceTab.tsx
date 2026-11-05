@@ -21,7 +21,9 @@ export function AppearanceTab({ settings, onSettings }: SettingsTabProps) {
   return (
     <div className={styles.tabContent}>
       <SectionTitle>Accent color</SectionTitle>
-      <p className={styles.help}>Choose a color used for highlights and active controls.</p>
+      <p className={styles.help}>
+        Tint surfaces, borders, buttons, and highlights across your space.
+      </p>
       <div className={styles.accentRow}>
         {(Object.keys(ACCENTS) as Array<Exclude<AccentId, 'custom'>>).map((id) => (
           <button

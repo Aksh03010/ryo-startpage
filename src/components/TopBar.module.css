@@ -7,8 +7,8 @@
   gap: 24px;
   width: 100%;
   margin: 0 auto;
-  padding: 18px 5%;
-  color: #e5ece4;
+  padding: 24px var(--page-gutter);
+  color: var(--ui-text);
 }
 .brand {
   display: flex;
@@ -24,7 +24,7 @@
   line-height: 1;
 }
 .brandDot {
-  color: var(--accent);
+  color: var(--accent-ink, var(--accent));
 }
 .actions {
   display: flex;
@@ -38,9 +38,9 @@
   width: 37px;
   height: 37px;
   border-radius: 999px;
-  border: 1px solid #ffffff1c;
+  border: 1px solid var(--ui-border);
   background: #ffffff04;
-  color: #b2bdb5;
+  color: var(--ui-muted);
   transition:
     background 160ms,
     border-color 160ms,
@@ -52,7 +52,7 @@
   color: #fff;
 }
 .icon[data-active] {
-  border-color: #a9d2b578;
-  color: var(--accent);
-  background: #b6d9ba12;
+  border-color: var(--ui-border-strong);
+  color: var(--accent-ink, var(--accent));
+  background: var(--ui-hover);
 }

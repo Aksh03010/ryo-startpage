@@ -48,7 +48,7 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 a:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--accent-ink, var(--accent)) 70%, transparent);
   outline-offset: 2px;
 }
 
@@ -57,7 +57,7 @@ input[type='number'] {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent-ink, var(--accent)) 45%, transparent);
   color: #ffffff;
 }
 

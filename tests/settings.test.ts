@@ -1,15 +1,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { DEFAULT_SETTINGS } from '../src/constants';
-import { migrateSettings } from '../src/features/settings/migrateSettings';
+import { normalizeSettings } from '../src/features/settings/normalizeSavedData';
 import { getUpcomingReminders } from '../src/lib/reminders';
-import type { Settings, Reminder } from '../src/types';
+import type { Reminder } from '../src/types';
 
-test('current settings migrations preserve identity and user choices', () => {
+test('current settings normalization preserves user choices', () => {
   const settings = structuredClone(DEFAULT_SETTINGS);
   settings.appearance.widgets.tasks.visible = false;
   settings.appearance.widgets.clock.size = 120;
-  assert.equal(migrateSettings(settings), settings);
+  assert.deepEqual(normalizeSettings(settings), settings);
 });
 
 test('legacy widget and glass migrations preserve overrides and do not mutate the save', () => {
@@ -26,8 +26,7 @@ test('legacy widget and glass migrations preserve overrides and do not mutate th
     },
   };
   const before = structuredClone(legacy);
-  // The migration boundary also receives older, incomplete versions of this schema.
-  const result = migrateSettings(legacy as unknown as Settings);
+  const result = normalizeSettings(legacy);
   assert.equal(result.appearance.boxMode, 'solid');
   assert.equal(result.appearance.widgets.clock.style.boxMode, 'glass');
   assert.equal(result.appearance.widgets.clock.style.opacity, 25);
@@ -36,7 +35,7 @@ test('legacy widget and glass migrations preserve overrides and do not mutate th
   assert.equal(result.appearance.widgets.tasks.style.boxMode, 'none');
   assert.equal(result.appearance.widgets.reminders.visible, true);
   assert.deepEqual(legacy, before);
-  assert.equal(migrateSettings(result), result);
+  assert.deepEqual(normalizeSettings(result), result);
 });
 
 test('reminders exclude expired one-time entries and roll repeating entries to the next week', () => {

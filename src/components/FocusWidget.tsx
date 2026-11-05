@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Pause, Play, RotateCcw, Timer, Zap } from 'lucide-react';
 import { useNow } from '../hooks/useNow';
-import { pauseFocus, remainingSeconds, startFocus } from '../lib/focus';
+import { normalizeFocusSnapshot, pauseFocus, remainingSeconds, startFocus } from '../lib/focus';
 import type { FocusSnapshot } from '../lib/focus';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import styles from './FocusWidget.module.css';
@@ -15,11 +15,15 @@ export function FocusWidget({
   focusMinutes: number;
   breakMinutes: number;
 }) {
-  const [snapshot, setSnapshot] = useLocalStorage<FocusSnapshot>(settingsKey, () => ({
-    duration: focusMinutes * 60,
-    paused: true,
-    remaining: focusMinutes * 60,
-  }));
+  const [snapshot, setSnapshot] = useLocalStorage<FocusSnapshot>(
+    settingsKey,
+    () => ({
+      duration: focusMinutes * 60,
+      paused: true,
+      remaining: focusMinutes * 60,
+    }),
+    normalizeFocusSnapshot,
+  );
   const phase = snapshot.phase ?? 'focus';
   const duration = (phase === 'focus' ? focusMinutes : breakMinutes) * 60;
   const now = useNow(snapshot.paused ? null : 1000);
@@ -103,7 +107,7 @@ export function FocusWidget({
             cy="36"
             r="31"
             fill="none"
-            stroke="var(--accent)"
+            stroke="var(--accent-ink, var(--accent))"
             strokeWidth="4"
             strokeLinecap="round"
             strokeDasharray={2 * Math.PI * 31}

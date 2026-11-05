@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import type { WallpaperState } from '../../types';
 
 export function useWallpaperSource(wallpaper: WallpaperState) {
-  const [upload, setUpload] = useState<{ id: string; src: string | null }>({ id: '', src: null });
+  const [upload, setUpload] = useState<{ id: string; src: string | null; failed: boolean }>({
+    id: '',
+    src: null,
+    failed: false,
+  });
 
   useEffect(() => {
     if (wallpaper.kind !== 'upload' || !wallpaper.mediaId) return;
@@ -14,10 +18,10 @@ export function useWallpaperSource(wallpaper: WallpaperState) {
       .then((record) => {
         if (cancelled) return;
         if (record) objectUrl = URL.createObjectURL(record.blob);
-        setUpload({ id, src: objectUrl });
+        setUpload({ id, src: objectUrl, failed: !record });
       })
       .catch(() => {
-        if (!cancelled) setUpload({ id, src: null });
+        if (!cancelled) setUpload({ id, src: null, failed: true });
       });
     return () => {
       cancelled = true;
@@ -25,6 +29,10 @@ export function useWallpaperSource(wallpaper: WallpaperState) {
     };
   }, [wallpaper.kind, wallpaper.mediaId]);
 
-  if (wallpaper.kind === 'url') return wallpaper.url ?? null;
-  return wallpaper.kind === 'upload' && upload.id === wallpaper.mediaId ? upload.src : null;
+  if (wallpaper.kind === 'url') return { src: wallpaper.url ?? null, failed: !wallpaper.url };
+  const current = wallpaper.kind === 'upload' && upload.id === wallpaper.mediaId;
+  return {
+    src: current ? upload.src : null,
+    failed: wallpaper.kind === 'upload' && (!wallpaper.mediaId || (current && upload.failed)),
+  };
 }

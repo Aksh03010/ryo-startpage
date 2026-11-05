@@ -34,7 +34,7 @@ export function ClockWidget({ clock, accent }: { clock: ClockSettings; accent: s
 
   const timeStyle = {
     fontFamily: font.css,
-    fontSize: `clamp(48px, min(11vw, 18dvh), ${baseSize}px)`,
+    fontSize: `clamp(48px, min(11vw, var(--clock-viewport-cap, 18dvh)), ${baseSize}px)`,
     color: accent,
   } as CSSProperties;
 
@@ -56,11 +56,11 @@ export function ClockWidget({ clock, accent }: { clock: ClockSettings; accent: s
         data-animation={clock.animation === 'none' ? undefined : clock.animation}
         style={timeStyle}
       >
-        <span key={parts.hour} className={`${styles.updated} ${styles.hour}`}>
+        <span key={`hour-${parts.hour}`} className={`${styles.updated} ${styles.hour}`}>
           {parts.hour}
         </span>
         <span className={styles.colon}>·</span>
-        <span key={parts.minute} className={`${styles.updated} ${styles.minute}`}>
+        <span key={`minute-${parts.minute}`} className={`${styles.updated} ${styles.minute}`}>
           {parts.minute}
         </span>
         {clock.showSeconds && <span className={styles.seconds}>{parts.second}</span>}

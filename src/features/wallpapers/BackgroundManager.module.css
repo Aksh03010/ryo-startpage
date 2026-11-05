@@ -3,7 +3,7 @@
   inset: 0;
   z-index: 0;
   overflow: hidden;
-  background: #080c0b;
+  background: var(--ui-bg, #080c0b);
   pointer-events: none;
 }
 .wallpaperMedia {
@@ -24,8 +24,17 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 50% 22%, #14241e70, transparent 54%),
-    radial-gradient(ellipse at 3% 65%, #17202055, transparent 40%), #080c0b;
+    radial-gradient(
+      ellipse at 50% 22%,
+      color-mix(in srgb, var(--accent) 12%, transparent),
+      transparent 54%
+    ),
+    radial-gradient(
+      ellipse at 3% 65%,
+      color-mix(in srgb, var(--accent) 6%, transparent),
+      transparent 40%
+    ),
+    var(--ui-bg, #080c0b);
 }
 .stars {
   position: absolute;
@@ -38,7 +47,7 @@
   height: 340px;
   right: -10px;
   top: 9%;
-  color: #9abca0;
+  color: var(--accent-ink);
   opacity: 0.18;
 }
 .grain {
@@ -51,4 +60,17 @@
   position: absolute;
   inset: 0;
   background: radial-gradient(ellipse at 50% 35%, transparent 35%, #03060555 100%);
+}
+
+.mediaError {
+  position: fixed;
+  z-index: 55;
+  left: var(--page-gutter);
+  bottom: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--ui-border);
+  border-radius: 10px;
+  background: var(--ui-surface);
+  color: var(--ui-muted);
+  font-size: 12px;
 }

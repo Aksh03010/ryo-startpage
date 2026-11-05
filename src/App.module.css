@@ -1,11 +1,23 @@
 .app {
+  --page-gutter: clamp(28px, 3vw, 64px);
+  --space: 24px;
+  --clock-viewport-cap: 18dvh;
+  --ui-bg: color-mix(in srgb, var(--accent) 4%, #080a10);
+  --ui-surface: color-mix(in srgb, var(--accent) 9%, #12141b);
+  --ui-raised: color-mix(in srgb, var(--accent) 13%, #171a23);
+  --ui-border: color-mix(in srgb, var(--accent-ink) 22%, transparent);
+  --ui-border-strong: color-mix(in srgb, var(--accent-ink) 50%, transparent);
+  --ui-text: color-mix(in srgb, var(--accent) 12%, #f4f4f7);
+  --ui-muted: color-mix(in srgb, var(--accent) 28%, #a4a7b0);
+  --ui-dim: color-mix(in srgb, var(--accent-ink) 18%, #858994);
+  --ui-hover: color-mix(in srgb, var(--accent-ink) 10%, transparent);
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
   height: 100dvh;
   overflow: hidden;
-  color: #ecf0e9;
+  color: var(--ui-text);
   font-family: 'Segoe UI', system-ui, sans-serif;
   font-size: calc(16px * var(--text-scale, 1));
 }
@@ -27,21 +39,17 @@
   position: relative;
   flex: 1;
   min-height: 0;
-  width: 90%;
+  width: calc(100% - var(--page-gutter) * 2);
   margin: 0 auto;
   overflow: hidden;
 }
-.dashboard[data-layout='free'] > section {
-  max-width: calc(100% - var(--widget-left));
-  max-height: calc(100% - var(--widget-top));
-}
 .dashboard[data-layout='flow'] {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   grid-template-rows: var(--flow-rows);
   align-content: start;
-  gap: clamp(10px, 2dvh, 20px);
-  padding: 0 0 18px;
+  gap: var(--space);
+  padding: 12px 0 24px;
 }
 .dashboard[data-layout='flow'] > section {
   position: relative;
@@ -68,15 +76,15 @@
   width: min(580px, 100%);
 }
 .dashboard[data-layout='flow'] > section[data-widget-id='tasks'] {
-  grid-column: 1;
+  grid-column: var(--column-tasks);
   grid-row: var(--row-tasks);
 }
 .dashboard[data-layout='flow'] > section[data-widget-id='focus'] {
-  grid-column: 2;
+  grid-column: var(--column-focus);
   grid-row: var(--row-focus);
 }
 .dashboard[data-layout='flow'] > section[data-widget-id='links'] {
-  grid-column: 3;
+  grid-column: var(--column-links);
   grid-row: var(--row-links);
 }
 .dashboard[data-layout='flow'] > section[data-widget-id='reminders'] {
@@ -95,7 +103,7 @@
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 .dashboard[data-layout='flow'] > section[data-widget-id='reminders'] > div {
-  padding: 13px 22px;
+  padding: 20px 24px;
 }
 .dashboard[data-grid] {
   background-image:
@@ -130,4 +138,68 @@
 }
 .widgetLoading {
   min-height: 0;
+}
+
+.storageError {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: calc(100% - 48px);
+  padding: 14px 20px;
+  border: 1px solid var(--ui-border-strong);
+  border-radius: 16px;
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  font-size: 13px;
+}
+.storageError button {
+  border: 0;
+  background: transparent;
+  color: var(--accent-ink);
+}
+@media (max-height: 760px) {
+  .app {
+    --clock-viewport-cap: 11dvh;
+  }
+  .dashboard[data-layout='flow'] {
+    grid-template-rows: var(--compact-flow-rows);
+  }
+  .dashboard[data-layout='flow'] > section[data-widget-id='clock'] {
+    grid-column: 1 / span 2;
+    grid-row: var(--compact-row-clock);
+    justify-self: start;
+    align-self: center;
+  }
+  .dashboard[data-layout='flow'] > section[data-widget-id='search'] {
+    grid-column: 3 / -1;
+    grid-row: var(--compact-row-search);
+    justify-self: center;
+    align-self: center;
+  }
+  .dashboard[data-layout='flow']:not(:has([data-widget-id='clock']))
+    > section[data-widget-id='search'] {
+    grid-column: 1 / -1;
+  }
+  .dashboard[data-layout='flow']:not(:has([data-widget-id='search']))
+    > section[data-widget-id='clock'] {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+  .dashboard[data-layout='flow'] > section[data-widget-id='tasks'] {
+    grid-row: var(--compact-row-tasks);
+  }
+  .dashboard[data-layout='flow'] > section[data-widget-id='focus'] {
+    grid-row: var(--compact-row-focus);
+  }
+  .dashboard[data-layout='flow'] > section[data-widget-id='links'] {
+    grid-row: var(--compact-row-links);
+  }
+  .dashboard[data-layout='flow'] > section[data-widget-id='reminders'] {
+    grid-row: var(--compact-row-reminders);
+  }
 }

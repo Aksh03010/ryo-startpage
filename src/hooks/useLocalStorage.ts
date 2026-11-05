@@ -1,13 +1,32 @@
 import { useEffect, useState } from 'react';
 
-export function useLocalStorage<T>(key: string, initial: T | (() => T)) {
+function preserveRecoveryCopy(key: string, raw: string) {
+  try {
+    if (window.localStorage.getItem(`${key}.recovery`) === null)
+      window.localStorage.setItem(`${key}.recovery`, raw);
+  } catch {
+    /* Recovery must still work when storage is full. */
+  }
+}
+
+export function useLocalStorage<T>(
+  key: string,
+  initial: T | (() => T),
+  normalize?: (value: unknown, fallback: T) => T,
+) {
   const [value, setValue] = useState<T>(() => {
     const fallback = typeof initial === 'function' ? (initial as () => T)() : initial;
+    let original: string | null = null;
     try {
       const current = window.localStorage.getItem(key);
       const raw = current ?? window.localStorage.getItem(key.replace(/^ryo\./, 'aura.'));
       if (raw === null) return fallback;
-      const parsed = JSON.parse(raw) as T;
+      original = raw;
+      const parsed: unknown = JSON.parse(raw);
+      const restored = normalize ? normalize(parsed, fallback) : (parsed as T);
+      if (normalize && JSON.stringify(restored) !== raw) {
+        preserveRecoveryCopy(key, raw);
+      }
       if (current === null) {
         try {
           window.localStorage.setItem(key, raw);
@@ -15,8 +34,9 @@ export function useLocalStorage<T>(key: string, initial: T | (() => T)) {
           // Keep the old saved value usable when storage is read-only or full.
         }
       }
-      return parsed;
+      return restored;
     } catch {
+      if (original !== null) preserveRecoveryCopy(key, original);
       return fallback;
     }
   });
@@ -29,6 +49,7 @@ export function useLocalStorage<T>(key: string, initial: T | (() => T)) {
         window.localStorage.setItem(key, serialized);
     } catch (error) {
       console.error(`Unable to persist ${key}`, error);
+      window.dispatchEvent(new Event('ryo:storage-error'));
     }
   }, [key, value]);
 

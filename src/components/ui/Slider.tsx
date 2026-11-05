@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import styles from './Controls.module.css';
 
 export function Slider({
@@ -19,7 +19,13 @@ export function Slider({
   display?: (value: number) => string;
 }) {
   const percent = ((value - min) / (max - min)) * 100;
-  const clamp = (raw: number) => Math.min(max, Math.max(min, raw));
+  const inputId = useId();
+  const clamp = (raw: number) =>
+    Number(Math.min(max, Math.max(min, min + Math.round((raw - min) / step) * step)).toFixed(6));
+  const formatted = display?.(value) ?? '';
+  const suffix = formatted.startsWith(String(value))
+    ? formatted.slice(String(value).length).trim()
+    : '';
   const [draft, setDraft] = useState<string | null>(null);
 
   const commit = () => {
@@ -31,9 +37,11 @@ export function Slider({
   };
 
   return (
-    <label className={styles.sliderRow}>
+    <div className={styles.sliderRow}>
       <div className={styles.sliderMeta}>
-        <span className={styles.sliderLabel}>{label}</span>
+        <label className={styles.sliderLabel} htmlFor={inputId}>
+          {label}
+        </label>
         <span className={styles.sliderValueWrap}>
           <input
             className={styles.sliderValueInput}
@@ -52,7 +60,7 @@ export function Slider({
                 parsed >= min &&
                 parsed <= max
               ) {
-                onChange(parsed);
+                onChange(clamp(parsed));
               }
             }}
             onBlur={commit}
@@ -64,11 +72,14 @@ export function Slider({
             }}
             aria-label={label}
           />
-          <span className={styles.sliderValueSuffix}>{display ? display(value) : ''}</span>
+          <span className={styles.sliderValueSuffix} aria-hidden="true">
+            {suffix}
+          </span>
         </span>
       </div>
       <input
         type="range"
+        id={inputId}
         min={min}
         max={max}
         step={step}
@@ -81,6 +92,6 @@ export function Slider({
         }}
         aria-label={label}
       />
-    </label>
+    </div>
   );
 }

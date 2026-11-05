@@ -37,6 +37,7 @@ Your settings, links, tasks, and reminders are saved in that browser on that dev
 - Search with Google, DuckDuckGo, Brave, and YouTube.
 - Quick links, repeating tasks, reminders, and a focus timer.
 - Draggable widgets, appearance controls, and keyboard shortcuts.
+- Accent colors tint surfaces, borders, and controls. Dark custom accents keep readable text.
 - Local-first storage: settings and lists use `localStorage`; uploaded wallpapers use IndexedDB.
 
 ## Choose your space

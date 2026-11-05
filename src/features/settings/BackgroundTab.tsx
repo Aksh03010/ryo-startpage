@@ -57,7 +57,7 @@ export function BackgroundTab({
           <button
             key={preset.id}
             type="button"
-            className={`${styles.presetCard} ${wallpaper.preset === preset.id ? styles.presetActive : ''}`}
+            className={`${styles.presetCard} ${wallpaper.kind === 'preset' && wallpaper.preset === preset.id ? styles.presetActive : ''}`}
             aria-pressed={wallpaper.kind === 'preset' && wallpaper.preset === preset.id}
             onClick={() => {
               setUrlDraft('');
@@ -98,6 +98,7 @@ export function BackgroundTab({
         <button
           type="button"
           className={styles.actionButton}
+          disabled={uploading}
           onClick={() => fileRef.current?.click()}
         >
           {uploading ? <Loader2 size={15} className={styles.spin} /> : <Image size={15} />}
@@ -128,10 +129,13 @@ export function BackgroundTab({
       )}
 
       <div className={styles.field}>
-        <label className={styles.fieldLabel}>Wallpaper URL</label>
+        <label className={styles.fieldLabel} htmlFor="wallpaper-url">
+          Wallpaper URL
+        </label>
         <div className={styles.urlRow}>
           <input
             className={styles.urlInput}
+            id="wallpaper-url"
             value={urlDraft}
             onChange={(event) => setUrlDraft(event.target.value)}
             placeholder="https://example.com/sunset.jpg"
