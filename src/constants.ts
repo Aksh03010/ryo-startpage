@@ -204,6 +204,7 @@ export const DEFAULT_SETTINGS: Settings = {
     font: 'space',
     size: 150,
     use24Hour: false,
+    base24: false,
     showSeconds: false,
     showDate: true,
     showGreeting: true,

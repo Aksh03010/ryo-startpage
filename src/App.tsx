@@ -125,7 +125,15 @@ export function App() {
       const renderContent = () => {
         switch (id) {
           case 'clock':
-            return <ClockWidget clock={settings.clock} accent={`rgba(var(--accent-rgb), 0.94)`} />;
+            return (
+              <ClockWidget
+                clock={settings.clock}
+                accent={`rgba(var(--accent-rgb), 0.94)`}
+                onBase24Change={(base24) =>
+                  setSettings((draft) => ({ ...draft, clock: { ...draft.clock, base24 } }))
+                }
+              />
+            );
           case 'tasks':
             return <TaskManager tasks={tasks} settings={settings.tasks} onTasksChange={setTasks} />;
           case 'reminders':

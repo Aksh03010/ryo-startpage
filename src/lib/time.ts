@@ -1,14 +1,20 @@
-export function formatClockParts(date: Date, use24: boolean, seconds: boolean) {
-  const hours = use24 ? date.getHours() : date.getHours() % 12 || 12;
-  const minute = String(date.getMinutes()).padStart(2, '0');
-  const second = String(date.getSeconds()).padStart(2, '0');
-  const suffix = use24 ? '' : date.getHours() < 12 ? 'AM' : 'PM';
+export function formatClockParts(date: Date, use24: boolean, seconds: boolean, base24 = false) {
+  const fullDay = use24 || base24;
+  const hours = fullDay ? date.getHours() : date.getHours() % 12 || 12;
+  const format = (value: number, width = 2) =>
+    value
+      .toString(base24 ? 24 : 10)
+      .toUpperCase()
+      .padStart(width, '0');
+  const minute = format(date.getMinutes());
+  const second = format(date.getSeconds());
+  const suffix = fullDay ? '' : date.getHours() < 12 ? 'AM' : 'PM';
   return {
-    hour: String(hours).padStart(use24 ? 2 : 1, '0'),
+    hour: format(hours, fullDay ? 2 : 1),
     minute,
     second,
     suffix,
-    hour12: !use24,
+    hour12: !fullDay,
     seconds,
   };
 }

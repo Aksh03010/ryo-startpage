@@ -98,6 +98,15 @@ export function WidgetsTab({
             <>
               <SectionTitle>Clock</SectionTitle>
               <Toggle
+                label="Base 24"
+                checked={Boolean(settings.clock.base24)}
+                onChange={(value) => patchClock({ base24: value })}
+              />
+              <p className={styles.help}>
+                Base 24 uses digits 0–9 and A–N, with hours from 0 to 23. For example, 23:59 becomes
+                0N:2B. Turn it off to return to your usual time format.
+              </p>
+              <Toggle
                 label="24-hour time"
                 checked={settings.clock.use24Hour}
                 onChange={(value) => patchClock({ use24Hour: value })}

@@ -11,10 +11,9 @@ import { applySpacePreset } from '../src/lib/spacePresets';
 test('Preact app: minimal → workspace, task entry, timer controls, and arrange mode', async () => {
   const window = createTestWindow({ url: 'http://localhost/' });
   installTestGlobals(window);
-  window.localStorage.setItem(
-    'ryo.settings.v2',
-    JSON.stringify(applySpacePreset(DEFAULT_SETTINGS, 'minimal')),
-  );
+  const legacySettings = structuredClone(applySpacePreset(DEFAULT_SETTINGS, 'minimal'));
+  delete legacySettings.clock.base24;
+  window.localStorage.setItem('ryo.settings.v2', JSON.stringify(legacySettings));
   const { App } = await import('../src/App');
   const container = window.document.createElement('div');
   window.document.body.append(container);
@@ -59,6 +58,18 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
       );
     }
 
+    const baseToggle = () => container.querySelector('button[title^="Use digits"]')!;
+    assert.equal(baseToggle().getAttribute('aria-pressed'), 'false');
+    await click(baseToggle());
+    assert.equal(baseToggle().getAttribute('aria-pressed'), 'true');
+    assert.equal(
+      (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).clock.base24,
+      true,
+    );
+    await act(() => render(null, container));
+    await act(() => render(h(App, {}), container));
+    assert.equal(baseToggle().getAttribute('aria-pressed'), 'true');
+
     await click(button('Open customize panel'));
     await until(() => container.querySelector('[role="dialog"]'));
     const tab = (label: string) => {
@@ -89,6 +100,13 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
       30,
     );
     await click(tab('Widgets'));
+    assert.equal(button('Base 24').getAttribute('aria-checked'), 'true');
+    await click(button('Base 24'));
+    assert.equal(baseToggle().getAttribute('aria-pressed'), 'false');
+    assert.equal(
+      (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).clock.base24,
+      false,
+    );
     await click(button('Show seconds'));
     assert.equal(
       (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).clock.showSeconds,

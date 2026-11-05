@@ -10,6 +10,29 @@ import { applySpacePreset } from '../src/lib/spacePresets';
 import { DEFAULT_SETTINGS } from '../src/constants';
 import { buildSearchUrl } from '../src/lib/search';
 import { dateKey, isTaskDone } from '../src/lib/tasks';
+import { formatClockParts } from '../src/lib/time';
+
+test('base 24 converts each clock part and leaves ordinary formats unchanged', () => {
+  const date = new Date(2026, 10, 4, 23, 59, 24);
+  const base24 = formatClockParts(date, false, true, true);
+  assert.deepEqual([base24.hour, base24.minute, base24.second], ['0N', '2B', '10']);
+  assert.equal(base24.hour12, false);
+  assert.equal(base24.suffix, '');
+  for (let value = 0; value < 60; value++) {
+    date.setMinutes(value);
+    const { minute } = formatClockParts(date, true, false, true);
+    assert.match(minute, /^[0-9A-N]{2}$/);
+    assert.equal(parseInt(minute, 24), value);
+  }
+  date.setHours(0, 0, 0);
+  assert.equal(formatClockParts(date, false, false, true).hour, '00');
+  assert.equal(formatClockParts(date, false, false).hour, '12');
+  date.setHours(13, 24, 59);
+  assert.equal(formatClockParts(date, false, true).hour, '1');
+  assert.equal(formatClockParts(date, false, true).suffix, 'PM');
+  assert.equal(formatClockParts(date, true, true).hour, '13');
+  assert.equal(formatClockParts(date, true, true).minute, '24');
+});
 
 const initial = { duration: 1500, remaining: 1500, paused: true };
 

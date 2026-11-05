@@ -15,6 +15,30 @@
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
 }
 
+.baseToggle {
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid #ffffff26;
+  border-radius: 999px;
+  background: #ffffff08;
+  color: #bdc8c2;
+  font:
+    500 11px/1.4 'Manrope',
+    system-ui;
+  cursor: pointer;
+}
+
+.baseToggle:hover,
+.baseToggle[aria-pressed='true'] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.baseToggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .timeWrap {
   position: relative;
   display: inline-block;
