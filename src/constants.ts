@@ -194,6 +194,7 @@ export const DEFAULT_SETTINGS: Settings = {
     size: 150,
     use24Hour: false,
     base24: false,
+    blorp: false,
     showSeconds: false,
     showDate: true,
     showGreeting: true,

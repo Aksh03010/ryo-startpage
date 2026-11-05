@@ -1,19 +1,26 @@
 import { isPageActive, subscribeActivity } from '../lib/activity';
 import { useEffect, useState } from 'react';
 
-export function useNow(interval: number | null = 1000) {
-  const [now, setNow] = useState(() => new Date());
+export function useNow(interval: number | null = 1000, alignToLocalDay = false) {
+  const [tick, setTick] = useState(() => ({ now: new Date(), interval, alignToLocalDay }));
+  // Refresh before committing a new cadence instead of showing the last mode's stale tick.
+  if (tick.interval !== interval || tick.alignToLocalDay !== alignToLocalDay) {
+    setTick({ now: new Date(), interval, alignToLocalDay });
+  }
 
   useEffect(() => {
     if (interval === null) return;
     let timer = 0;
+    const delayFrom = (date: Date) => {
+      const timestamp = date.getTime() - (alignToLocalDay ? date.getTimezoneOffset() * 60_000 : 0);
+      return interval - (timestamp % interval) || interval;
+    };
     const update = () => {
       window.clearTimeout(timer);
       if (!isPageActive()) return;
       const current = new Date();
-      setNow(current);
-      const remainder = current.getTime() % interval;
-      timer = window.setTimeout(update, interval - remainder || interval);
+      setTick({ now: current, interval, alignToLocalDay });
+      timer = window.setTimeout(update, delayFrom(current));
     };
 
     const handleVisibility = () => {
@@ -21,14 +28,13 @@ export function useNow(interval: number | null = 1000) {
       if (isPageActive()) update();
     };
 
-    const remainder = Date.now() % interval;
-    if (isPageActive()) timer = window.setTimeout(update, interval - remainder || interval);
+    if (isPageActive()) timer = window.setTimeout(update, delayFrom(new Date()));
     const unsubscribe = subscribeActivity(handleVisibility);
     return () => {
       window.clearTimeout(timer);
       unsubscribe();
     };
-  }, [interval]);
+  }, [interval, alignToLocalDay]);
 
-  return now;
+  return tick.now;
 }

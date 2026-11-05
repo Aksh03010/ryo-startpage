@@ -8,6 +8,31 @@ import { buildSearchUrl } from '../src/lib/search';
 import { dateKey, isTaskDone } from '../src/lib/tasks';
 import { formatClockParts } from '../src/lib/time';
 
+test('blorp decimal time follows the local day and rolls over at exact metric boundaries', () => {
+  const cases: Array<[number, string, string, string]> = [
+    [0, '0', '00', '00'],
+    [863, '0', '00', '00'],
+    [864, '0', '00', '01'],
+    [86_399, '0', '00', '99'],
+    [86_400, '0', '01', '00'],
+    [8_639_999, '0', '99', '99'],
+    [8_640_000, '1', '00', '00'],
+    [43_200_000, '5', '00', '00'],
+    [64_800_000, '7', '50', '00'],
+    [86_399_999, '9', '99', '99'],
+    [86_400_000, '0', '00', '00'],
+  ];
+  for (const [milliseconds, hour, minute, second] of cases) {
+    const date = new Date(2026, 10, 4, 0, 0, 0, milliseconds);
+    const parts = formatClockParts(date, false, true, false, true);
+    assert.deepEqual([parts.hour, parts.minute, parts.second], [hour, minute, second]);
+    assert.equal(parts.suffix, '');
+    assert.equal(parts.hour12, false);
+    // Decimal mode wins if a manually edited save enables both easter eggs.
+    assert.deepEqual(formatClockParts(date, true, true, true, true), parts);
+  }
+});
+
 test('blurb uses a unique symbol per hour, base-√60 minutes and seconds, and preserves ordinary time', () => {
   const date = new Date(2026, 10, 4, 23, 59, 24);
   const blurb = formatClockParts(date, false, true, true);

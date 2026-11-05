@@ -266,11 +266,18 @@ export function WidgetsTab({
             </>
           )}
           {widgetDetail === 'clock' && (
-            <Toggle
-              label="blurb"
-              checked={Boolean(settings.clock.base24)}
-              onChange={(value) => patchClock({ base24: value })}
-            />
+            <>
+              <Toggle
+                label="blurb"
+                checked={Boolean(settings.clock.base24) && !settings.clock.blorp}
+                onChange={(value) => patchClock({ base24: value })}
+              />
+              <Toggle
+                label="blorp"
+                checked={Boolean(settings.clock.blorp)}
+                onChange={(value) => patchClock({ blorp: value })}
+              />
+            </>
           )}
           <button
             type="button"

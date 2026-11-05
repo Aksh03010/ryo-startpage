@@ -11,7 +11,14 @@ export function createSettingsActions(onSettings: UpdateSettings) {
       onSettings((previous) => ({ ...previous, appearance: { ...previous.appearance, ...value } }));
     },
     patchClock(value: Partial<Settings['clock']>) {
-      onSettings((previous) => ({ ...previous, clock: { ...previous.clock, ...value } }));
+      onSettings((previous) => ({
+        ...previous,
+        clock: {
+          ...previous.clock,
+          ...value,
+          ...(value.blorp ? { base24: false } : value.base24 ? { blorp: false } : {}),
+        },
+      }));
     },
     patchWidgetStyle(id: WidgetId, value: Partial<WidgetStyleOverride>) {
       onSettings((previous) => ({

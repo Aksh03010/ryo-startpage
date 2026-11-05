@@ -44,7 +44,28 @@ function formatBlurbPart(value: number): string {
   return result;
 }
 
-export function formatClockParts(date: Date, use24: boolean, seconds: boolean, blurb = false) {
+export function formatClockParts(
+  date: Date,
+  use24: boolean,
+  seconds: boolean,
+  blurb = false,
+  blorp = false,
+) {
+  if (blorp) {
+    // Use local wall time so midnight/noon retain their meaning across time zones and DST.
+    const milliseconds =
+      ((date.getHours() * 60 + date.getMinutes()) * 60 + date.getSeconds()) * 1000 +
+      date.getMilliseconds();
+    const ticks = Math.floor(milliseconds / 864);
+    return {
+      hour: String(Math.floor(ticks / 10_000)),
+      minute: String(Math.floor(ticks / 100) % 100).padStart(2, '0'),
+      second: String(ticks % 100).padStart(2, '0'),
+      suffix: '',
+      hour12: false,
+      seconds,
+    };
+  }
   const fullDay = use24 || blurb;
   const hours = fullDay ? date.getHours() : date.getHours() % 12 || 12;
   const format = (value: number, width = 2) => String(value).padStart(width, '0');

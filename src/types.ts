@@ -72,6 +72,8 @@ export interface ClockSettings {
   use24Hour: boolean;
   /** Blurb mode; the original storage key is retained for existing preferences. */
   base24?: boolean;
+  /** Decimal time: 10 hours per day, 100 minutes per hour, 100 seconds per minute. */
+  blorp?: boolean;
   showSeconds: boolean;
   showDate: boolean;
   showGreeting: boolean;

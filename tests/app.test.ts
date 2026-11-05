@@ -13,6 +13,7 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
   installTestGlobals(window);
   const legacySettings = structuredClone(applySpacePreset(DEFAULT_SETTINGS, 'minimal'));
   delete legacySettings.clock.base24;
+  delete legacySettings.clock.blorp;
   // Existing browsers may still have an enabled widget from the experimental version.
   Object.assign(legacySettings.appearance.widgets, {
     system: { visible: true, size: 100, style: {} },
@@ -100,7 +101,9 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     assert.equal(container.textContent?.includes('System monitor'), false);
     assert.equal(button('blurb').getAttribute('aria-checked'), 'false');
     const switches = container.querySelectorAll('[role="switch"]');
-    assert.equal(switches[switches.length - 1].getAttribute('aria-label'), 'blurb');
+    assert.equal(switches[switches.length - 2].getAttribute('aria-label'), 'blurb');
+    assert.equal(switches[switches.length - 1].getAttribute('aria-label'), 'blorp');
+    assert.equal(button('blorp').getAttribute('aria-checked'), 'false');
     await click(button('blurb'));
     assert.ok(clock().querySelector('time.blurb'));
     assert.match(clock().querySelector('.minute')!.textContent!, /^[0-7]{2}\.[0-7]{3}$/);
@@ -110,6 +113,20 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     );
     await click(button('Show seconds'));
     assert.match(clock().querySelector('.seconds')!.textContent!, /^[0-7]{2}\.[0-7]{3}$/);
+    await click(button('blorp'));
+    assert.equal(button('blurb').getAttribute('aria-checked'), 'false');
+    assert.ok(clock().querySelector('time.blorp'));
+    assert.equal(clock().querySelector('time.blurb'), null);
+    assert.match(clock().querySelector('.hour')!.textContent!, /^\d$/);
+    assert.match(clock().querySelector('.minute')!.textContent!, /^\d{2}$/);
+    assert.match(clock().querySelector('time')!.getAttribute('aria-label')!, /^Decimal time:/);
+    assert.equal(
+      (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).clock.base24,
+      false,
+    );
+    await click(button('blurb'));
+    assert.equal(button('blorp').getAttribute('aria-checked'), 'false');
+    assert.ok(clock().querySelector('time.blurb'));
     await click(button('blurb'));
     assert.equal(clock().querySelector('time.blurb'), null);
     assert.match(clock().querySelector('.minute')!.textContent!, /^\d{2}$/);
@@ -117,6 +134,11 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     await click(button('blurb'));
     assert.equal(
       (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).clock.showSeconds,
+      true,
+    );
+    await click(button('blorp'));
+    assert.equal(
+      (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).clock.blorp,
       true,
     );
     await click(tab('Layout'));
@@ -168,9 +190,9 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     assert.equal(container.querySelector('[data-widget-id="system"]'), null);
     await act(() => render(null, container));
     await act(() => render(h(App, {}), container));
-    assert.ok(clock().querySelector('time.blurb'));
+    assert.ok(clock().querySelector('time.blorp'));
     assert.equal(clock().querySelector('button'), null);
-    assert.match(clock().querySelector('.seconds')!.textContent!, /^[0-7]{2}\.[0-7]{3}$/);
+    assert.match(clock().querySelector('.seconds')!.textContent!, /^\d{2}$/);
   } finally {
     await act(() => render(null, container));
     await window.happyDOM.close();
