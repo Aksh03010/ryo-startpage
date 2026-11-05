@@ -103,13 +103,13 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     assert.equal(switches[switches.length - 1].getAttribute('aria-label'), 'blurb');
     await click(button('blurb'));
     assert.ok(clock().querySelector('time.blurb'));
-    assert.match(clock().querySelector('.minute')!.textContent!, /^[0-5]{3}$/);
+    assert.match(clock().querySelector('.minute')!.textContent!, /^[0-7]{2}\.[0-7]{3}$/);
     assert.equal(
       (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).clock.base24,
       true,
     );
     await click(button('Show seconds'));
-    assert.match(clock().querySelector('.seconds')!.textContent!, /^[0-5]{3}$/);
+    assert.match(clock().querySelector('.seconds')!.textContent!, /^[0-7]{2}\.[0-7]{3}$/);
     await click(button('blurb'));
     assert.equal(clock().querySelector('time.blurb'), null);
     assert.match(clock().querySelector('.minute')!.textContent!, /^\d{2}$/);
@@ -170,7 +170,7 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     await act(() => render(h(App, {}), container));
     assert.ok(clock().querySelector('time.blurb'));
     assert.equal(clock().querySelector('button'), null);
-    assert.match(clock().querySelector('.seconds')!.textContent!, /^[0-5]{3}$/);
+    assert.match(clock().querySelector('.seconds')!.textContent!, /^[0-7]{2}\.[0-7]{3}$/);
   } finally {
     await act(() => render(null, container));
     await window.happyDOM.close();

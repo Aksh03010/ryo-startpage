@@ -26,12 +26,30 @@ const HOUR_SYMBOLS = [
   '◎',
 ] as const;
 
+const BLURB_BASE = Math.sqrt(60);
+
+/** Greedy base-√60 expansion for a clock field (0–59), truncated to three fractional digits. */
+function formatBlurbPart(value: number): string {
+  const tens = Math.floor(value / BLURB_BASE);
+  const remainder = value - tens * BLURB_BASE;
+  const units = Math.floor(remainder);
+  let fraction = remainder - units;
+  let result = `${tens}${units}.`;
+  for (let place = 0; place < 3; place++) {
+    fraction *= BLURB_BASE;
+    const digit = Math.floor(fraction);
+    result += digit;
+    fraction -= digit;
+  }
+  return result;
+}
+
 export function formatClockParts(date: Date, use24: boolean, seconds: boolean, blurb = false) {
   const fullDay = use24 || blurb;
   const hours = fullDay ? date.getHours() : date.getHours() % 12 || 12;
-  const format = (value: number, width = 2) => value.toString(blurb ? 6 : 10).padStart(width, '0');
-  const minute = format(date.getMinutes(), blurb ? 3 : 2);
-  const second = format(date.getSeconds(), blurb ? 3 : 2);
+  const format = (value: number, width = 2) => String(value).padStart(width, '0');
+  const minute = blurb ? formatBlurbPart(date.getMinutes()) : format(date.getMinutes());
+  const second = blurb ? formatBlurbPart(date.getSeconds()) : format(date.getSeconds());
   const suffix = fullDay ? '' : date.getHours() < 12 ? 'AM' : 'PM';
   return {
     hour: blurb ? HOUR_SYMBOLS[date.getHours()] : format(hours, fullDay ? 2 : 1),
