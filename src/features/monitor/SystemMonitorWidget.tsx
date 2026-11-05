@@ -52,7 +52,7 @@ export function SystemMonitorWidget({ metrics: visibleMetrics }: { metrics: Metr
           <span>Local monitor is not connected.</span>
           <small>Start the Ryo Monitor helper on this computer to see live stats.</small>
           <a
-            href="https://github.com/Aksh03010/ryo-startpage#local-system-monitor"
+            href="https://github.com/Aksh03010/ryo-startpage/blob/experimental/README.md#local-system-monitor-optional"
             target="_blank"
             rel="noreferrer"
           >

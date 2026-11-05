@@ -3,7 +3,7 @@ setlocal
 
 set "INSTALL_DIR=%LOCALAPPDATA%\RyoHome\Monitor"
 set "MONITOR_SCRIPT=%INSTALL_DIR%\ryo_monitor.py"
-set "MONITOR_URL=https://raw.githubusercontent.com/Aksh03010/ryo-startpage/main/monitor/ryo_monitor.py"
+set "MONITOR_URL=https://raw.githubusercontent.com/Aksh03010/ryo-startpage/experimental/monitor/ryo_monitor.py"
 
 where py >nul 2>nul
 if errorlevel 1 (
@@ -17,7 +17,7 @@ where curl.exe >nul 2>nul
 if errorlevel 1 (
   echo curl.exe is required to download Ryo Monitor.
   echo Install Windows updates or download the helper manually from:
-  echo https://raw.githubusercontent.com/Aksh03010/ryo-startpage/main/monitor/ryo_monitor.py
+  echo https://raw.githubusercontent.com/Aksh03010/ryo-startpage/experimental/monitor/ryo_monitor.py
   pause
   exit /b 1
 )
