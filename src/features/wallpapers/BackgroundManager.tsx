@@ -48,9 +48,7 @@ function BackgroundManagerView({
   const isPresetKind = wallpaper.kind === 'preset';
   const presetImage = preset.id !== 'aurora' && preset.src ? preset.src : undefined;
   const showCustomMedia =
-    !isPresetKind &&
-    src &&
-    (wallpaper.kind === 'url' || wallpaper.kind === 'upload' || wallpaper.kind === 'native');
+    !isPresetKind && src && (wallpaper.kind === 'url' || wallpaper.kind === 'upload');
 
   return (
     <div className={styles.scene} aria-hidden>

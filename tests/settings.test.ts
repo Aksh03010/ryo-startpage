@@ -24,7 +24,6 @@ test('legacy widget and glass migrations preserve overrides and do not mutate th
         tasks: { visible: false, style: { boxMode: 'none', glass: 'off' } },
       },
     },
-    monitorMetrics: { cpu: false },
   };
   const before = structuredClone(legacy);
   // The migration boundary also receives older, incomplete versions of this schema.
@@ -36,7 +35,6 @@ test('legacy widget and glass migrations preserve overrides and do not mutate th
   assert.equal(result.appearance.widgets.tasks.visible, false);
   assert.equal(result.appearance.widgets.tasks.style.boxMode, 'none');
   assert.equal(result.appearance.widgets.reminders.visible, true);
-  assert.deepEqual(result.monitorMetrics, { cpu: false, gpu1: true, gpu2: true, ram: true });
   assert.deepEqual(legacy, before);
   assert.equal(migrateSettings(result), result);
 });

@@ -1,4 +1,4 @@
-export type WidgetId = 'clock' | 'tasks' | 'search' | 'links' | 'focus' | 'reminders' | 'system';
+export type WidgetId = 'clock' | 'tasks' | 'search' | 'links' | 'focus' | 'reminders';
 
 export type ClockFont = 'space' | 'instrument' | 'jetbrains' | 'manrope';
 
@@ -10,7 +10,7 @@ export type SearchEngineId = 'google' | 'duckduckgo' | 'brave' | 'youtube';
 
 export type BackgroundPresetId = 'aurora' | 'midnight' | 'ember' | 'glacier';
 
-export type WallpaperKind = 'preset' | 'upload' | 'url' | 'native';
+export type WallpaperKind = 'preset' | 'upload' | 'url';
 
 export interface WallpaperState {
   kind: WallpaperKind;
@@ -106,12 +106,6 @@ export interface Settings {
   tasks: TaskSettings;
   layout: LayoutSettings;
   searchEngine: SearchEngineId;
-  monitorMetrics: {
-    cpu: boolean;
-    gpu1: boolean;
-    gpu2: boolean;
-    ram: boolean;
-  };
 }
 
 export type TaskRepeatDay = 0 | 1 | 2 | 3 | 4 | 5 | 6;

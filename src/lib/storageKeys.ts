@@ -7,5 +7,4 @@ export const STORAGE_KEYS = {
   focus: 'ryo.focus.v2',
   focusSettings: 'ryo.focus.settings',
   reminders: 'ryo.reminders.v2',
-  monitorMode: 'ryo.monitor.mode',
 } as const;

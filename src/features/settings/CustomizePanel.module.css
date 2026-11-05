@@ -623,23 +623,3 @@
   background: #b3d1a81f;
   border-color: #bad0b45c;
 }
-.engineHelp {
-  border: 1px solid #b5d0ae22;
-  border-radius: 15px;
-  padding: 12px 14px;
-  font-size: 11px;
-  line-height: 1.7;
-  color: #9db397;
-}
-.engineHelp summary {
-  cursor: pointer;
-  color: #ceddc8;
-}
-.engineHelp p {
-  margin-top: 9px;
-}
-.engineHelp a {
-  display: inline-block;
-  color: #c0e3cb;
-  margin-top: 9px;
-}

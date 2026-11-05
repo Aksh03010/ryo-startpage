@@ -28,7 +28,7 @@ Use small, focused commits. Preserve the current visual identity and feature beh
 
 ## Verification boundaries
 
-Type checking includes the application, Vite configuration, and tests. The test loader maps React imports to Preact and stubs CSS modules; Happy DOM exercises interactions and lifecycle behavior. These checks do not replace browser layout, accessibility, codec, or native Wallpaper Engine testing.
+Type checking includes the application, Vite configuration, and tests. The test loader maps React imports to Preact and stubs CSS modules; Happy DOM exercises interactions and lifecycle behavior. These checks do not replace browser layout, accessibility, or codec testing.
 
 `check:bundle` measures the initial JavaScript and CSS referenced by the production HTML, with a combined 40 KiB gzip budget. Optional widgets download their own chunks when enabled. Report the same measurement before and after a change.
 

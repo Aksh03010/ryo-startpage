@@ -1,13 +1,13 @@
 import { getGlobalBoxMode } from './appearance';
 import { RotateCcw } from 'lucide-react';
 import {
-  DEFAULT_SETTINGS,
+  WIDGET_IDS,
   WIDGET_TITLES,
   CLOCK_FONTS,
   CLOCK_ANIMATIONS,
   SEARCH_ENGINES,
 } from '../../constants';
-import type { BoxMode, ClockFont, ClockAnimation, WidgetId } from '../../types';
+import type { BoxMode, ClockFont, ClockAnimation } from '../../types';
 import styles from './CustomizePanel.module.css';
 import { SectionTitle } from '../../components/ui/SectionTitle';
 import { Segmented } from '../../components/ui/Segmented';
@@ -41,16 +41,19 @@ export function WidgetsTab({
       <SectionTitle>Choose a widget</SectionTitle>
       <p className={styles.help}>Select a widget to show or hide it and adjust its settings.</p>
       <div className={styles.widgetList}>
-        {Object.entries(appearance.widgets).map(([id, widget]) => (
+        {WIDGET_IDS.map((id) => (
           <button
             key={id}
             type="button"
             className={`${styles.widgetRow} ${widgetDetail === id ? styles.widgetRowActive : ''}`}
             aria-pressed={widgetDetail === id}
-            onClick={() => setWidgetDetail(id as WidgetId)}
+            onClick={() => setWidgetDetail(id)}
           >
-            <span className={styles.widgetDot} data-active={widget.visible || undefined} />
-            <span>{WIDGET_TITLES[id as WidgetId]}</span>
+            <span
+              className={styles.widgetDot}
+              data-active={appearance.widgets[id]?.visible || undefined}
+            />
+            <span>{WIDGET_TITLES[id]}</span>
           </button>
         ))}
       </div>
@@ -206,72 +209,6 @@ export function WidgetsTab({
                   onFocusSettings((previous) => ({ ...previous, focusMinutes: value }))
                 }
               />
-            </>
-          )}
-
-          {widgetDetail === 'system' && (
-            <>
-              <SectionTitle>System monitor</SectionTitle>
-              <p className={styles.help}>
-                Choose which readings appear in the monitor. RAM usage is read from Windows; GPU
-                readings depend on sensors exposed by MSI Afterburner.
-              </p>
-              <Toggle
-                label="Show CPU"
-                checked={settings.monitorMetrics?.cpu ?? true}
-                onChange={(value) =>
-                  onSettings((draft) => ({
-                    ...draft,
-                    monitorMetrics: {
-                      ...(draft.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics),
-                      cpu: value,
-                    },
-                  }))
-                }
-              />
-              <Toggle
-                label="Show GPU 1"
-                checked={settings.monitorMetrics?.gpu1 ?? true}
-                onChange={(value) =>
-                  onSettings((draft) => ({
-                    ...draft,
-                    monitorMetrics: {
-                      ...(draft.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics),
-                      gpu1: value,
-                    },
-                  }))
-                }
-              />
-              <Toggle
-                label="Show GPU 2"
-                checked={settings.monitorMetrics?.gpu2 ?? true}
-                onChange={(value) =>
-                  onSettings((draft) => ({
-                    ...draft,
-                    monitorMetrics: {
-                      ...(draft.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics),
-                      gpu2: value,
-                    },
-                  }))
-                }
-              />
-              <Toggle
-                label="Show RAM"
-                checked={settings.monitorMetrics?.ram ?? true}
-                onChange={(value) =>
-                  onSettings((draft) => ({
-                    ...draft,
-                    monitorMetrics: {
-                      ...(draft.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics),
-                      ram: value,
-                    },
-                  }))
-                }
-              />
-              <p className={styles.help}>
-                MSI Afterburner supplies GPU sensor readings. Install and start the helper using the
-                setup guide in the project README.
-              </p>
             </>
           )}
 

@@ -2,10 +2,6 @@ import type { Task } from '../src/types';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { remainingSeconds, startFocus, pauseFocus } from '../src/lib/focus';
-import {
-  parseEngineProperties,
-  applyWallpaperOverrides,
-} from '../src/features/wallpapers/wallpaperEngine';
 import { applySpacePreset } from '../src/lib/spacePresets';
 import { DEFAULT_SETTINGS } from '../src/constants';
 import { buildSearchUrl } from '../src/lib/search';
@@ -57,49 +53,6 @@ test('timer restarts after completion and clamps backward clock changes', () => 
   assert.equal(remainingSeconds(resumed, 1000), 45);
 });
 
-test('engine colors require three valid normalized channels', () => {
-  assert.equal(parseEngineProperties({ accent: { value: '1 0.5 0' } }).accent, '#ff8000');
-  assert.equal(parseEngineProperties({ accent: { value: '255 0 0' } }).accent, undefined);
-  assert.equal(parseEngineProperties({ accent: { value: 'nope' } }).accent, undefined);
-});
-
-test('engine paths preserve drive letters, spaces, and filename punctuation', () => {
-  const result = parseEngineProperties({
-    backgroundfile: { value: 'C:\\Wallpapers\\moon #1.jpg' },
-  });
-  assert.equal(result.media?.url, 'file:///C:/Wallpapers/moon%20%231.jpg');
-  assert.equal(result.media?.mediaType, 'image');
-});
-
-test('engine video takes precedence over image and clearing restores the image', () => {
-  const image = { value: 'C:/moon.jpg' };
-  assert.equal(
-    parseEngineProperties({ backgroundfile: image, backgroundvideo: { value: 'C:/orbit.webm' } })
-      .media?.mediaType,
-    'video',
-  );
-  assert.equal(
-    parseEngineProperties({ backgroundfile: image, backgroundvideo: { value: '' } }).media
-      ?.mediaType,
-    'image',
-  );
-  assert.equal(parseEngineProperties({ backgroundfile: { value: '' } }).media, null);
-});
-
-test('native overrides remain in memory and minimal mode wins over widget toggles', () => {
-  const original = JSON.stringify(DEFAULT_SETTINGS);
-  const settings = applyWallpaperOverrides(DEFAULT_SETTINGS, {
-    minimal: true,
-    accent: '#ffffff',
-    widgets: { tasks: true },
-    media: { url: 'file:///C:/orbit.webm', mediaType: 'video' },
-  });
-  assert.equal(settings.appearance.widgets.tasks.visible, false);
-  assert.equal(settings.appearance.widgets.clock.visible, true);
-  assert.equal(settings.background.wallpaper.kind, 'native');
-  assert.equal(JSON.stringify(DEFAULT_SETTINGS), original);
-});
-
 test('minimal preset preserves user style choices and excludes optional widgets', () => {
   const settings = applySpacePreset(DEFAULT_SETTINGS, 'minimal');
   assert.deepEqual(
@@ -114,13 +67,6 @@ test('minimal preset preserves user style choices and excludes optional widgets'
   assert.equal(
     settings.appearance.widgets.clock.style,
     DEFAULT_SETTINGS.appearance.widgets.clock.style,
-  );
-});
-
-test('workspace leaves system monitoring opt-in', () => {
-  assert.equal(
-    applySpacePreset(DEFAULT_SETTINGS, 'workspace').appearance.widgets.system.visible,
-    false,
   );
 });
 

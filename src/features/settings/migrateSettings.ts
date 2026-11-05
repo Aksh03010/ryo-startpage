@@ -41,21 +41,7 @@ function migrateBoxStyles(draft: Settings): Settings {
   };
 }
 
-function addMonitorMetrics(draft: Settings): Settings {
-  const monitorMetrics = { ...DEFAULT_SETTINGS.monitorMetrics, ...draft.monitorMetrics };
-  const current = draft.monitorMetrics;
-  if (
-    current &&
-    current.cpu === monitorMetrics.cpu &&
-    current.gpu1 === monitorMetrics.gpu1 &&
-    current.gpu2 === monitorMetrics.gpu2 &&
-    current.ram === monitorMetrics.ram
-  )
-    return draft;
-  return { ...draft, monitorMetrics };
-}
-
 /** Upgrade existing valid saves without replacing user-selected widget or appearance values. */
 export function migrateSettings(settings: Settings): Settings {
-  return addMonitorMetrics(migrateBoxStyles(addMissingWidgets(settings)));
+  return migrateBoxStyles(addMissingWidgets(settings));
 }

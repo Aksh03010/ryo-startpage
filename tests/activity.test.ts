@@ -4,9 +4,8 @@ import { createTestWindow, installTestGlobals } from './helpers/dom';
 import { h, render } from 'preact';
 import { act } from 'preact/test-utils';
 import { useNow } from '../src/hooks/useNow';
-import { setHostPaused } from '../src/lib/activity';
 
-test('clock cancels all scheduled ticks while hidden or paused by Wallpaper Engine', async () => {
+test('clock cancels all scheduled ticks while hidden and resumes when visible', async () => {
   const window = createTestWindow();
   installTestGlobals(window);
   const schedule = window.setTimeout.bind(window);
@@ -46,10 +45,6 @@ test('clock cancels all scheduled ticks while hidden or paused by Wallpaper Engi
     await act(() => {
       window.document.dispatchEvent(new window.Event('visibilitychange'));
     });
-    assert.equal(timers.size, 1);
-    await act(() => setHostPaused(true));
-    assert.equal(timers.size, 0);
-    await act(() => setHostPaused(false));
     assert.equal(timers.size, 1);
     await act(() => render(null, container));
     assert.equal(timers.size, 0);

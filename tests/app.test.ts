@@ -13,6 +13,10 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
   installTestGlobals(window);
   const legacySettings = structuredClone(applySpacePreset(DEFAULT_SETTINGS, 'minimal'));
   delete legacySettings.clock.base24;
+  // Existing browsers may still have an enabled widget from the experimental version.
+  Object.assign(legacySettings.appearance.widgets, {
+    system: { visible: true, size: 100, style: {} },
+  });
   window.localStorage.setItem('ryo.settings.v2', JSON.stringify(legacySettings));
   const { App } = await import('../src/App');
   const container = window.document.createElement('div');
@@ -42,6 +46,8 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     assert.ok(container.querySelector('[role="search"]'));
     assert.equal(container.querySelector('[data-widget-id="tasks"]'), null);
     assert.equal(container.querySelector('[role="dialog"]'), null);
+    assert.equal(container.querySelector('[data-widget-id="system"]'), null);
+    assert.equal('wallpaperPropertyListener' in window, false);
     for (const feature of [
       'TaskManager',
       'FocusWidget',
@@ -49,7 +55,6 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
       'RemindersWidget',
       'ArrangeCanvas',
       'CustomizePanel',
-      'SystemMonitorWidget',
     ]) {
       assert.equal(
         [...globalThis.__loadedSources].some((url: string) => url.endsWith(`/${feature}.tsx`)),
@@ -100,6 +105,7 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
       30,
     );
     await click(tab('Widgets'));
+    assert.equal(container.textContent?.includes('System monitor'), false);
     assert.equal(button('Base 24').getAttribute('aria-checked'), 'true');
     await click(button('Base 24'));
     assert.equal(baseToggle().getAttribute('aria-pressed'), 'false');
@@ -158,22 +164,7 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     assert.ok(button('Reposition Tasks'));
     await click(button('Arrange widgets'));
     assert.equal(container.querySelector('[data-edit-mode]'), null);
-
-    await act(() =>
-      window.wallpaperPropertyListener!.applyUserProperties({
-        minimal: { value: true },
-        accent: { value: '1 0.5 0' },
-      }),
-    );
-    assert.equal(container.querySelector('[data-widget-id="tasks"]'), null);
-    assert.equal(
-      (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).appearance.widgets
-        .tasks.visible,
-      true,
-    );
-    await act(() => window.wallpaperPropertyListener!.setPaused(true));
-    assert.equal(window.document.documentElement.hasAttribute('data-host-paused'), true);
-    await act(() => window.wallpaperPropertyListener!.setPaused(false));
+    assert.equal(container.querySelector('[data-widget-id="system"]'), null);
   } finally {
     await act(() => render(null, container));
     await window.happyDOM.close();

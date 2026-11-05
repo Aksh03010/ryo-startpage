@@ -69,10 +69,6 @@
   grid-column: 1 / -1;
   grid-row: 4;
 }
-.dashboard[data-layout='flow'] > section[data-widget-id='system'] {
-  grid-column: 1 / -1;
-  grid-row: 5;
-}
 .dashboard[data-grid] {
   background-image:
     linear-gradient(#ffffff09 1px, transparent 1px),
@@ -156,9 +152,6 @@
   .dashboard[data-layout='flow'] > section[data-widget-id='reminders'] {
     grid-row: 5;
   }
-  .dashboard[data-layout='flow'] > section[data-widget-id='system'] {
-    grid-row: 6;
-  }
 }
 @media (max-width: 520px) {
   .dashboard[data-layout='flow'] {
@@ -186,9 +179,6 @@
   }
   .dashboard[data-layout='flow'] > section[data-widget-id='reminders'] {
     order: 5;
-  }
-  .dashboard[data-layout='flow'] > section[data-widget-id='system'] {
-    order: 6;
   }
   .dashboard[data-layout='free'] {
     display: flex;

@@ -8,7 +8,6 @@
     "build": "tsc -b && vite build",
     "lint": "eslint . --max-warnings=0",
     "preview": "vite preview",
-    "build:wallpaper": "tsc -b && node scripts/build-wallpaper.mjs",
     "test": "node --import ./tests/register.mjs --test tests/*.test.ts",
     "check:bundle": "node scripts/check-bundle.mjs",
     "typecheck": "tsc -b",

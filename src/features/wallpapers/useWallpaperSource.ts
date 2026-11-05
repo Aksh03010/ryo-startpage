@@ -25,6 +25,6 @@ export function useWallpaperSource(wallpaper: WallpaperState) {
     };
   }, [wallpaper.kind, wallpaper.mediaId]);
 
-  if (wallpaper.kind === 'url' || wallpaper.kind === 'native') return wallpaper.url ?? null;
+  if (wallpaper.kind === 'url') return wallpaper.url ?? null;
   return wallpaper.kind === 'upload' && upload.id === wallpaper.mediaId ? upload.src : null;
 }

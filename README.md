@@ -30,21 +30,6 @@ The site works as a regular web page in current desktop versions of **Microsoft 
 
 Your settings, links, tasks, and reminders are saved in that browser on that device. Uploaded wallpapers are stored on that device too. Browser data is not automatically shared between devices.
 
-## Local system monitor (optional)
-
-The System monitor widget is off by default. It reads sensor data only while the widget is enabled and the local helper is running. The helper supports Windows CPU and RAM usage and browser process CPU use. MSI Afterburner is needed for GPU and temperature sensors; those readings appear only when Afterburner exposes them.
-
-You do not need to download or clone the Ryo - Home source code to use this feature.
-
-1. Install Python 3.10 or newer for Windows. Install [MSI Afterburner](https://www.msi.com/Landing/afterburner/graphics-cards) too if you want GPU or temperature readings.
-2. For Afterburner readings, open Afterburner and go to **Settings > Monitoring**. Enable the GPU usage and temperature sensors you want to see. Enable CPU temperature too if it is available on your system. The monitor can display up to two GPUs.
-3. [Download the Windows monitor launcher](https://github.com/Aksh03010/ryo-startpage/raw/refs/heads/main/monitor/Start-RyoMonitor.bat), then double-click the downloaded `Start-RyoMonitor.bat` file. The launcher downloads the helper to `%LOCALAPPDATA%\RyoHome\Monitor` and starts it. A terminal window should say `Ryo Monitor listening on http://127.0.0.1:8765`. Keep that window open while using the widget.
-4. In Ryo - Home, open **Customize > Widgets > System monitor**, turn on **Show on page**, and choose **Computer** or **Browser** in the widget. If your browser asks to allow the page to access devices on your local network, allow it so the page can reach the monitor on this computer.
-
-The launcher needs an internet connection the first time it runs. It requires the Python Launcher (`py`), installed with Python for Windows, and `curl.exe` (included with Windows 10 and newer). If the launcher says `Python 3 is required`, install Python from [python.org](https://www.python.org/downloads/windows/) and run it again. If it says another monitor is already using the port, close any other Ryo Monitor terminal windows first. The **Browser** view and CPU usage do not need Afterburner; GPU or temperature readings can be unavailable when Afterburner is closed or a sensor is not enabled. To inspect the helper before running it, [view its source](https://github.com/Aksh03010/ryo-startpage/blob/main/monitor/ryo_monitor.py).
-
-The helper listens only on this computer (`127.0.0.1`) and allows requests from the Ryo - Home site and local development page. It does not change hardware settings. Customize > Widgets > System monitor lets you independently show or hide CPU, GPU 1, GPU 2, and RAM. RAM usage is available directly from Windows; GPU usage and temperatures depend on the sensors enabled in Afterburner. Missing temperature sensors are shown as unavailable.
-
 ## Features
 
 - Built-in wallpaper scenes, plus image and video uploads or a wallpaper URL.
@@ -56,32 +41,13 @@ The helper listens only on this computer (`127.0.0.1`) and allows requests from 
 
 ## Choose your space
 
-Open Customize and choose **Minimal** (clock and search), **Everyday** (adds quick links), or **Workspace** (adds tasks, focus, and reminders). You can still toggle and style every widget individually. Presets preserve your wallpaper and styling and return to the responsive layout. System monitoring stays opt-in.
+Open Customize and choose **Minimal** (clock and search), **Everyday** (adds quick links), or **Workspace** (adds tasks, focus, and reminders). You can still toggle and style every widget individually. Presets preserve your wallpaper and styling and return to the responsive layout.
 
 Press `/` to focus search, `Ctrl + ,` to customize, and `Esc` to close the panel or finish arranging. Focus and Rest modes have independent durations. Running timers use deadlines, so they catch up after a sleeping or hidden tab.
 
-## Wallpaper Engine
+## Experimental integrations
 
-### Use a Wallpaper Engine video as your startpage background
-
-Right-click an installed **video** wallpaper in Wallpaper Engine and choose **Open in Explorer**. Upload its MP4 or WebM file through Ryo's **Customize > Background > Upload image / video**. Images, GIFs, AVIF, and OGV are supported too. Uploads stay in the browser's local IndexedDB. Direct image/video URLs also work.
-
-A scene wallpaper's `.pkg` file is not a browser-playable video. To reuse a scene here, record it as a video first. See Wallpaper Engine's [file guide](https://help.wallpaperengine.io/en/functionality/editingwallpapers.html) and [scene export explanation](https://help.wallpaperengine.io/en/functionality/export.html).
-
-### Run Ryo inside Wallpaper Engine
-
-```sh
-npm ci
-npm run build:wallpaper
-```
-
-Import **dist-wallpaper/index.html** through Wallpaper Engine's **Create Wallpaper** button. Keep its `assets/`, `wallpapers/`, and `project.json` together; import the generated folder rather than the source repository. The build uses relative asset paths and includes its own fonts through system font fallbacks, so it needs no font CDN.
-
-Wallpaper Engine's panel exposes accent color, Minimal mode, individual widget switches, reduced motion, an image picker, and a video picker. A selected video takes precedence over the selected image; clear the video to return to the image. Use **WebM** for video inside Wallpaper Engine. Browser playback supports MP4 as well.
-
-The native adapter uses the documented [user properties](https://docs.wallpaperengine.io/en/web/customization/properties.html) and [pause callback](https://docs.wallpaperengine.io/en/web/api/propertylistener.html). Native overrides remain in memory and do not rewrite saved browser preferences. Pausing the host stops clock updates, monitor polling, and video playback. Local system monitoring is intended for browser mode: the optional helper retains its existing trusted-origin restrictions and rejects file-based origins.
-
-The generated package and adapter are covered by build and DOM tests. Playback inside the installed Wallpaper Engine application still requires manual verification. This integration does not mirror another desktop wallpaper live into a normal browser tab.
+Wallpaper Engine support and the local system monitor live on the [experimental branch](https://github.com/Aksh03010/ryo-startpage/tree/experimental). They are excluded from `main` and the live site. Regular image/video wallpaper uploads and direct wallpaper URLs remain available here. See that branch’s README for setup and testing.
 
 ## Performance and architecture
 
@@ -89,7 +55,7 @@ Ryo uses **Vite + TypeScript + Preact**, with Preact's React compatibility layer
 
 - Each optional widget is a separate lazy-loaded module. Disabled widgets do not mount or download their code/styles. Customize, drag support, and IndexedDB media code load when needed.
 - The default celestial background uses static SVG and CSS. Default widgets use solid surfaces without backdrop blur. Fonts use local system fallbacks, removing blocking font requests.
-- Clock/reminder updates and monitor polling stop while hidden. Monitoring aborts in-flight requests, times out after four seconds, and backs off to 30 seconds if the helper is offline.
+- Clock/reminder updates and wallpaper video playback stop while hidden.
 - Focus timers persist start/pause/reset/completion changes instead of saving every second.
 
 The original core JavaScript was approximately **103 KB gzip**; the new core is approximately **22 KB gzip**. Visible optional widgets add their own small chunks. These are build payload measurements, not an FPS or CPU benchmark. `npm run check:bundle` checks the current core JS/CSS budget. CI runs behavior tests and the bundle check before deploying.
@@ -102,19 +68,17 @@ src/
   components/            Widgets, layout shells, and shared UI controls
   features/
     layout/              Arrange mode and persisted widget positions
-    monitor/             Optional metrics polling, types, and rendering
     settings/            Settings ownership, migrations, and four UI tabs
-    wallpapers/          Background rendering, uploads, media storage, native bridge
+    wallpapers/          Background rendering, uploads, media storage
   hooks/                 Shared storage, clock, and media-query hooks
   lib/                   Pure scheduling/search helpers and persisted key names
   types.ts               Shared application data contracts
   index.css              Global styles; components retain colocated CSS modules
 tests/                   Behavior tests, DOM setup, and the TS/TSX loader
-scripts/                 Wallpaper Engine packaging and bundle checks
-monitor/                 Optional Windows-only sensor helper
+scripts/                 Bundle checks
 ```
 
-Settings flow from `useStartpageState` to widgets and the settings tabs through typed update callbacks. Lists/settings use localStorage, uploaded media uses IndexedDB, and native Wallpaper Engine preferences are merged in memory. Clock ticks remain local to the clock component. The wallpaper renderer layers the selected media, dimming, grain, and vignette.
+Settings flow from `useStartpageState` to widgets and the settings tabs through typed update callbacks. Lists/settings use localStorage, and uploaded media uses IndexedDB. Clock ticks remain local to the clock component. The wallpaper renderer layers the selected media, dimming, grain, and vignette.
 
 Read the [architecture guide](docs/architecture.md) for ownership and lifecycle details and [contributing guide](CONTRIBUTING.md) for coding, testing, and license rules. Application modules use named exports; optional features retain lazy imports.
 
@@ -140,9 +104,8 @@ npm run lint     # lint source, tests, and scripts with no warnings
 npm run typecheck # strictly check source, config, and tests
 npm run format:check # verify formatting
 npm run format   # apply formatting
-npm test         # test Preact interactions, timers, presets, and native controls
+npm test         # test Preact interactions, timers, and presets
 npm run check:bundle    # enforce a 40 KiB gzip budget for core JS + CSS
-npm run build:wallpaper # create a self-contained Wallpaper Engine project
 ```
 
 ## Host your own copy

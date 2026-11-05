@@ -14,6 +14,7 @@ import {
   DEFAULT_LINKS,
   DEFAULT_POSITIONS,
   DEFAULT_SETTINGS,
+  WIDGET_IDS,
   WIDGET_TITLES,
   hexToRgbTriplet,
 } from './constants';
@@ -43,11 +44,6 @@ const CustomizePanel = lazy(() =>
 );
 const ArrangeCanvas = lazy(() =>
   import('./components/ArrangeCanvas').then((module) => ({ default: module.ArrangeCanvas })),
-);
-const SystemMonitorWidget = lazy(() =>
-  import('./features/monitor/SystemMonitorWidget').then((module) => ({
-    default: module.SystemMonitorWidget,
-  })),
 );
 
 export function App() {
@@ -101,10 +97,7 @@ export function App() {
   }, [customizeOpen, arrange, toggleCustomize, setArrange]);
 
   const widgetIds = useMemo(
-    () =>
-      Object.entries(settings.appearance.widgets)
-        .filter(([, widget]) => widget.visible)
-        .map(([id]) => id as WidgetId),
+    () => WIDGET_IDS.filter((id) => settings.appearance.widgets[id]?.visible),
     [settings.appearance.widgets],
   );
 
@@ -149,14 +142,6 @@ export function App() {
                 }
               />
             );
-          case 'system':
-            return (
-              <Suspense fallback={<p>Connecting monitor…</p>}>
-                <SystemMonitorWidget
-                  metrics={settings.monitorMetrics ?? DEFAULT_SETTINGS.monitorMetrics}
-                />
-              </Suspense>
-            );
           default:
             return (
               <FocusWidget
@@ -200,7 +185,6 @@ export function App() {
       settings.clock,
       settings.tasks,
       settings.searchEngine,
-      settings.monitorMetrics,
       layout,
       arrange,
       tasks,

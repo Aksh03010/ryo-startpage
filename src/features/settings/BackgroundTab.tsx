@@ -153,24 +153,6 @@ export function BackgroundTab({
         </p>
       </div>
 
-      <details className={styles.engineHelp}>
-        <summary>Wallpaper Engine & live backgrounds</summary>
-        <p>
-          For a video wallpaper, right-click it in Wallpaper Engine, choose Open in Explorer, then
-          upload its MP4 or WebM file here. Scene (.pkg) wallpapers need a video recording.
-        </p>
-        <p>
-          Ryo also includes a native web-wallpaper build with Wallpaper Engine controls. See the
-          project README for setup. In Wallpaper Engine, use WebM videos.
-        </p>
-        <a
-          href="https://help.wallpaperengine.io/en/functionality/editingwallpapers.html"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Wallpaper Engine's file guide ↗
-        </a>
-      </details>
       <SectionTitle>Wallpaper adjustments</SectionTitle>
       <Slider
         label="Darken wallpaper"

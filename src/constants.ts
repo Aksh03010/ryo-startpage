@@ -10,15 +10,7 @@ import type {
   WidgetId,
 } from './types';
 
-export const WIDGET_IDS: WidgetId[] = [
-  'clock',
-  'tasks',
-  'search',
-  'links',
-  'focus',
-  'reminders',
-  'system',
-];
+export const WIDGET_IDS: WidgetId[] = ['clock', 'tasks', 'search', 'links', 'focus', 'reminders'];
 const publicAsset = (path: string) => `${import.meta.env?.BASE_URL ?? '/'}${path}`;
 
 export const WIDGET_TITLES: Record<WidgetId, string> = {
@@ -28,7 +20,6 @@ export const WIDGET_TITLES: Record<WidgetId, string> = {
   links: 'Quick links',
   focus: 'Focus timer',
   reminders: 'Reminders',
-  system: 'System monitor',
 };
 
 export const PRESETS: Array<{
@@ -155,7 +146,6 @@ export const DEFAULT_POSITIONS = {
   links: { x: 71, y: 12 },
   focus: { x: 71, y: 49 },
   reminders: { x: 7, y: 72 },
-  system: { x: 72, y: 74 },
 };
 
 export const DEFAULT_LINKS: QuickLink[] = [
@@ -186,7 +176,6 @@ export const DEFAULT_SETTINGS: Settings = {
       links: { visible: true, size: 100, style: {} },
       focus: { visible: true, size: 100, style: {} },
       reminders: { visible: true, size: 100, style: {} },
-      system: { visible: false, size: 100, style: {} },
     },
   },
   background: {
@@ -213,7 +202,6 @@ export const DEFAULT_SETTINGS: Settings = {
   tasks: { showCompleted: true },
   layout: { snapToGrid: true, showGrid: false },
   searchEngine: 'duckduckgo',
-  monitorMetrics: { cpu: true, gpu1: true, gpu2: true, ram: true },
 };
 
 export const DEFAULT_FOCUS: FocusSettings = { focusMinutes: 25, breakMinutes: 5, sessions: 0 };

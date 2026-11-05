@@ -76,9 +76,3 @@ input[type='number'] {
     transition-duration: 0.001ms !important;
   }
 }
-
-html[data-host-paused] *,
-html[data-host-paused] *::before,
-html[data-host-paused] *::after {
-  animation-play-state: paused !important;
-}
