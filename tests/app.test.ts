@@ -63,17 +63,9 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
       );
     }
 
-    const baseToggle = () => container.querySelector('button[title^="Use digits"]')!;
-    assert.equal(baseToggle().getAttribute('aria-pressed'), 'false');
-    await click(baseToggle());
-    assert.equal(baseToggle().getAttribute('aria-pressed'), 'true');
-    assert.equal(
-      (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).clock.base24,
-      true,
-    );
-    await act(() => render(null, container));
-    await act(() => render(h(App, {}), container));
-    assert.equal(baseToggle().getAttribute('aria-pressed'), 'true');
+    const clock = () => container.querySelector('[data-widget-id="clock"]')!;
+    assert.equal(clock().querySelector('button'), null);
+    assert.equal(clock().textContent?.includes('Base 24'), false);
 
     await click(button('Open customize panel'));
     await until(() => container.querySelector('[role="dialog"]'));
@@ -106,14 +98,23 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     );
     await click(tab('Widgets'));
     assert.equal(container.textContent?.includes('System monitor'), false);
-    assert.equal(button('Base 24').getAttribute('aria-checked'), 'true');
-    await click(button('Base 24'));
-    assert.equal(baseToggle().getAttribute('aria-pressed'), 'false');
+    assert.equal(button('blurb').getAttribute('aria-checked'), 'false');
+    const switches = container.querySelectorAll('[role="switch"]');
+    assert.equal(switches[switches.length - 1].getAttribute('aria-label'), 'blurb');
+    await click(button('blurb'));
+    assert.ok(clock().querySelector('time.blurb'));
+    assert.match(clock().querySelector('.minute')!.textContent!, /^[0-5]{3}$/);
     assert.equal(
       (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).clock.base24,
-      false,
+      true,
     );
     await click(button('Show seconds'));
+    assert.match(clock().querySelector('.seconds')!.textContent!, /^[0-5]{3}$/);
+    await click(button('blurb'));
+    assert.equal(clock().querySelector('time.blurb'), null);
+    assert.match(clock().querySelector('.minute')!.textContent!, /^\d{2}$/);
+    assert.match(clock().querySelector('.seconds')!.textContent!, /^\d{2}$/);
+    await click(button('blurb'));
     assert.equal(
       (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).clock.showSeconds,
       true,
@@ -165,6 +166,11 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     await click(button('Arrange widgets'));
     assert.equal(container.querySelector('[data-edit-mode]'), null);
     assert.equal(container.querySelector('[data-widget-id="system"]'), null);
+    await act(() => render(null, container));
+    await act(() => render(h(App, {}), container));
+    assert.ok(clock().querySelector('time.blurb'));
+    assert.equal(clock().querySelector('button'), null);
+    assert.match(clock().querySelector('.seconds')!.textContent!, /^[0-5]{3}$/);
   } finally {
     await act(() => render(null, container));
     await window.happyDOM.close();

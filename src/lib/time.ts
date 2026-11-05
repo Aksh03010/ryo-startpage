@@ -1,16 +1,40 @@
-export function formatClockParts(date: Date, use24: boolean, seconds: boolean, base24 = false) {
-  const fullDay = use24 || base24;
+// One text glyph per hour, using local symbol fonts instead of image or font downloads.
+const HOUR_SYMBOLS = [
+  '☾',
+  '☽',
+  '◌',
+  '○',
+  '◔',
+  '◑',
+  '◕',
+  '◉',
+  '◇',
+  '✧',
+  '✦',
+  '✶',
+  '☼',
+  '✹',
+  '✺',
+  '✷',
+  '✴',
+  '✳',
+  '❋',
+  '◈',
+  '◆',
+  '△',
+  '▽',
+  '◎',
+] as const;
+
+export function formatClockParts(date: Date, use24: boolean, seconds: boolean, blurb = false) {
+  const fullDay = use24 || blurb;
   const hours = fullDay ? date.getHours() : date.getHours() % 12 || 12;
-  const format = (value: number, width = 2) =>
-    value
-      .toString(base24 ? 24 : 10)
-      .toUpperCase()
-      .padStart(width, '0');
-  const minute = format(date.getMinutes());
-  const second = format(date.getSeconds());
+  const format = (value: number, width = 2) => value.toString(blurb ? 6 : 10).padStart(width, '0');
+  const minute = format(date.getMinutes(), blurb ? 3 : 2);
+  const second = format(date.getSeconds(), blurb ? 3 : 2);
   const suffix = fullDay ? '' : date.getHours() < 12 ? 'AM' : 'PM';
   return {
-    hour: format(hours, fullDay ? 2 : 1),
+    hour: blurb ? HOUR_SYMBOLS[date.getHours()] : format(hours, fullDay ? 2 : 1),
     minute,
     second,
     suffix,

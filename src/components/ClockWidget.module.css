@@ -15,59 +15,44 @@
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
 }
 
-.baseToggle {
-  min-height: 32px;
-  padding: 5px 10px;
-  border: 1px solid #ffffff26;
-  border-radius: 999px;
-  background: #ffffff08;
-  color: #bdc8c2;
-  font:
-    500 11px/1.4 'Manrope',
-    system-ui;
-  cursor: pointer;
-}
-
-.baseToggle:hover,
-.baseToggle[aria-pressed='true'] {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-.baseToggle:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-.timeWrap {
+.time {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.14em;
   max-width: 100%;
   font-weight: 500;
   letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.timeRef {
-  visibility: hidden;
-  pointer-events: none;
-  user-select: none;
-  display: flex;
-  align-items: baseline;
-  gap: 0.14em;
-}
-
-.time {
-  position: absolute;
-  left: 0;
-  top: 0;
-  display: flex;
-  align-items: baseline;
-  gap: 0.14em;
+  line-height: 1.15;
   text-shadow:
     0 2px 26px rgba(2, 6, 18, 0.55),
     0 1px 4px rgba(0, 0, 0, 0.38);
+}
+
+.hour,
+.minute {
+  flex: none;
+  width: 2ch;
+  text-align: center;
+}
+
+.blurb .hour {
+  width: 1.3em;
+  align-self: center;
+  font-family: 'Segoe UI Symbol', 'Apple Symbols', 'Noto Sans Symbols 2', sans-serif;
+  font-size: 0.85em;
+  font-variant-emoji: text;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.blurb .minute {
+  width: 3ch;
+}
+
+.blurb .seconds {
+  width: 3ch;
 }
 
 .updated {
@@ -78,10 +63,14 @@
 .colon {
   color: rgba(255, 255, 255, 0.55);
   font-size: 0.38em;
-  vertical-align: super;
+  align-self: center;
+  line-height: 1;
 }
 
 .seconds {
+  flex: none;
+  width: 2ch;
+  text-align: left;
   font-size: 0.29em;
   color: rgba(255, 255, 255, 0.72);
   font-weight: 400;

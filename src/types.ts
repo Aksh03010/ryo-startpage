@@ -70,7 +70,7 @@ export interface ClockSettings {
   font: ClockFont;
   size: number;
   use24Hour: boolean;
-  /** Older saves without this option use ordinary decimal time. */
+  /** Blurb mode; the original storage key is retained for existing preferences. */
   base24?: boolean;
   showSeconds: boolean;
   showDate: boolean;
