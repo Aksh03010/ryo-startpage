@@ -26,22 +26,8 @@ const HOUR_SYMBOLS = [
   '◎',
 ] as const;
 
-const BLURB_BASE = Math.sqrt(60);
-
-/** Greedy base-√60 expansion for a clock field (0–59), truncated to three fractional digits. */
 function formatBlurbPart(value: number): string {
-  const tens = Math.floor(value / BLURB_BASE);
-  const remainder = value - tens * BLURB_BASE;
-  const units = Math.floor(remainder);
-  let fraction = remainder - units;
-  let result = `${tens}${units}.`;
-  for (let place = 0; place < 3; place++) {
-    fraction *= BLURB_BASE;
-    const digit = Math.floor(fraction);
-    result += digit;
-    fraction -= digit;
-  }
-  return result;
+  return value.toString(6).padStart(3, '0');
 }
 
 export function formatClockParts(

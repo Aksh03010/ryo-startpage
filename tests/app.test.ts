@@ -106,13 +106,13 @@ test('Preact app: minimal → workspace, task entry, timer controls, and arrange
     assert.equal(button('blorp').getAttribute('aria-checked'), 'false');
     await click(button('blurb'));
     assert.ok(clock().querySelector('time.blurb'));
-    assert.match(clock().querySelector('.minute')!.textContent!, /^[0-7]{2}\.[0-7]{3}$/);
+    assert.match(clock().querySelector('.minute')!.textContent!, /^[0-5]{3}$/);
     assert.equal(
       (JSON.parse(window.localStorage.getItem('ryo.settings.v2')!) as Settings).clock.base24,
       true,
     );
     await click(button('Show seconds'));
-    assert.match(clock().querySelector('.seconds')!.textContent!, /^[0-7]{2}\.[0-7]{3}$/);
+    assert.match(clock().querySelector('.seconds')!.textContent!, /^[0-5]{3}$/);
     await click(button('blorp'));
     assert.equal(button('blurb').getAttribute('aria-checked'), 'false');
     assert.ok(clock().querySelector('time.blorp'));

@@ -33,10 +33,12 @@ test('blorp decimal time follows the local day and rolls over at exact metric bo
   }
 });
 
-test('blurb uses a unique symbol per hour, base-√60 minutes and seconds, and preserves ordinary time', () => {
+test('blurb uses a unique symbol per hour, base-six minutes and seconds, and preserves ordinary time', () => {
   const date = new Date(2026, 10, 4, 23, 59, 24);
   const blurb = formatClockParts(date, false, true, true);
   assert.equal(blurb.hour, '◎');
+  assert.equal(blurb.minute, '135');
+  assert.equal(blurb.second, '040');
   assert.equal(blurb.hour12, false);
   assert.equal(blurb.suffix, '');
   const symbols = new Set<string>();
@@ -53,15 +55,8 @@ test('blurb uses a unique symbol per hour, base-√60 minutes and seconds, and p
   for (let value = 0; value < 60; value++) {
     date.setMinutes(value, value);
     const { minute, second } = formatClockParts(date, true, true, true);
-    assert.match(minute, /^[0-7]{2}\.[0-7]{3}$/);
-    const reconstructed = [...minute.replace('.', '')].reduce(
-      (sum, digit, index) => sum + Number(digit) * Math.sqrt(60) ** (1 - index),
-      0,
-    );
-    // Truncating after three fractional places loses less than one unit in the last place.
-    assert.ok(reconstructed <= value + 1e-10);
-    assert.ok(value - reconstructed < Math.sqrt(60) ** -3 + 1e-10);
-    if (value < 8) assert.equal(minute, `0${value}.000`);
+    assert.match(minute, /^[0-5]{3}$/);
+    assert.equal(parseInt(minute, 6), value);
     assert.equal(second, minute);
     representations.add(minute);
   }
@@ -72,7 +67,7 @@ test('blurb uses a unique symbol per hour, base-√60 minutes and seconds, and p
       formatClockParts(date, false, false, true).minute,
       formatClockParts(date, false, true, true).second,
     ],
-    ['00.000', '00.000'],
+    ['000', '000'],
   );
   assert.equal(formatClockParts(date, false, false).hour, '12');
   date.setHours(13, 24, 59);
